@@ -1,16 +1,33 @@
-AMOH JUSTICE AI — INSTALLABLE WEB APP
+AMOH JUSTICE AI — LIVE AI UPGRADE
 
-Includes: luxury black-and-gold business website, the supplied office photo, responsive layout, friendly built-in Justice AI demo chat, WhatsApp contact, PWA manifest/icons, and basic offline cache.
+WHAT CHANGED
+- Justice AI now calls a server-side Vercel function connected to Google Gemini.
+- The AI can answer general questions as well as AMOH JUSTICE service questions.
+- Your Gemini API key is read only on the server from GEMINI_API_KEY; it is not included in browser JavaScript.
+- Black-and-gold design, office photo, installable web app, and existing website sections are retained.
 
-PUBLISH ON VERCEL (FREE STARTER)
-1. Extract this ZIP on your computer.
-2. Create a new GitHub repository named amoh-justice-ai.
-3. Upload all files and folders from inside this extracted folder (not the ZIP itself). Ensure index.html is at the repository root.
-4. On Vercel choose Add New > Project, import amoh-justice-ai, then click Deploy.
-5. Open the HTTPS URL. On Chrome/Edge use the install icon or browser menu > Install app. On Android Chrome use menu > Install app/Add to Home screen. On iPhone/iPad Safari use Share > Add to Home Screen.
+IMPORTANT
+- This upgrade needs a Gemini API key. Until the key is added in Vercel, chat will show a setup message.
+- Free tier availability, model access, rate limits, and terms can change. Check Google's current Gemini API pricing and terms before public launch.
+- Do not commit your API key into GitHub or put it in script.js.
+- This is not a user-authenticated app and does not include per-user quotas or persistent rate limiting. Add abuse protection before advertising it widely.
 
-IMPORTANT LIMITATIONS
-- Justice AI in this starter is a local scripted demo, not a connected generative AI service. To answer open-ended questions, connect an AI provider through a server-side API route and store the secret as a Vercel environment variable. Never put API keys in script.js.
-- No user accounts, real AI video generation, payments, or database are connected yet.
+DEPLOY ON VERCEL
+1. Extract this ZIP. The api folder must be at the project root alongside index.html.
+2. In GitHub repository amoh-justice-ai, upload/replace the updated files and folders from this ZIP. Keep README.md if GitHub already created it. Commit the changes.
+3. Vercel should redeploy automatically. Wait until deployment is Ready.
+4. Open https://aistudio.google.com/apikey and sign in to create a Gemini API key.
+5. In Vercel, open your project > Settings > Environment Variables. Add Name: GEMINI_API_KEY and Value: paste your key. Select Production (and Preview if you need it), then Save.
+6. Go to Deployments and redeploy the latest deployment (or push another commit) so the new environment variable is applied.
+7. Open the published app and ask Justice AI: “Explain photosynthesis in simple words.”
+
+SECURITY
+- Treat the API key like a password. Never share it in chat, screenshots, public GitHub files, or browser code.
+- If a key is exposed, revoke it in Google AI Studio and create another.
+- Google AI Studio: https://aistudio.google.com/apikey
+- Gemini pricing and terms: https://ai.google.dev/gemini-api/docs/pricing
+- Vercel environment variables: https://vercel.com/docs/environment-variables
+
+OTHER EXISTING LIMITATIONS
 - The enquiry form opens the visitor's email app. Replace amohjustice@example.com in script.js with your real business email before publishing.
-- Installability depends on browser/device support and secure HTTPS hosting.
+- AI video generation, customer accounts, payments, and database features are not connected.

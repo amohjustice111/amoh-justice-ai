@@ -8,10 +8,29 @@ document.querySelectorAll('[data-service]').forEach(a=>a.addEventListener('click
 document.querySelectorAll('[data-topic]').forEach(b=>b.addEventListener('click',()=>showToast('Selected tutorial topic: '+b.dataset.topic+'. Add your lesson or video link here when ready.')));
 document.getElementById('contactForm').addEventListener('submit',e=>{e.preventDefault();const name=document.getElementById('name').value.trim(),email=document.getElementById('email').value.trim(),service=document.getElementById('serviceSelect').value,message=document.getElementById('message').value.trim();const subject=encodeURIComponent('AMOH JUSTICE enquiry — '+service);const body=encodeURIComponent('Name: '+name+'\nEmail: '+email+'\nService: '+service+'\n\nProject details:\n'+message);window.location.href='mailto:amohjustice@example.com?subject='+subject+'&body='+body;});
 
-// Friendly built-in Justice AI demo. Replace with a secure server-side AI integration for open-ended answers.
+// Live Justice AI chat. The browser calls our server route; the secret key stays on Vercel.
 const chatMessages=document.getElementById('chatMessages');
-function addBubble(text,who){const el=document.createElement('div');el.className='bubble '+who;el.textContent=text;chatMessages.appendChild(el);chatMessages.scrollTop=chatMessages.scrollHeight;}
-function justiceReply(raw){const q=raw.toLowerCase();if(/hello|hi\b|hey|good morning|good afternoon/.test(q))return 'Hello! 😊 It is great to have you here. What can I help you explore today?';if(/service|offer|do you do|what can/.test(q))return 'AMOH JUSTICE offers AI video creation guidance, website design and development, graphic design, and digital learning tutorials. Which service interests you most?';if(/contact|whatsapp|phone|call|reach/.test(q))return 'You can contact AMOH JUSTICE on WhatsApp at +233 546 389 770: https://wa.me/233546389770';if(/website|web design|publish|vercel|github/.test(q))return 'We can help with responsive websites and beginner-friendly publishing guidance. A common route is to upload your project to GitHub and connect it to Vercel for deployment.';if(/graphic|poster|flyer|banner|design/.test(q))return 'Our graphic design service covers posters, flyers, banners, social media graphics, and visual branding. Tell us what you want to create through the contact section.';if(/video|ai video|prompt/.test(q))return 'We can help plan AI video concepts and write prompts for video tools. Automated video generation is not connected in this demo yet.';if(/learn|tutorial|beginner|teach/.test(q))return 'Start with the Tutorials section for AI prompts, publishing a website, and graphic design basics. Lesson links can be added as they are prepared.';if(/price|cost|pay|payment/.test(q))return 'Pricing depends on the service and project. Please contact us on WhatsApp so we can discuss your specific needs. No payments are collected in this demo.';if(/who are you|your name|justice ai/.test(q))return 'I’m Justice AI, the friendly digital helper for AMOH JUSTICE. I can answer basic questions about the services on this website.';return 'Thanks for your question! 😊 I’m currently a starter assistant and can answer basic questions about AMOH JUSTICE services. For a more detailed answer, contact us on WhatsApp at +233 546 389 770. A live AI connection can be added in the next stage.';}
-document.getElementById('chatForm').addEventListener('submit',e=>{e.preventDefault();const input=document.getElementById('chatInput');const message=input.value.trim();if(!message)return;addBubble(message,'user');input.value='';setTimeout(()=>addBubble(justiceReply(message),'bot'),180);});
-document.querySelectorAll('[data-question]').forEach(btn=>btn.addEventListener('click',()=>{const message=btn.dataset.question;addBubble(message,'user');setTimeout(()=>addBubble(justiceReply(message),'bot'),180);}));
+const chatForm=document.getElementById('chatForm');
+const chatInput=document.getElementById('chatInput');
+const sendButton=chatForm.querySelector('button[type="submit"]');
+const chatHistory=[];
+function addBubble(text,who){const el=document.createElement('div');el.className='bubble '+who;el.textContent=text;chatMessages.appendChild(el);chatMessages.scrollTop=chatMessages.scrollHeight;return el;}
+function setChatBusy(busy){sendButton.disabled=busy;sendButton.textContent=busy?'Thinking…':'Send ↗';chatInput.disabled=busy;}
+async function askJustice(message){
+  addBubble(message,'user');
+  chatHistory.push({role:'user',text:message});
+  const pending=addBubble('Justice AI is thinking…','bot');
+  setChatBusy(true);
+  try{
+    const response=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message,history:chatHistory.slice(-10,-1)})});
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok) throw new Error(data.error||'Justice AI could not answer. Please try again.');
+    pending.textContent=data.answer;
+    chatHistory.push({role:'model',text:data.answer});
+    if(chatHistory.length>12)chatHistory.splice(0,chatHistory.length-12);
+  }catch(error){pending.textContent='Sorry, I could not answer just now. '+(error.message||'Please try again later.');}
+  finally{setChatBusy(false);chatInput.focus();chatMessages.scrollTop=chatMessages.scrollHeight;}
+}
+chatForm.addEventListener('submit',e=>{e.preventDefault();const message=chatInput.value.trim();if(!message||sendButton.disabled)return;chatInput.value='';askJustice(message);});
+document.querySelectorAll('[data-question]').forEach(btn=>btn.addEventListener('click',()=>{if(!sendButton.disabled)askJustice(btn.dataset.question);}));
 let installPrompt;const installButton=document.getElementById('installApp');window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e;installButton.hidden=false;});installButton.addEventListener('click',async()=>{if(!installPrompt){showToast('If install is unavailable, open your browser menu and choose Install app or Add to Home Screen.');return;}installPrompt.prompt();await installPrompt.userChoice;installPrompt=null;installButton.hidden=true;});window.addEventListener('appinstalled',()=>{installButton.hidden=true;showToast('AMOH JUSTICE has been installed.');});
