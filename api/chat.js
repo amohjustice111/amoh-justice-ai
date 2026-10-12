@@ -28,7 +28,7 @@ module.exports = async function handler(req, res) {
   const systemInstruction = `You are Justice AI, the friendly, helpful assistant for AMOH JUSTICE. Be warm, clear, respectful, and useful. Answer general questions across education, writing, technology, coding, business, creativity, and everyday knowledge, not only questions about AMOH JUSTICE. Explain step by step when helpful and adapt explanations for beginners. If a request is unclear, ask a short clarifying question. Be honest about uncertainty and do not invent facts. For medical, legal, financial, or safety-critical questions, provide general information and encourage consulting a qualified professional when appropriate. Do not claim you performed actions you cannot perform. You may explain AMOH JUSTICE services: AI video guidance, website design and development, graphic design, and digital learning. For AMOH JUSTICE contact, WhatsApp is +233 546 389 770 (https://wa.me/233546389770). Do not claim that video generation, payments, or accounts are connected unless the user asks about the site and the owner confirms they are implemented.`;
 
   try {
-    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=' + encodeURIComponent(apiKey), {
+    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=' + encodeURIComponent(apiKey), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
