@@ -12,3 +12,11 @@
 .logo{width:44px;height:44px;object-fit:cover;border-radius:50%;border:1px solid var(--gold);box-shadow:0 0 18px #e3bb6522}.chat-avatar{width:42px;height:42px;object-fit:cover;border-radius:50%;border:1px solid var(--gold)}
 @media(max-width:760px){.video-hub{grid-template-columns:1fr}.video-links{grid-template-columns:1fr 1fr}}
 @media(max-width:460px){.video-links{grid-template-columns:1fr}.video-links a{padding:14px}}
+
+/* Blue palette override */
+:root{--bg:#061326;--panel:#0b1d36;--gold:#4da3ff;--pale:#b9ddff;--white:#f3f8ff;--muted:#a9bdd5;--line:rgba(77,163,255,.3)}
+.header{background:#07152bf2}.hero{background:radial-gradient(ellipse at 80% 40%,#12365f 0%,#0b1d36 38%,#061326 75%)}
+.services,.learning{background:#091a30}.about{background:linear-gradient(110deg,#071326,#10294a)}
+.video-hub{background:radial-gradient(ellipse at top right,rgba(77,163,255,.18),transparent 55%),linear-gradient(135deg,#0c2342,#071326);border-color:var(--line)}
+.video-hub h3 em{color:#73b7ff}.video-links a{background:#08182d;border-color:var(--line)}.video-links a:hover{border-color:#73b7ff}.video-links a>span{background:#4da3ff20;color:#80c2ff}
+.logo,.chat-avatar{border-color:#65b4ff;box-shadow:0 0 18px #248dff25}
