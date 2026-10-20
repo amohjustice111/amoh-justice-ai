@@ -6,11 +6,11 @@
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#090909",
-  "theme_color": "#090909",
+  "background_color": "#061326",
+  "theme_color": "#071a35",
   "icons": [
     {
-      "src": "/office-photo.png",
+      "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
