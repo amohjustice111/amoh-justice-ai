@@ -20,3 +20,6 @@
 .video-hub{background:radial-gradient(ellipse at top right,rgba(77,163,255,.18),transparent 55%),linear-gradient(135deg,#0c2342,#071326);border-color:var(--line)}
 .video-hub h3 em{color:#73b7ff}.video-links a{background:#08182d;border-color:var(--line)}.video-links a:hover{border-color:#73b7ff}.video-links a>span{background:#4da3ff20;color:#80c2ff}
 .logo,.chat-avatar{border-color:#65b4ff;box-shadow:0 0 18px #248dff25}
+
+/* Premium blue redesign override */
+:root{--bg:#061326;--panel:#0b1d35;--gold:#3c9cff;--pale:#a8d8ff;--white:#f4f8ff;--muted:#a9bdd6;--line:rgba(80,166,255,.3)}body{background:radial-gradient(ellipse at 75% 0%,#12355c 0%,var(--bg) 48%);color:var(--white)}.header,footer{background:#061326ed;border-color:var(--line)}.brand small,.eyebrow,.simple-link,.service a,.section-head .simple-link{color:#82c5ff}.btn.gold,.nav-cta{background:linear-gradient(135deg,#67baff,#1976df)!important;color:#031126!important;border-color:#8bd0ff!important}.btn.outline,.service,.video-links a,.chat-shell{border-color:var(--line)!important;background:linear-gradient(145deg,#102947,#09182b)!important}.hero-image img{border-color:#338ee8;box-shadow:0 20px 65px #00152e}.image-note{background:#0a2a4e;color:#c6e7ff}.logo,.chat-avatar{border-color:#65b4ff;box-shadow:0 0 18px #248dff25}
