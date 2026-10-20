@@ -1,0 +1,10 @@
+/* Justice AI floating launcher and full-screen chat */
+#justiceAiFloat{position:fixed;right:22px;bottom:22px;z-index:9998;border:1px solid #ffe4a0;border-radius:999px;background:linear-gradient(135deg,#f4d27e,#b9852d);color:#111;padding:14px 20px;box-shadow:0 8px 30px #0008;font-weight:700;cursor:pointer}
+#justiceAiOverlay{position:fixed;inset:0;z-index:9999;background:#070707f5;display:none;align-items:center;justify-content:center;padding:clamp(8px,2vw,24px)}
+#justiceAiOverlay.is-open{display:flex}
+#justiceAiOverlay .justice-ai-close{position:absolute;top:12px;right:16px;border:1px solid #e3bb65;border-radius:50%;width:44px;height:44px;background:#151515;color:#ffe4a0;font-size:28px;cursor:pointer;z-index:2}
+#justiceAiOverlay .chat-shell{width:min(900px,100%);height:min(850px,calc(100dvh - 32px));max-height:none;display:flex;flex-direction:column;overflow:hidden;margin:0}
+#justiceAiOverlay .chat-messages{flex:1;min-height:100px;overflow:auto}
+#justiceAiOverlay .chat-form{flex-shrink:0}
+#justiceAiOverlay .chat-disclaimer{flex-shrink:0}
+@media(max-width:600px){#justiceAiFloat{right:14px;bottom:14px;padding:13px 17px}#justiceAiOverlay{padding:6px}#justiceAiOverlay .chat-shell{height:calc(100dvh - 12px);border-radius:14px}#justiceAiOverlay .justice-ai-close{top:8px;right:8px}}
