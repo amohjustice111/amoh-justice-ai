@@ -29,7 +29,7 @@ The existing /api/chat endpoint requires GEMINI_API_KEY in Vercel. Use the provi
 KIE AI REAL VIDEO GENERATION (NEW)
 1. Create/manage your API key at https://kie.ai/api-key and check current model pricing at https://kie.ai/pricing. Video generation consumes KIE credits.
 2. In Vercel > Project Settings > Environment Variables, add KIE_API_KEY with your secret KIE key. Never paste it into GitHub, the browser, or ChatGPT.
-3. Configure SUPABASE_URL and SUPABASE_ANON_KEY as described above. The video API requires a valid signed-in Supabase user so strangers cannot freely spend your KIE credits.
+3. Configure SUPABASE_URL and SUPABASE_ANON_KEY as described above, and add KIE_ALLOWED_USER_EMAIL set to the exact email address of your own Supabase account. Video generation is restricted to that owner account to protect your KIE credits.
 4. Redeploy the project. Open /account.html, create an account, sign in, then go to /studio.html and choose Video prompt > Generate my video prompt > Generate real video with KIE.
 5. The Studio submits a Wan 2.2 Turbo 720p task and polls KIE for its result. KIE-generated media links may expire; download important results promptly.
 6. If generation fails, check KIE credits/logs, Vercel function logs, Supabase environment variables, and current KIE model documentation. Model parameters and pricing can change.
