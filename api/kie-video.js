@@ -7,9 +7,10 @@ module.exports = async function handler(req, res) {
     res.setHeader('Allow', 'GET, POST');
     return res.status(405).json({ error: 'Use GET to check a task or POST to create one.' });
   }
-  const { KIE_API_KEY, SUPABASE_URL, SUPABASE_ANON_KEY } = process.env;
+  const { KIE_API_KEY, SUPABASE_URL, SUPABASE_ANON_KEY, KIE_ALLOWED_USER_EMAIL } = process.env;
   if (!KIE_API_KEY) return res.status(503).json({ error: 'Video generation is not configured yet. Add KIE_API_KEY in Vercel.' });
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return res.status(503).json({ error: 'Secure generation requires Supabase authentication. Configure SUPABASE_URL and SUPABASE_ANON_KEY in Vercel.' });
+  if (!KIE_ALLOWED_USER_EMAIL) return res.status(503).json({ error: 'Video generation is locked until KIE_ALLOWED_USER_EMAIL is configured in Vercel.' });
   const auth = String(req.headers.authorization || '');
   if (!auth.startsWith('Bearer ')) return res.status(401).json({ error: 'Sign in to your AMOH JUSTICE AI account before generating a video.' });
   try {
@@ -17,6 +18,8 @@ module.exports = async function handler(req, res) {
       headers: { apikey: SUPABASE_ANON_KEY, Authorization: auth }
     });
     if (!userResponse.ok) return res.status(401).json({ error: 'Your session is not valid. Sign in again.' });
+    const user = await userResponse.json();
+    if (String(user.email || '').toLowerCase() !== KIE_ALLOWED_USER_EMAIL.toLowerCase()) return res.status(403).json({ error: 'Video generation is currently restricted to the site owner account.' });
     if (req.method === 'POST') {
       const body = req.body || {};
       const prompt = typeof body.prompt === 'string' ? body.prompt.trim() : '';
