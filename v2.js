@@ -22,6 +22,32 @@
   $('#buildPrompt').addEventListener('click',build);
   $('#copyPrompt').addEventListener('click',async()=>{const t=$('#promptResult').textContent;if(!t||t.startsWith('Your finished'))return status('studioStatus','Generate a prompt before copying.');try{await navigator.clipboard.writeText(t);status('studioStatus','Prompt copied to clipboard.')}catch(_){status('studioStatus','Copy was blocked by this browser. Select the prompt text and copy it manually.')}});
   $('#savePrompt').addEventListener('click',async()=>{const content=$('#promptResult').textContent;if(!content||content.startsWith('Your finished'))return status('studioStatus','Generate a prompt before saving.');await saveProject({title:($('#idea').value.trim().slice(0,60)||'Untitled prompt'),category:kind==='video'?'Video prompt':'Image prompt',description:$('#idea').value.trim(),content});status('studioStatus','Saved to your browser workspace.');toast('Saved to your workspace.')});
+  $('#generateVideo').addEventListener('click',async()=>{
+   if(kind!=='video')return status('studioStatus','Switch to Video prompt to generate a video.');
+   const prompt=build();if(!prompt)return;
+   const output=$('#generatedVideo'), videoStatus=$('#videoStatus');
+   $('#generateVideo').disabled=true;$('#videoOutput')?.classList.remove('v2-hidden');output.style.display='none';videoStatus.textContent='Checking your sign-in…';
+   try{
+    const sb=await getSupabase();if(!sb){videoStatus.textContent='Account service is not configured. Set up Supabase, then sign in at Free Account.';return}
+    const {data:sessionData}=await sb.auth.getSession();const token=sessionData?.session?.access_token;
+    if(!token){videoStatus.textContent='Please sign in to your AMOH JUSTICE AI account first.';return}
+    const selectedRatio=$('#ratio').value;const ratio=selectedRatio.includes('9:16')?'9:16':selectedRatio.includes('1:1')?'1:1':'16:9';
+    videoStatus.textContent='Sending your video request to KIE AI…';
+    const started=await fetch('/api/kie-video',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({prompt,ratio})});
+    const task=await started.json();if(!started.ok||!task.taskId)throw new Error(task.error||'Could not start video generation.');
+    videoStatus.textContent='Video task created. Generating… this can take several minutes.';
+    for(let i=0;i<60;i++){
+     await new Promise(resolve=>setTimeout(resolve,5000));
+     const response=await fetch('/api/kie-video?taskId='+encodeURIComponent(task.taskId),{headers:{Authorization:'Bearer '+token}});
+     const state=await response.json();if(!response.ok)throw new Error(state.error||'Could not check video status.');
+     if(state.state==='success'&&state.videoUrl){output.src=state.videoUrl;output.style.display='block';output.load();const link=$('#videoLink');if(link){link.href=state.videoUrl;$('#videoLinkWrap').style.display='block'}videoStatus.textContent='Your video is ready. Watch it here or open the video link.';return}
+     if(state.state==='fail'){throw new Error(state.error||'KIE reported that video generation failed.')}
+     videoStatus.textContent='KIE status: '+(state.state||'processing')+(state.progress!=null?' · '+state.progress+'%':'')+'. Please keep this page open.';
+    }
+    videoStatus.textContent='This task is still processing. Your task ID is '+task.taskId+'. Please try again in a little while.';
+   }catch(err){videoStatus.textContent=err.message||'Video generation failed. Check your KIE credits and Vercel settings.'}
+   finally{$('#generateVideo').disabled=kind!=='video'}
+  });
  }
  // Gallery filtering and saving project cards.
  $$('[data-filter]').forEach(b=>b.addEventListener('click',()=>{const f=b.dataset.filter;$$('[data-filter]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));$$('[data-category]').forEach(card=>card.classList.toggle('v2-hidden',f!=='all'&&card.dataset.category!==f))}));
