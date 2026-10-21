@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080808">
+<meta name="description" content="AMOH JUSTICE AI interactive creative dashboard for AI video, projects, learning and your account.">
+<title>Dashboard | AMOH JUSTICE AI</title>
+<link rel="icon" href="icon-192.png"><link rel="stylesheet" href="v2.css">
+<style>
+:root{color-scheme:dark;--gold:#e8c76b;--gold2:#fff0b5;--bg:#080808;--panel:#11100d;--muted:#aaa394;--line:rgba(232,199,107,.18)}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 70% -10%,#28200d 0,transparent 42%),var(--bg);color:#fffaf0;font-family:Inter,system-ui,-apple-system,sans-serif;min-height:100vh}
+button,a{font:inherit}.app{min-height:100vh;display:grid;grid-template-columns:250px minmax(0,1fr)}
+.sidebar{position:sticky;top:0;height:100vh;padding:24px 16px;border-right:1px solid var(--line);background:#0b0a08eF;display:flex;flex-direction:column;z-index:20}
+.brand{display:flex;align-items:center;gap:11px;text-decoration:none;color:#fffaf0;padding:4px 8px 25px}.brand img{width:43px;height:43px;object-fit:contain;border-radius:12px}.brand b{display:block;font-size:14px;letter-spacing:.08em}.brand small{display:block;color:var(--gold);font-size:9px;letter-spacing:.14em;margin-top:5px}
+.nav-label{font-size:9px;letter-spacing:.2em;color:#857c69;padding:14px 12px 8px}.nav{display:grid;gap:5px}.nav button{width:100%;border:1px solid transparent;background:transparent;color:#c9c1b2;border-radius:12px;text-align:left;padding:12px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:.2s}.nav button:hover{background:#ffffff08;color:#fff}.nav button[aria-current=page]{background:linear-gradient(100deg,#e8c76b20,#e8c76b08);border-color:#e8c76b4a;color:var(--gold2)}.nav-icon{width:22px;text-align:center;font-size:17px}.side-bottom{margin-top:auto;border:1px solid var(--line);border-radius:15px;padding:14px;background:linear-gradient(145deg,#1a160c,#0e0d0b)}.side-bottom strong{font-size:12px}.side-bottom p{font-size:11px;line-height:1.6;color:var(--muted);margin:7px 0 12px}.side-bottom a{color:var(--gold2);font-size:11px;text-decoration:none}
+.workspace{min-width:0}.topbar{height:76px;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(18px,4vw,48px);border-bottom:1px solid var(--line);background:#090908c9;position:sticky;top:0;z-index:10;backdrop-filter:blur(16px)}.top-left{display:flex;align-items:center;gap:13px}.menu-toggle{display:none;border:1px solid var(--line);background:#17150f;color:var(--gold2);border-radius:10px;padding:9px 12px}.crumb{font-size:11px;color:var(--muted)}.crumb b{color:#fffaf0;font-size:13px;display:block;margin-top:4px}.top-actions{display:flex;align-items:center;gap:10px}.pill{border:1px solid var(--line);border-radius:999px;padding:9px 12px;color:#d6c9a7;font-size:10px;white-space:nowrap}.profile{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#fff0b5,#a97922);color:#171108;font-weight:800}
+main{padding:clamp(20px,4vw,46px);max-width:1500px;margin:auto}.screen{display:none;animation:rise .22s ease}.screen.active{display:block}@keyframes rise{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}.eyebrow{font-size:10px;letter-spacing:.22em;color:var(--gold);font-weight:800}.hero{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(220px,.8fr);gap:25px;align-items:stretch}.hero-copy{padding:clamp(8px,2vw,22px) 0}.hero h1{font-size:clamp(38px,5vw,68px);letter-spacing:-.06em;line-height:1.02;margin:15px 0}.hero h1 em{font-style:normal;background:linear-gradient(100deg,#fff5c7,#e8c76b,#a97922);color:transparent;background-clip:text}.intro{color:#bdb5a5;line-height:1.8;max-width:570px;font-size:14px}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}.btn{border:1px solid #e8c76b65;background:#e8c76b0d;color:var(--gold2);padding:12px 16px;border-radius:11px;text-decoration:none;font-weight:700;font-size:12px;cursor:pointer}.btn.primary{background:linear-gradient(135deg,#fff0b5,#b88930);color:#181206;border:0}.feature-art{min-height:260px;border:1px solid var(--line);border-radius:22px;padding:25px;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;position:relative;background:radial-gradient(circle at 60% 32%,#d5a94336,transparent 27%),linear-gradient(140deg,#241d0f,#100f0c 55%,#080808)}.orb{position:absolute;width:160px;height:160px;border-radius:50%;border:1px solid #f1d88878;top:18%;left:calc(50% - 80px);box-shadow:0 0 65px #d3a33c22,inset 0 0 40px #d3a33c12}.orb:before,.orb:after{content:"";position:absolute;inset:17px;border:1px solid #f1d88845;border-radius:50%;transform:rotateX(65deg) rotateY(25deg)}.orb:after{transform:rotateX(65deg) rotateY(-45deg)}.feature-art small,.feature-art strong,.feature-art span{position:relative}.feature-art small{color:var(--gold);letter-spacing:.18em;font-size:9px}.feature-art strong{font-size:25px;letter-spacing:-.04em;margin:8px 0}.feature-art span{font-size:11px;color:var(--muted)}
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:15px;margin:35px 0 16px}.section-head h2{font-size:21px;letter-spacing:-.04em;margin:6px 0}.section-head p{color:var(--muted);font-size:12px;margin:0}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.card{border:1px solid var(--line);border-radius:17px;background:linear-gradient(145deg,#17150f,#0d0c0a);padding:19px;min-height:164px;display:flex;flex-direction:column;align-items:flex-start}.card .symbol{font-size:21px;color:var(--gold);margin-bottom:18px}.card h3{font-size:14px;margin:0 0 8px}.card p{color:var(--muted);font-size:11px;line-height:1.7;margin:0 0 15px}.card button{margin-top:auto;background:none;border:0;padding:0;color:var(--gold2);font-size:11px;font-weight:700;cursor:pointer}
+.quick-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:14px}.stat{border:1px solid var(--line);border-radius:14px;padding:15px;background:#0d0c0a}.stat span{font-size:10px;color:var(--muted)}.stat b{display:block;font-size:18px;margin-top:7px}
+.frame-wrap{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#0d0c0a}.frame-head{padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);color:var(--muted);font-size:11px}.frame-head a{color:var(--gold2);text-decoration:none}.content-frame{display:block;width:100%;height:calc(100vh - 190px);min-height:650px;border:0;background:#080808}
+footer{padding:22px clamp(20px,4vw,46px);color:#716b5f;font-size:10px;border-top:1px solid var(--line)}
+@media(max-width:900px){.app{grid-template-columns:220px minmax(0,1fr)}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{grid-template-columns:1fr}.feature-art{min-height:200px}.orb{top:8%}}
+@media(max-width:680px){.app{display:block}.sidebar{position:fixed;left:0;top:0;bottom:0;width:min(285px,86vw);height:100dvh;transform:translateX(-105%);transition:transform .22s ease;box-shadow:20px 0 60px #0008}.sidebar.open{transform:translateX(0)}.menu-toggle{display:block}.topbar{height:66px;padding:0 15px}.top-actions .pill{display:none}main{padding:22px 16px}.hero h1{font-size:43px}.cards{grid-template-columns:1fr}.quick-stats{grid-template-columns:1fr 1fr}.content-frame{height:calc(100dvh - 150px);min-height:600px}.section-head{margin-top:28px}.feature-art{min-height:220px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar" id="sidebar">
+<a class="brand" href="dashboard.html" aria-label="AMOH JUSTICE dashboard"><img src="icon-512.png" alt=""><span><b>AMOH JUSTICE</b><small>DREAM · CREATE · ACHIEVE</small></span></a>
+<div class="nav-label">WORKSPACE</div>
+<nav class="nav" aria-label="Main dashboard navigation">
+<button data-screen="overview" aria-current="page"><span class="nav-icon">⌂</span>Overview</button>
+<button data-screen="studio"><span class="nav-icon">✦</span>AI Creator Studio</button>
+<button data-screen="projects"><span class="nav-icon">▦</span>My Projects</button>
+<button data-screen="academy"><span class="nav-icon">⌘</span>AI Academy</button>
+<button data-screen="account"><span class="nav-icon">◈</span>Account & Sign in</button>
+</nav>
+<div class="nav-label">EXPLORE</div>
+<nav class="nav" aria-label="Explore navigation"><button data-screen="about"><span class="nav-icon">◎</span>About AMOH JUSTICE</button></nav>
+<div class="side-bottom"><strong>Your next idea starts here.</strong><p>Turn your imagination into prompts, visuals, and creative projects.</p><a href="https://wa.me/233546389770" target="_blank" rel="noopener">Talk to AMOH JUSTICE ↗</a></div>
+</aside>
+<div class="workspace">
+<header class="topbar"><div class="top-left"><button class="menu-toggle" id="menuToggle" aria-label="Open navigation" aria-expanded="false">☰</button><div class="crumb">AMOH JUSTICE AI /<b id="pageTitle">Overview</b></div></div><div class="top-actions"><span class="pill">✦ CREATIVE WORKSPACE</span><span class="profile" aria-label="AMOH JUSTICE">AJ</span></div></header>
+<main>
+<section class="screen active" id="screen-overview">
+<div class="hero"><div class="hero-copy"><div class="eyebrow">✦ YOUR IDEAS. POWERED BY TECHNOLOGY.</div><h1>Welcome to your<br><em>creative universe.</em></h1><p class="intro">A home for your AI creation tools, projects, and learning. Choose a screen from the sidebar and move through your workspace without leaving the dashboard.</p><div class="actions"><button class="btn primary" data-go="studio">Open Creator Studio →</button><button class="btn" data-go="projects">Explore my projects ↗</button></div><div class="quick-stats"><div class="stat"><span>CREATION</span><b>AI Studio</b></div><div class="stat"><span>INSPIRATION</span><b>Project Gallery</b></div><div class="stat"><span>GROWTH</span><b>AI Academy</b></div></div></div><div class="feature-art"><div class="orb"></div><small>AMOH JUSTICE / DIGITAL STUDIO</small><strong>Dream it.<br>Create it.</strong><span>Creative technology, made accessible.</span></div></div>
+<div class="section-head"><div><h2>Your workspace</h2><p>Pick up where your next idea begins.</p></div></div>
+<div class="cards">
+<article class="card"><div class="symbol">✦</div><h3>AI Creator Studio</h3><p>Build cinematic video and image prompts and access supported generation tools.</p><button data-go="studio">Open studio →</button></article>
+<article class="card"><div class="symbol">▦</div><h3>My Projects</h3><p>Explore the gallery and organize creative concepts and project notes.</p><button data-go="projects">Open projects →</button></article>
+<article class="card"><div class="symbol">⌘</div><h3>AI Academy</h3><p>Learn prompting, video planning, and practical digital skills step by step.</p><button data-go="academy">Start learning →</button></article>
+<article class="card"><div class="symbol">◈</div><h3>Account & Sign in</h3><p>Open your account page to create an account or sign in to your workspace.</p><button data-go="account">Open account →</button></article>
+<article class="card"><div class="symbol">◎</div><h3>About the brand</h3><p>Learn about AMOH JUSTICE and explore available services.</p><button data-go="about">Meet the brand →</button></article>
+<article class="card"><div class="symbol">↗</div><h3>Need a hand?</h3><p>Contact AMOH JUSTICE to discuss a design, video, or website project.</p><a href="https://wa.me/233546389770" target="_blank" rel="noopener">Contact on WhatsApp →</a></article>
+</div>
+</section>
+<section class="screen" id="screen-studio"><div class="frame-wrap"><div class="frame-head"><span>✦ AI CREATOR STUDIO</span><a href="studio.html" target="_blank" rel="noopener">Open in new tab ↗</a></div><iframe class="content-frame" data-src="studio.html" title="AI Creator Studio" loading="lazy"></iframe></div></section>
+<section class="screen" id="screen-projects"><div class="frame-wrap"><div class="frame-head"><span>▦ PROJECT GALLERY</span><a href="gallery.html" target="_blank" rel="noopener">Open in new tab ↗</a></div><iframe class="content-frame" data-src="gallery.html" title="Project Gallery" loading="lazy"></iframe></div></section>
+<section class="screen" id="screen-academy"><div class="frame-wrap"><div class="frame-head"><span>⌘ AI ACADEMY</span><a href="academy.html" target="_blank" rel="noopener">Open in new tab ↗</a></div><iframe class="content-frame" data-src="academy.html" title="AI Academy" loading="lazy"></iframe></div></section>
+<section class="screen" id="screen-account"><div class="frame-wrap"><div class="frame-head"><span>◈ ACCOUNT & SIGN IN</span><a href="account.html" target="_blank" rel="noopener">Open in new tab ↗</a></div><iframe class="content-frame" data-src="account.html" title="Account and sign in" loading="lazy"></iframe></div></section>
+<section class="screen" id="screen-about"><div class="frame-wrap"><div class="frame-head"><span>◎ ABOUT AMOH JUSTICE</span><a href="about.html" target="_blank" rel="noopener">Open in new tab ↗</a></div><iframe class="content-frame" data-src="about.html" title="About AMOH JUSTICE" loading="lazy"></iframe></div></section>
+</main>
+<footer>© <span id="year"></span> AMOH JUSTICE AI · DREAM · CREATE · ACHIEVE</footer>
+</div>
+</div>
+<script>
+(function(){
+const sidebar=document.getElementById('sidebar'),toggle=document.getElementById('menuToggle'),title=document.getElementById('pageTitle');
+const names={overview:'Overview',studio:'AI Creator Studio',projects:'My Projects',academy:'AI Academy',account:'Account & Sign in',about:'About AMOH JUSTICE'};
+function show(name,updateHash=true){if(!names[name])name='overview';document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id==='screen-'+name));document.querySelectorAll('[data-screen]').forEach(b=>{if(b.dataset.screen===name)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});title.textContent=names[name];const frame=document.querySelector('#screen-'+name+' iframe[data-src]');if(frame&&!frame.src)frame.src=frame.dataset.src;if(updateHash)history.replaceState(null,'','#'+name);sidebar.classList.remove('open');toggle.setAttribute('aria-expanded','false');window.scrollTo({top:0,behavior:'smooth'});}
+document.querySelectorAll('[data-screen]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.screen)));
+document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.go)));
+toggle.addEventListener('click',()=>{const opened=sidebar.classList.toggle('open');toggle.setAttribute('aria-expanded',String(opened));});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')sidebar.classList.remove('open')});
+document.getElementById('year').textContent=new Date().getFullYear();
+const initial=location.hash.replace('#','');if(names[initial])show(initial,false);
+})();
+</script>
+</body></html>
