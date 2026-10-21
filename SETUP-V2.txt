@@ -1,0 +1,36 @@
+AMOH JUSTICE AI 2.0 — SETUP NOTES
+=================================
+
+WHAT WORKS WITHOUT SETUP
+- Black-and-gold cinematic website theme and responsive page layouts.
+- AI Creator Studio prompt builder for video and image concepts.
+- Copying and saving prompts in the current browser.
+- Portfolio filters and saving project notes locally.
+- AI Academy lessons and local progress tracking.
+- External links to AI tools. Each provider has its own terms, login requirements, free limits and regional availability.
+
+IMPORTANT FREE-USE LIMITATION
+This repository does not contain a direct, unlimited video/image generation engine. No dependable promise of unlimited free API generation can be made. The Studio prepares prompts and opens external providers; free plans and credits can change. The existing Justice AI chat also requires its Gemini key to be configured and is subject to the provider's free quota. No paid service is enabled by this setup.
+
+OPTIONAL FREE ACCOUNT SETUP (SUPABASE)
+1. Create a Supabase project and check the current free-tier limits and terms.
+2. In the Supabase SQL Editor, run the contents of supabase-schema.sql.
+3. In the project's Auth settings, configure the site URL to your deployed website URL and set the allowed redirect URLs, including https://YOUR-DOMAIN/account.html.
+4. In Vercel project Settings > Environment Variables, add:
+   SUPABASE_URL = your project URL
+   SUPABASE_ANON_KEY = your project's public anon key
+   Do NOT add the service_role key. Never expose service-role keys in a browser or this public config endpoint.
+5. Redeploy the site, then open /account.html and test sign-up, email confirmation, sign-in, password reset, sign-out, and private project access.
+6. Ensure RLS remains enabled. The SQL policies allow each authenticated user to access only rows whose user_id matches their own user ID.
+
+OPTIONAL JUSTICE AI CHAT
+The existing /api/chat endpoint requires GEMINI_API_KEY in Vercel. Use the provider's official console and confirm current pricing, free quota, terms, and model availability before adding the key. Never commit keys to GitHub.
+
+AI GENERATION INTEGRATION
+To provide direct in-site generation rather than links to external tools, a compatible provider API and credentials are required. Choose only a provider that explicitly offers a usable free API tier for your intended use, verify Ghana/region eligibility and terms, and test quotas before implementation. Do not put provider secrets in client-side code. Until then, the prompt builder plus provider launch links are the free path.
+
+CONTACT FORM
+The existing contact form still uses the placeholder amohjustice@example.com. Replace it with the intended contact email before publishing, or change the form to a real configured form endpoint.
+
+DEPLOYMENT
+Changes are prepared on feature/amoh-justice-ai-v2-free. Review the pull request before merging. A Vercel deployment should be verified separately after merge; creating a PR does not itself prove that the live site has updated.
