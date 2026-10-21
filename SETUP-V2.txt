@@ -26,8 +26,16 @@ OPTIONAL FREE ACCOUNT SETUP (SUPABASE)
 OPTIONAL JUSTICE AI CHAT
 The existing /api/chat endpoint requires GEMINI_API_KEY in Vercel. Use the provider's official console and confirm current pricing, free quota, terms, and model availability before adding the key. Never commit keys to GitHub.
 
+KIE AI REAL VIDEO GENERATION (NEW)
+1. Create/manage your API key at https://kie.ai/api-key and check current model pricing at https://kie.ai/pricing. Video generation consumes KIE credits.
+2. In Vercel > Project Settings > Environment Variables, add KIE_API_KEY with your secret KIE key. Never paste it into GitHub, the browser, or ChatGPT.
+3. Configure SUPABASE_URL and SUPABASE_ANON_KEY as described above. The video API requires a valid signed-in Supabase user so strangers cannot freely spend your KIE credits.
+4. Redeploy the project. Open /account.html, create an account, sign in, then go to /studio.html and choose Video prompt > Generate my video prompt > Generate real video with KIE.
+5. The Studio submits a Wan 2.2 Turbo 720p task and polls KIE for its result. KIE-generated media links may expire; download important results promptly.
+6. If generation fails, check KIE credits/logs, Vercel function logs, Supabase environment variables, and current KIE model documentation. Model parameters and pricing can change.
+
 AI GENERATION INTEGRATION
-To provide direct in-site generation rather than links to external tools, a compatible provider API and credentials are required. Choose only a provider that explicitly offers a usable free API tier for your intended use, verify Ghana/region eligibility and terms, and test quotas before implementation. Do not put provider secrets in client-side code. Until then, the prompt builder plus provider launch links are the free path.
+Do not put provider secrets in client-side code. The Creator Studio uses a server-side API route for KIE and requires an authenticated user. External provider links remain available as alternatives.
 
 CONTACT FORM
 The existing contact form still uses the placeholder amohjustice@example.com. Replace it with the intended contact email before publishing, or change the form to a real configured form endpoint.
