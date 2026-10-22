@@ -218,3 +218,21 @@ body:before{
   linear-gradient(145deg,#09070F 0%,#100B1C 48%,#080D12 100%);
 }
 .header{background:rgba(9,7,15,.84)}
+
+/* Premium blue accent refresh: replace gold highlights across the main site */
+:root{--gold:#91caff;--blue:#70b8ff;--blue-strong:#2878ed;--aj-blue:#63b3ff}
+::selection{background:#63b3ff;color:#061326}
+.btn.gold{background:linear-gradient(115deg,#d8edff,#69b6ff 52%,#397ce8);color:#071322;box-shadow:0 8px 28px rgba(65,151,255,.2)}
+.btn.gold:hover{box-shadow:0 12px 34px rgba(65,151,255,.32)}
+.brand .logo{border-color:rgba(99,179,255,.5);box-shadow:0 0 28px rgba(65,151,255,.16)}
+.nav-cta{border-color:rgba(99,179,255,.5);background:rgba(65,151,255,.12)}
+.nav-cta:hover{background:rgba(65,151,255,.24)}
+.hero h1 em,.section h2 em,.video-hub h3 em{background-image:linear-gradient(100deg,#e0f0ff 5%,#78c2ff 55%,#8e83ff 100%)}
+.service-icon{border-color:rgba(99,179,255,.3);background:rgba(49,133,255,.14);color:#a9d8ff}
+.whatsapp{border-color:rgba(100,220,156,.25)}
+.chat-top{background:rgba(27,45,75,.55)}
+.chat-form .btn{background:linear-gradient(135deg,#d8edff,#69b6ff 52%,#397ce8);color:#071322}
+#justiceAiFloat{border-color:#83c5ff!important;background:linear-gradient(135deg,#d8edff,#3989ee)!important;color:#071322!important;box-shadow:0 8px 30px #2878ed44!important}
+#justiceAiOverlay .justice-ai-close{color:#b9dcff!important;border-color:#63b3ff!important}
+.v2-card-icon{color:#91caff;border-color:rgba(99,179,255,.4);background:rgba(65,151,255,.1)}
+.v2-card small,.v2-card b{color:#a9d8ff}
