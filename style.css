@@ -169,3 +169,33 @@ footer{border-color:rgba(232,199,107,.18)}
 @media(max-width:980px){.v2-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.v2-card-grid{grid-template-columns:1fr}.v2-card{min-height:220px;padding:22px}}
 @media(prefers-reduced-motion:reduce){.v2-card{transition:none}.v2-card:hover{transform:none}}
+
+/* AMOH JUSTICE AI — premium multicolor theme */
+:root{
+ --bg:#08080d;--panel:rgba(19,17,29,.86);--panel-strong:#11101a;
+ --text:#fbf8ff;--muted:#b9b4ca;--blue:#a99aff;--blue-strong:#7665f5;
+ --gold:#f4d49a;--line:rgba(169,154,255,.2);--glow:rgba(0,220,200,.14);
+ --aj-purple:#9a8bff;--aj-teal:#35e0ce;--aj-orange:#ffad78;
+}
+body{background-color:#08080d}
+body:before{
+ background:
+  radial-gradient(ellipse at 8% 8%,rgba(154,139,255,.16),transparent 32%),
+  radial-gradient(ellipse at 92% 20%,rgba(53,224,206,.11),transparent 31%),
+  radial-gradient(ellipse at 65% 90%,rgba(255,173,120,.08),transparent 35%),
+  linear-gradient(180deg,rgba(8,8,13,.88),rgba(8,8,13,.97));
+}
+::selection{background:#35e0ce;color:#071313}
+.header{background:rgba(8,8,13,.82);border-bottom-color:rgba(169,154,255,.22)}
+.brand .logo{border-color:rgba(244,212,154,.55);box-shadow:0 0 26px rgba(154,139,255,.16)}
+#nav>a:not(.nav-cta):hover,.simple-link:hover{color:var(--aj-teal)}
+.nav-cta{border-color:rgba(53,224,206,.45);background:linear-gradient(120deg,rgba(154,139,255,.16),rgba(53,224,206,.09))}
+:where(button,.button,.btn,.primary-button,[type=submit],.nav-cta){transition:transform .18s,border-color .18s,box-shadow .18s,background .18s}
+:where(button,.button,.btn,.primary-button,[type=submit]):hover{border-color:rgba(53,224,206,.65)}
+:where(.button,.btn,.primary-button,.nav-cta,[type=submit]){box-shadow:0 5px 22px rgba(154,139,255,.08)}
+:where(input,textarea,select):focus{outline-color:var(--aj-purple);border-color:var(--aj-purple);box-shadow:0 0 0 3px rgba(154,139,255,.13)}
+:where(.card,.panel,.tool-card,.feature-card,.pricing-card,.service-card){border-color:rgba(169,154,255,.22)}
+:where(.card:hover,.panel:hover,.tool-card:hover,.feature-card:hover,.pricing-card:hover,.service-card:hover){border-color:rgba(53,224,206,.4)}
+:where(.eyebrow,.section-kicker,.tag,.badge){color:var(--aj-teal)}
+:where(h1,h2,.hero-title){text-wrap:balance}
+@media(prefers-reduced-motion:reduce){:where(button,.button,.btn,.primary-button,[type=submit],.nav-cta){transition:none}}
