@@ -88,3 +88,54 @@
  .v2-page:has(#buildPrompt) .v2-actions .v2-button{width:100%}
 }
 @media(prefers-reduced-motion:reduce){.v2-page:has(#buildPrompt) .v2-button,.v2-page:has(#buildPrompt) .v2-tool,.v2-page:has(#buildPrompt) .v2-field input,.v2-page:has(#buildPrompt) .v2-field select,.v2-page:has(#buildPrompt) .v2-field textarea{transition:none!important}}
+
+
+/* AMOH JUSTICE AI — shared premium multicolor accents */
+:root{
+ --v2-purple:#a99aff;--v2-teal:#35e0ce;--v2-orange:#ffad78;
+}
+.v2-page{
+ background-image:
+  radial-gradient(ellipse at 5% 8%,rgba(154,139,255,.12),transparent 32%),
+  radial-gradient(ellipse at 95% 22%,rgba(53,224,206,.09),transparent 30%);
+}
+.v2-topline{border-color:rgba(169,154,255,.22)}
+.v2-kicker{color:var(--v2-teal)}
+.v2-title{ text-shadow:0 8px 36px rgba(154,139,255,.10)}
+.v2-panel,.v2-art,.v2-lesson,.v2-card{
+ border-color:rgba(169,154,255,.23);
+ background-image:linear-gradient(145deg,rgba(30,25,43,.48),rgba(9,9,12,.24));
+}
+.v2-panel:hover,.v2-art:hover,.v2-card:hover{
+ border-color:rgba(53,224,206,.42);
+}
+.v2-button:not(.primary){
+ border-color:rgba(169,154,255,.4);
+ color:#e4deff;
+ background:linear-gradient(120deg,rgba(154,139,255,.13),rgba(53,224,206,.06));
+}
+.v2-button:not(.primary):hover:not(:disabled){border-color:rgba(53,224,206,.7)}
+.v2-button.primary{
+ background:linear-gradient(115deg,#fff0b5 0%,#e8c76b 48%,#ffad78 100%);
+ color:#171108;
+}
+.v2-field label{color:#d8d0ff}
+.v2-field input:focus,.v2-field select:focus,.v2-field textarea:focus{
+ border-color:var(--v2-purple);
+ box-shadow:0 0 0 3px rgba(169,154,255,.15);
+}
+.v2-result{
+ border-color:rgba(169,154,255,.28);
+ background:radial-gradient(ellipse at 100% 0%,rgba(53,224,206,.07),transparent 44%),#09090d;
+}
+.v2-badge{color:var(--v2-teal);border-color:rgba(53,224,206,.3);background:rgba(53,224,206,.07)}
+.v2-card-icon{color:var(--v2-purple);border-color:rgba(169,154,255,.42);background:rgba(154,139,255,.09)}
+.v2-card small,.v2-card b{color:#f4d49a}
+.v2-art:nth-child(3n+2) .v2-art-visual{
+ background:radial-gradient(circle at 25% 30%,rgba(154,139,255,.35),transparent 36%),linear-gradient(145deg,#1b191f,#08080d 75%);
+}
+.v2-art:nth-child(3n) .v2-art-visual{
+ background:radial-gradient(circle at 65% 30%,rgba(53,224,206,.22),transparent 32%),linear-gradient(145deg,#22180f,#08080d 75%);
+}
+:where(.v2-page) :is(button,a,input,select,textarea):focus-visible{outline:2px solid var(--v2-teal);outline-offset:3px}
+@media(prefers-reduced-motion:reduce){.v2-page *{scroll-behavior:auto}}
