@@ -139,3 +139,15 @@
 }
 :where(.v2-page) :is(button,a,input,select,textarea):focus-visible{outline:2px solid var(--v2-teal);outline-offset:3px}
 @media(prefers-reduced-motion:reduce){.v2-page *{scroll-behavior:auto}}
+
+/* Premium blue accent refresh for shared creator pages */
+:root{--v2-gold:#70b8ff;--v2-gold-light:#c9e6ff;--v2-purple:#9b9aff;--v2-teal:#35e0ce}
+.v2-button.primary{background:linear-gradient(115deg,#d8edff 0%,#70b8ff 52%,#6478f5 100%);color:#071322}
+.v2-page:has(#buildPrompt) .v2-button.primary{box-shadow:0 5px 22px rgba(65,151,255,.18)}
+.v2-page:has(#buildPrompt) .v2-button.primary:hover:not(:disabled){box-shadow:0 8px 30px rgba(65,151,255,.3)}
+.v2-page:has(#buildPrompt) .v2-field input:hover,.v2-page:has(#buildPrompt) .v2-field select:hover,.v2-page:has(#buildPrompt) .v2-field textarea:hover{border-color:rgba(99,179,255,.5)}
+.v2-page:has(#buildPrompt) .v2-result{border-color:rgba(99,179,255,.28)}
+.v2-page:has(#videoOutput){border-color:rgba(99,179,255,.38)}
+.v2-page:has(#videoOutput) video{border-color:rgba(99,179,255,.28)}
+.v2-card small,.v2-card b{color:#a9d8ff}
+.v2-card-icon{color:#91caff;border-color:rgba(99,179,255,.42);background:rgba(65,151,255,.1)}
