@@ -199,3 +199,22 @@ body:before{
 :where(.eyebrow,.section-kicker,.tag,.badge){color:var(--aj-teal)}
 :where(h1,h2,.hero-title){text-wrap:balance}
 @media(prefers-reduced-motion:reduce){:where(button,.button,.btn,.primary-button,[type=submit],.nav-cta){transition:none}}
+
+
+/* Site-wide background refresh: deep midnight plum with purple, teal and sunset light */
+:root{
+ --bg:#09070F;
+ --panel:rgba(24,18,35,.88);
+ --panel-strong:#151020;
+ --line:rgba(169,154,255,.22);
+ --glow:rgba(53,224,206,.13);
+}
+body{background:#09070F}
+body:before{
+ background:
+  radial-gradient(ellipse at 12% 12%,rgba(119,83,209,.24),transparent 36%),
+  radial-gradient(ellipse at 88% 24%,rgba(0,179,165,.15),transparent 33%),
+  radial-gradient(ellipse at 72% 86%,rgba(221,111,65,.12),transparent 34%),
+  linear-gradient(145deg,#09070F 0%,#100B1C 48%,#080D12 100%);
+}
+.header{background:rgba(9,7,15,.84)}
