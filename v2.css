@@ -55,3 +55,36 @@
 .hero-image img{transform:translateZ(14px);backface-visibility:hidden}
 .hero-image .image-note{transform:translateZ(28px)}
 @media(prefers-reduced-motion:reduce){.hero-image{transition:none!important;transform:none!important}.hero-image img,.hero-image .image-note{transform:none!important}}
+
+
+/* Creator Studio premium visual refresh */
+.v2-page:has(#buildPrompt){position:relative;isolation:isolate}
+.v2-page:has(#buildPrompt)::before{content:"";position:absolute;z-index:-1;top:20px;left:50%;width:min(900px,100vw);height:480px;transform:translateX(-50%);pointer-events:none;background:radial-gradient(ellipse at 50% 5%,rgba(214,166,55,.16),transparent 63%);filter:blur(10px)}
+.v2-page:has(#buildPrompt)>.v2-topline{padding:12px 16px;border:1px solid rgba(232,199,107,.15);border-radius:16px;background:rgba(15,14,11,.72);backdrop-filter:blur(14px)}
+.v2-page:has(#buildPrompt)>.v2-kicker{display:flex;align-items:center;gap:10px}
+.v2-page:has(#buildPrompt)>.v2-kicker::before{content:"";width:24px;height:1px;background:var(--v2-gold);box-shadow:0 0 12px #e8c76b}
+.v2-page:has(#buildPrompt)>.v2-title{max-width:850px;text-shadow:0 8px 40px rgba(232,199,107,.08)}
+.v2-page:has(#buildPrompt)>.v2-lead{max-width:700px}
+.v2-page:has(#buildPrompt)>.v2-tabs{padding:6px;width:max-content;max-width:100%;border:1px solid rgba(232,199,107,.15);border-radius:999px;background:rgba(8,8,8,.8)}
+.v2-page:has(#buildPrompt)>.v2-panel{position:relative;overflow:hidden;border-color:rgba(232,199,107,.3);background:linear-gradient(145deg,rgba(28,24,16,.96),rgba(9,9,8,.98) 58%,rgba(23,18,10,.96));box-shadow:0 28px 90px #0008,0 0 0 1px #fff00003 inset}
+.v2-page:has(#buildPrompt)>.v2-panel::before{content:"";position:absolute;top:0;left:8%;right:8%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,240,181,.7),transparent)}
+.v2-page:has(#buildPrompt) .v2-field input,.v2-page:has(#buildPrompt) .v2-field select,.v2-page:has(#buildPrompt) .v2-field textarea{transition:border-color .2s,box-shadow .2s,background .2s}
+.v2-page:has(#buildPrompt) .v2-field input:hover,.v2-page:has(#buildPrompt) .v2-field select:hover,.v2-page:has(#buildPrompt) .v2-field textarea:hover{border-color:rgba(232,199,107,.48);background:#0d0c09}
+.v2-page:has(#buildPrompt) .v2-actions{padding-top:5px}
+.v2-page:has(#buildPrompt) .v2-button{min-height:44px;transition:transform .18s,box-shadow .18s,border-color .18s,background .18s}
+.v2-page:has(#buildPrompt) .v2-button:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 24px #0006;border-color:rgba(255,240,181,.75)}
+.v2-page:has(#buildPrompt) .v2-button.primary{box-shadow:0 5px 22px rgba(184,137,48,.15)}
+.v2-page:has(#buildPrompt) .v2-button.primary:hover:not(:disabled){box-shadow:0 8px 30px rgba(184,137,48,.28)}
+.v2-page:has(#buildPrompt) .v2-result{border-color:rgba(232,199,107,.28);background:linear-gradient(135deg,#080807,#100e09);box-shadow:inset 0 1px #ffffff05}
+.v2-page:has(#videoOutput){border-color:rgba(232,199,107,.38);background:linear-gradient(145deg,#16130d,#090908)}
+.v2-page:has(#videoOutput) video{border:1px solid rgba(232,199,107,.25);box-shadow:0 16px 45px #0008}
+.v2-page:has(#buildPrompt) .v2-tool{transition:transform .2s,border-color .2s,background .2s}
+.v2-page:has(#buildPrompt) .v2-tool:hover{transform:translateY(-3px);border-color:rgba(232,199,107,.4);background:linear-gradient(145deg,#17130b,#0d0c0a)}
+.v2-page:has(#buildPrompt) :is(button,a,input,select,textarea):focus-visible{outline:2px solid var(--v2-gold-light);outline-offset:3px}
+@media(max-width:560px){
+ .v2-page:has(#buildPrompt)>.v2-topline{gap:10px;padding:10px 12px}
+ .v2-page:has(#buildPrompt)>.v2-tabs{width:100%;display:grid;grid-template-columns:1fr 1fr}
+ .v2-page:has(#buildPrompt) .v2-tab{padding:11px 10px}
+ .v2-page:has(#buildPrompt) .v2-actions .v2-button{width:100%}
+}
+@media(prefers-reduced-motion:reduce){.v2-page:has(#buildPrompt) .v2-button,.v2-page:has(#buildPrompt) .v2-tool,.v2-page:has(#buildPrompt) .v2-field input,.v2-page:has(#buildPrompt) .v2-field select,.v2-page:has(#buildPrompt) .v2-field textarea{transition:none!important}}
