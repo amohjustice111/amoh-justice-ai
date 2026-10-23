@@ -35,19 +35,16 @@ module.exports = async function handler(req, res) {
       if (!style) return res.status(400).json({ error: 'Please choose a genre and sound style.' });
       if (customMode && !instrumental && !prompt.trim()) return res.status(400).json({ error: 'Lyrics are required in Lyrics to Song mode.' });
 
-      const input = {
-        custom_mode: customMode,
-        instrumental,
-        model: 'V6',
-        title,
-        style
-      };
+      const input = { custom_mode: customMode, instrumental, model: 'V6' };
       if (customMode) {
+        input.title = title;
+        input.style = style;
         if (!instrumental) input.lyrics = prompt;
+        if (typeof body.vocalGender === 'string' && ['m', 'f'].includes(body.vocalGender)) input.vocal_gender = body.vocalGender;
       } else {
-        input.prompt = prompt;
+        // KIE non-custom mode expects the idea in prompt and does not accept custom-only fields.
+        input.prompt = style + '. Song idea: ' + prompt;
       }
-      if (typeof body.vocalGender === 'string' && ['m', 'f'].includes(body.vocalGender)) input.vocal_gender = body.vocalGender;
 
       const upstream = await fetch('https://api.kie.ai/api/v1/jobs/createTask', {
         method: 'POST',
@@ -77,7 +74,7 @@ module.exports = async function handler(req, res) {
     const state = ['success', 'succeed', 'completed', 'complete'].includes(stateRaw) ? 'success'
       : ['fail', 'failed', 'error'].includes(stateRaw) ? 'fail' : stateRaw;
     let result = {};
-    try { result = typeof task.resultJson === 'string' ? JSON.parse(task.resultJson) : (task.resultJson || {}); } catch (_) {}
+    try { result = typeof task.resultJson === 'string' ? JSON.parse(task.resultJson) : (task.resultJson || task.response || {}); } catch (_) {}
     const clips = result.data || result.sunoData || result.clips || task.response?.data || task.response?.sunoData || [];
     const tracks = Array.isArray(clips) ? clips.map(clip => ({
       id: clip.id || null,
