@@ -151,3 +151,34 @@
 .v2-page:has(#videoOutput) video{border-color:rgba(99,179,255,.28)}
 .v2-card small,.v2-card b{color:#a9d8ff}
 .v2-card-icon{color:#91caff;border-color:rgba(99,179,255,.42);background:rgba(65,151,255,.1)}
+
+/* AMOH JUSTICE AI — shared luxury emerald theme and accessible motion */
+:root{--v2-gold:#4ade80;--v2-gold-light:#d1fae5;--v2-black:#050a07;--v2-panel:#0b1710;--v2-muted:#b3c9ba}
+body{background-color:#050a07}
+body:before{background:radial-gradient(ellipse at 78% 8%,rgba(22,163,74,.13),transparent 38%),radial-gradient(ellipse at 12% 70%,rgba(20,83,45,.14),transparent 42%)}
+.v2-back,.v2-kicker{color:#86efac}
+.v2-title em{background:linear-gradient(100deg,#f2e6b8 0%,#86efac 48%,#22c55e 100%);background-clip:text;-webkit-background-clip:text}
+.v2-panel{border-color:rgba(74,222,128,.22);background:linear-gradient(145deg,rgba(13,35,22,.92),rgba(7,13,9,.97));box-shadow:0 24px 70px rgba(0,0,0,.22),0 0 38px rgba(22,163,74,.035)}
+.v2-tool,.v2-art,.v2-lesson{border-color:rgba(74,222,128,.18);background:linear-gradient(145deg,#0d1b12,#080d09)}
+.v2-link,.v2-button{border-color:rgba(74,222,128,.38);color:#d1fae5;background:rgba(34,197,94,.08)}
+.v2-button.primary{background:linear-gradient(120deg,#d1fae5,#22c55e);color:#052e16;border:0}
+.v2-field label{color:#bbf7d0}
+.v2-field input,.v2-field select,.v2-field textarea{border-color:rgba(74,222,128,.23);background:#060b08;color:#f0fff5}
+.v2-field input:focus,.v2-field select:focus,.v2-field textarea:focus{border-color:#4ade80;box-shadow:0 0 0 3px rgba(34,197,94,.11)}
+.v2-tab{border-color:rgba(74,222,128,.22);background:#0a130d;color:#c1d8c9}
+.v2-tab[aria-pressed="true"]{background:#22c55e;color:#052e16;border-color:#4ade80}
+.v2-result{border-color:rgba(74,222,128,.22);background:linear-gradient(135deg,#060b08,#0d1b12);color:#d1fae5}
+.v2-badge{border-color:rgba(74,222,128,.22);background:rgba(34,197,94,.08);color:#bbf7d0}
+.v2-art-visual{background:radial-gradient(circle at 70% 25%,#22c55e44,transparent 36%),linear-gradient(145deg,#12301e,#070b08 72%)}
+.v2-art:nth-child(3n+2) .v2-art-visual{background:radial-gradient(circle at 25% 30%,#d9c27a44,transparent 36%),linear-gradient(145deg,#15251a,#070b08 75%)}
+.v2-art:nth-child(3n) .v2-art-visual{background:radial-gradient(circle at 65% 30%,#16a34a44,transparent 34%),linear-gradient(145deg,#10271a,#070b08 75%)}
+.v2-lesson input{accent-color:#22c55e}
+.v2-footer{border-top-color:rgba(74,222,128,.16)}
+.amoh-whatsapp-float{position:fixed;right:18px;bottom:18px;z-index:9997;display:inline-flex;align-items:center;gap:9px;padding:12px 16px;border:1px solid #86efac;border-radius:999px;background:linear-gradient(135deg,#d1fae5,#22c55e);color:#052e16;text-decoration:none;box-shadow:0 10px 30px #0008,0 0 24px #22c55e22;font-size:12px;transition:transform .2s,box-shadow .2s}
+.amoh-whatsapp-float span{font-size:18px}.amoh-whatsapp-float:hover{transform:translateY(-3px);box-shadow:0 14px 38px #0009,0 0 30px #22c55e44}
+.v2-art,.v2-tool,.v2-link,.v2-button,.v2-tab{transition:transform .22s,border-color .22s,box-shadow .22s,background .22s}
+.v2-art:hover,.v2-tool:hover{border-color:rgba(74,222,128,.4);box-shadow:0 18px 42px rgba(0,0,0,.24),0 0 26px rgba(22,163,74,.05)}
+.v2-button:hover:not(:disabled),.v2-link:hover{transform:translateY(-2px)}
+:where(a,button,input,select,textarea,summary):focus-visible{outline:2px solid #bbf7d0;outline-offset:3px}
+@media(max-width:560px){.amoh-whatsapp-float{right:10px;bottom:10px;padding:10px 13px}.amoh-whatsapp-float b{font-size:11px}}
+@media(prefers-reduced-motion:reduce){.amoh-whatsapp-float,.v2-art,.v2-tool,.v2-link,.v2-button,.v2-tab{transition:none!important}}
