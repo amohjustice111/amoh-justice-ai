@@ -1,1 +1,49 @@
-const CACHE='amoh-justice-ai-v7';const FILES=['/','/index.html','/style.css','/script.js','/office-photo.png','/manifest.webmanifest','/icon-192.png','/icon-512.png','/justice-ai-floating.css','/justice-ai-floating.js'];self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES))));self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))))));self.addEventListener('fetch',e=>{const url=new URL(e.request.url);if(url.pathname==='/api/chat')return;if(e.request.method==='GET')e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{if(res.ok&&url.origin===self.location.origin){const copy=res.clone();caches.open(CACHE).then(c=>c.put(e.request,copy));}return res;}).catch(()=>caches.match('/index.html'))));});
+const CACHE='amoh-justice-ai-v8';
+const FILES=['/','/index.html','/style.css','/script.js','/office-photo.png','/manifest.webmanifest','/icon-192.png','/icon-512.png','/justice-ai-floating.css','/justice-ai-floating.js'];
+
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE).then(cache => cache.addAll(FILES))
+  );
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(keys => Promise.all(
+      keys.filter(key => key !== CACHE).map(key => caches.delete(key))
+    )).then(() => self.clients.claim())
+  );
+});
+
+self.addEventListener('fetch', event => {
+  const request = event.request;
+  const url = new URL(request.url);
+
+  // Never cache API requests or responses: task status, account data, and AI
+  // responses must always reach the server and respect Cache-Control: no-store.
+  if (url.origin !== self.location.origin ||
+      request.method !== 'GET' ||
+      url.pathname.startsWith('/api/') ||
+      request.headers.has('authorization')) {
+    return;
+  }
+
+  event.respondWith(
+    caches.match(request).then(cached => {
+      if (cached) return cached;
+
+      return fetch(request).then(response => {
+        const cacheControl = response.headers.get('Cache-Control') || '';
+        if (response.ok && !/no-store|private/i.test(cacheControl)) {
+          const copy = response.clone();
+          caches.open(CACHE).then(cache => cache.put(request, copy));
+        }
+        return response;
+      }).catch(() => {
+        if (request.mode === 'navigate') return caches.match('/index.html');
+        return Response.error();
+      });
+    })
+  );
+});
