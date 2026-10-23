@@ -121,6 +121,7 @@ main{max-width:1800px;padding:24px clamp(16px,2.6vw,38px)}
 <nav class="nav" aria-label="Main dashboard navigation">
 <button data-screen="overview" aria-current="page"><span class="nav-icon">⌂</span>Overview</button>
 <button data-screen="studio"><span class="nav-icon">✦</span>AI Creator Studio</button>
+<button data-screen="music"><span class="nav-icon">♫</span>AI Music Studio</button>
 <button data-screen="projects"><span class="nav-icon">▦</span>My Projects</button>
 <button data-screen="academy"><span class="nav-icon">⌘</span>AI Academy</button>
 <button data-screen="account"><span class="nav-icon">◈</span>Account & Sign in</button>
@@ -151,6 +152,7 @@ main{max-width:1800px;padding:24px clamp(16px,2.6vw,38px)}
 </div>
 </section>
 <section class="screen" id="screen-studio"><div class="frame-wrap"><div class="frame-head"><span>✦ AI CREATOR STUDIO</span><a href="studio.html" target="_blank" rel="noopener">Open in new tab ↗</a></div><iframe class="content-frame" data-src="studio.html" title="AI Creator Studio" loading="lazy"></iframe></div></section>
+<section class="screen" id="screen-music"><div class="frame-wrap"><div class="frame-head"><span>♫ AI MUSIC STUDIO</span><a href="music.html" target="_blank" rel="noopener">Open in new tab ↗</a></div><iframe class="content-frame" data-src="music.html" title="AI Music Studio" loading="lazy"></iframe></div></section>
 <section class="screen" id="screen-projects"><div class="frame-wrap"><div class="frame-head"><span>▦ PROJECT GALLERY</span><a href="gallery.html" target="_blank" rel="noopener">Open in new tab ↗</a></div><iframe class="content-frame" data-src="gallery.html" title="Project Gallery" loading="lazy"></iframe></div></section>
 <section class="screen" id="screen-academy"><div class="frame-wrap"><div class="frame-head"><span>⌘ AI ACADEMY</span><a href="academy.html" target="_blank" rel="noopener">Open in new tab ↗</a></div><iframe class="content-frame" data-src="academy.html" title="AI Academy" loading="lazy"></iframe></div></section>
 <section class="screen" id="screen-account"><div class="frame-wrap"><div class="frame-head"><span>◈ ACCOUNT & SIGN IN</span><a href="account.html" target="_blank" rel="noopener">Open in new tab ↗</a></div><iframe class="content-frame" data-src="account.html" title="Account and sign in" loading="lazy"></iframe></div></section>
@@ -162,7 +164,7 @@ main{max-width:1800px;padding:24px clamp(16px,2.6vw,38px)}
 <script>
 (function(){
 const sidebar=document.getElementById('sidebar'),toggle=document.getElementById('menuToggle'),title=document.getElementById('pageTitle');
-const names={overview:'Overview',studio:'AI Creator Studio',projects:'My Projects',academy:'AI Academy',account:'Account & Sign in',about:'About AMOH JUSTICE'};
+const names={overview:'Overview',studio:'AI Creator Studio',music:'AI Music Studio',projects:'My Projects',academy:'AI Academy',account:'Account & Sign in',about:'About AMOH JUSTICE'};
 function show(name,updateHash=true){if(!names[name])name='overview';document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id==='screen-'+name));document.querySelectorAll('[data-screen]').forEach(b=>{if(b.dataset.screen===name)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});title.textContent=names[name];const frame=document.querySelector('#screen-'+name+' iframe[data-src]');if(frame&&!frame.src)frame.src=frame.dataset.src;if(updateHash)history.replaceState(null,'','#'+name);sidebar.classList.remove('open');toggle.setAttribute('aria-expanded','false');window.scrollTo({top:0,behavior:'smooth'});}
 document.querySelectorAll('[data-screen]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.screen)));
 document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.go)));
