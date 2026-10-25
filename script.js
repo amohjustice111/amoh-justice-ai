@@ -41,3 +41,18 @@ let installPrompt;const installButton=document.getElementById('installApp');if(i
 
 /* Subtle pointer-driven 3D hero tilt; disabled for touch and reduced-motion users. */
 (()=>{const card=document.querySelector('.hero-image');if(!card||window.matchMedia('(prefers-reduced-motion: reduce)').matches||!window.matchMedia('(hover: hover) and (pointer: fine)').matches)return;card.addEventListener('pointermove',e=>{const r=card.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-.5;const y=(e.clientY-r.top)/r.height-.5;card.style.transform='perspective(1100px) rotateY('+(x*7).toFixed(2)+'deg) rotateX('+(-y*5).toFixed(2)+'deg) translateY(-2px)'});card.addEventListener('pointerleave',()=>{card.style.transform='perspective(1100px) rotateY(0deg) rotateX(0deg) translateY(0)'});})();
+
+/* Searchable homepage navigation and accessible mobile menu */
+(()=> {
+const nav=document.getElementById('nav'),menu=document.getElementById('menu'),overlay=document.getElementById('amohCommandOverlay'),openBtn=document.getElementById('amohCommandOpen'),closeBtn=document.getElementById('amohCommandClose'),input=document.getElementById('amohCommandInput'),results=document.getElementById('amohCommandResults');
+if(!nav||!menu||!overlay||!openBtn||!input||!results)return;
+const items=[...nav.querySelectorAll('a')].map(a=>({title:a.textContent.trim(),href:a.getAttribute('href'),desc:a.classList.contains('nav-cta')?'Start a project':'Open page'}));
+function render(){const q=input.value.trim().toLowerCase();const filtered=items.filter(x=>(x.title+' '+x.href).toLowerCase().includes(q));results.replaceChildren();const label=document.createElement('div');label.className='amoh-command-label';label.id='amohCommandTitle';label.textContent=q?'SEARCH RESULTS':'QUICK NAVIGATION';results.appendChild(label);if(!filtered.length){const empty=document.createElement('div');empty.className='amoh-command-empty';empty.textContent='No results. Try poster, AI, gallery, or contact.';results.appendChild(empty);return}filtered.forEach(item=>{const a=document.createElement('a');a.className='amoh-command-link';a.href=item.href;const icon=document.createElement('span');icon.className='amoh-command-icon';icon.textContent='↗';const copy=document.createElement('span');copy.className='amoh-command-copy';const title=document.createElement('b');title.textContent=item.title;const desc=document.createElement('small');desc.textContent=item.desc;copy.append(title,desc);a.append(icon,copy);a.addEventListener('click',()=>{close();nav.classList.remove('open');menu.setAttribute('aria-expanded','false')});results.appendChild(a)})}
+function open(){overlay.classList.add('is-open');overlay.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';input.value='';render();input.focus()}
+function close(){overlay.classList.remove('is-open');overlay.setAttribute('aria-hidden','true');document.body.style.overflow='';openBtn.focus()}
+openBtn.addEventListener('click',open);closeBtn.addEventListener('click',close);input.addEventListener('input',render);overlay.addEventListener('click',e=>{if(e.target===overlay)close()});
+menu.addEventListener('click',()=>{const opened=nav.classList.toggle('open');menu.setAttribute('aria-expanded',String(opened))});
+nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{nav.classList.remove('open');menu.setAttribute('aria-expanded','false')}));
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();open()}else if(e.key==='Escape'&&overlay.classList.contains('is-open'))close()});
+render();
+})();
