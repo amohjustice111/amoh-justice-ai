@@ -157,6 +157,32 @@ h1,h2,h3,.section-title,.hero-title{animation:amohContinuousShake 1.8s linear in
 }
 @media(prefers-reduced-motion:reduce){h1,h2,h3,.section-title,.hero-title,#welcomeScreen:before,.hero-image img{animation:none!important}}
 </style>
+
+<style id="amoh-emotional-circular-motion">
+/* Slow, continuous circular travel for the main photo; cinematic breathing motion for the backdrop. */
+@keyframes amohPhotoCircle {
+  0%   { transform:translate3d(0,-7px,0) rotate(0deg); }
+  25%  { transform:translate3d(8px,0,0) rotate(1deg); }
+  50%  { transform:translate3d(0,7px,0) rotate(0deg); }
+  75%  { transform:translate3d(-8px,0,0) rotate(-1deg); }
+  100% { transform:translate3d(0,-7px,0) rotate(0deg); }
+}
+@keyframes amohBackdropEmotion {
+  0% { transform:scale(1.04) translate3d(-1.5%,0,0); opacity:.19; filter:saturate(.78) brightness(.82); }
+  25% { transform:scale(1.09) translate3d(0,-1.5%,0); opacity:.27; filter:saturate(.92) brightness(.94); }
+  50% { transform:scale(1.13) translate3d(1.5%,0,0); opacity:.23; filter:saturate(1.02) brightness(.88); }
+  75% { transform:scale(1.08) translate3d(0,1.5%,0); opacity:.29; filter:saturate(.86) brightness(.98); }
+  100% { transform:scale(1.04) translate3d(-1.5%,0,0); opacity:.19; filter:saturate(.78) brightness(.82); }
+}
+@media(prefers-reduced-motion:no-preference) {
+  .hero-image img { animation:amohPhotoCircle 16s ease-in-out infinite!important; transform-origin:center; will-change:transform; }
+  #welcomeScreen:before { animation:amohBackdropEmotion 28s ease-in-out infinite!important; will-change:transform,opacity,filter; }
+  body:before { background-attachment:fixed; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .hero-image img,#welcomeScreen:before { animation:none!important; }
+}
+</style>
 </head>
 <body>
 <div id="amohReadingProgress" aria-hidden="true"><span></span></div>
