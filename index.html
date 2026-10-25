@@ -103,7 +103,21 @@ footer{border-top-color:rgba(74,222,128,.18)}
 @media(prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}.section.amoh-reveal{opacity:0;transform:translateY(16px);transition:opacity .65s ease,transform .65s cubic-bezier(.2,.7,.2,1)}.section.amoh-reveal.amoh-visible{opacity:1;transform:translateY(0)}.section.amoh-reveal .section-head{transition-delay:.06s}}
 @media(prefers-reduced-motion:reduce){#amohReadingProgress span{transition:none!important}}
 
-</style></head>
+</style>
+<style id="amoh-homepage-photo-background">
+/* Use the existing homepage photo as a subtle, low-opacity page background. */
+body{background:#030805!important}
+body:before{
+  background:
+    linear-gradient(180deg,rgba(2,9,5,.88),rgba(2,9,5,.92)),
+    url('/office-photo.png') center 35%/cover no-repeat!important;
+  opacity:1!important;
+}
+@media(max-width:700px){
+  body:before{background:linear-gradient(180deg,rgba(2,9,5,.91),rgba(2,9,5,.94)),url('/office-photo.png') center/cover no-repeat!important}
+}
+</style>
+</head>
 <body>
 <div id="amohReadingProgress" aria-hidden="true"><span></span></div>
 <div id="welcomeScreen" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle" aria-describedby="welcomeDescription">
