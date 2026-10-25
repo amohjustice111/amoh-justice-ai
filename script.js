@@ -1,5 +1,4 @@
 const nav=document.getElementById('nav');
-document.getElementById('menu').addEventListener('click',()=>nav.classList.toggle('open'));
 nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>nav.classList.remove('open')));
 document.getElementById('year').textContent=new Date().getFullYear();
 const toast=document.getElementById('toast');let toastTimer;
