@@ -146,6 +146,17 @@ body:before{
   h1,h2,h3,.section-title,.hero-title { animation:none!important; }
 }
 </style>
+
+<style id="amoh-continuous-motion">
+@keyframes amohContinuousShake{0%,100%{transform:translateX(0) rotate(0)}10%,30%,50%,70%,90%{transform:translateX(-1.5px) rotate(-.15deg)}20%,40%,60%,80%{transform:translateX(1.5px) rotate(.15deg)}}
+@keyframes amohPhotoOrbit{0%{transform:translate(0,0) rotate(0deg)}25%{transform:translate(5px,-5px) rotate(1deg)}50%{transform:translate(0,-8px) rotate(0deg)}75%{transform:translate(-5px,-3px) rotate(-1deg)}100%{transform:translate(0,0) rotate(0deg)}}
+@media(prefers-reduced-motion:no-preference){
+h1,h2,h3,.section-title,.hero-title{animation:amohContinuousShake 1.8s linear infinite!important}
+#welcomeScreen:before{animation:amohPhotoOrbit 12s ease-in-out infinite!important}
+.hero-image img{animation:amohPhotoOrbit 9s ease-in-out infinite!important;transform-origin:center}
+}
+@media(prefers-reduced-motion:reduce){h1,h2,h3,.section-title,.hero-title,#welcomeScreen:before,.hero-image img{animation:none!important}}
+</style>
 </head>
 <body>
 <div id="amohReadingProgress" aria-hidden="true"><span></span></div>
