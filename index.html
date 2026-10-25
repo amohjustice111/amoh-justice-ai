@@ -59,16 +59,52 @@ footer{border-top-color:rgba(74,222,128,.18)}
 #welcomeScreen .welcome-enter:focus-visible,#welcomeScreen .welcome-skip:focus-visible{outline:3px solid #bbf7d0;outline-offset:4px}
 #welcomeScreen .welcome-footer{margin:26px 0 0;color:#9eb7a4;font-size:10px;letter-spacing:.17em}
 @media(prefers-reduced-motion:reduce){#welcomeScreen{transition:none}}
+
+/* Cinematic homepage polish — emerald light, subtle particles, and accessible motion */
+#welcomeScreen{background:#020704;perspective:1200px}
+#welcomeScreen:before{opacity:.25;filter:saturate(.7);animation:welcomeBackdrop 24s ease-in-out infinite alternate}
+#welcomeScreen:after{background:linear-gradient(115deg,rgba(1,8,4,.94),rgba(2,18,8,.72) 52%,rgba(1,7,4,.95)),radial-gradient(ellipse at 50% 42%,rgba(34,197,94,.25),transparent 62%)}
+#welcomeScreen .welcome-panel{position:relative;overflow:hidden;border-color:rgba(134,239,172,.36);background:linear-gradient(145deg,rgba(4,20,10,.82),rgba(2,8,5,.76));box-shadow:0 30px 110px #0009,0 0 70px rgba(34,197,94,.09);animation:welcomePanelIn .9s cubic-bezier(.2,.75,.2,1) both}
+#welcomeScreen .welcome-panel:before{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;padding:1px;background:linear-gradient(130deg,rgba(187,247,208,.65),transparent 28%,transparent 68%,rgba(34,197,94,.5));-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+#welcomeScreen .welcome-panel:after{content:"";position:absolute;top:-30%;left:-60%;width:42%;height:160%;pointer-events:none;transform:rotate(20deg);background:linear-gradient(90deg,transparent,rgba(187,247,208,.07),transparent);animation:welcomeShimmer 8s ease-in-out infinite}
+#welcomeScreen .welcome-mark{position:relative;z-index:1;box-shadow:0 0 0 8px rgba(34,197,94,.055),0 0 48px rgba(34,197,94,.28);animation:welcomeMarkPulse 4s ease-in-out infinite}
+#welcomeScreen .welcome-kicker{display:flex;align-items:center;justify-content:center;gap:10px}
+#welcomeScreen .welcome-kicker:before,#welcomeScreen .welcome-kicker:after{content:"";width:24px;height:1px;background:linear-gradient(90deg,transparent,#4ade80)}
+#welcomeScreen .welcome-kicker:after{transform:scaleX(-1)}
+#welcomeScreen h1{text-wrap:balance;text-shadow:0 0 35px rgba(34,197,94,.09)}
+#welcomeScreen h1 em{background:linear-gradient(100deg,#f0fdf4 0%,#86efac 45%,#22c55e 100%);background-clip:text;-webkit-background-clip:text;color:transparent}
+#welcomeScreen .welcome-enter{transition:transform .25s,box-shadow .25s,filter .25s}
+#welcomeScreen .welcome-enter:hover{transform:translateY(-3px);filter:brightness(1.07);box-shadow:0 14px 38px rgba(34,197,94,.32)}
+#welcomeScreen .welcome-skip{transition:background .25s,border-color .25s}
+#welcomeScreen .welcome-skip:hover{background:rgba(134,239,172,.08);border-color:rgba(134,239,172,.6)}
+#welcomeScreen .welcome-footer{display:flex;align-items:center;justify-content:center;gap:10px}
+#welcomeScreen .welcome-footer:before,#welcomeScreen .welcome-footer:after{content:"";width:18px;height:1px;background:rgba(134,239,172,.4)}
+.hero .eyebrow{display:inline-flex;align-items:center;gap:9px;padding:9px 13px;border:1px solid rgba(74,222,128,.22);border-radius:999px;background:rgba(22,163,74,.06);box-shadow:inset 0 0 20px rgba(34,197,94,.025)}
+.hero .eyebrow:before{content:"";width:6px;height:6px;border-radius:50%;background:#4ade80;box-shadow:0 0 12px #4ade80;animation:emeraldBeacon 2.4s ease-in-out infinite}
+.hero h1{ text-wrap:balance;text-shadow:0 8px 45px rgba(0,0,0,.25)}
+.hero-image{transform-style:preserve-3d}
+.hero-image img{transition:filter .5s}
+.hero-image:hover img{filter:saturate(1.02) contrast(1.03)}
+.v2-card{position:relative;overflow:hidden}
+.v2-card:after{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;background:radial-gradient(circle at 0 0,rgba(34,197,94,.12),transparent 58%);transition:opacity .3s}
+.v2-card:hover:after{opacity:1}
+@keyframes welcomePanelIn{from{opacity:0;transform:translateY(20px) rotateX(3deg) scale(.985)}to{opacity:1;transform:translateY(0) rotateX(0) scale(1)}}
+@keyframes welcomeBackdrop{from{transform:scale(1.025) translate3d(-.5%,0,0)}to{transform:scale(1.09) translate3d(.5%,-.5%,0)}}
+@keyframes welcomeShimmer{0%,20%{left:-60%}55%,100%{left:130%}}
+@keyframes welcomeMarkPulse{0%,100%{box-shadow:0 0 0 8px rgba(34,197,94,.055),0 0 38px rgba(34,197,94,.18)}50%{box-shadow:0 0 0 11px rgba(34,197,94,.035),0 0 55px rgba(34,197,94,.3)}}
+@keyframes emeraldBeacon{0%,100%{opacity:.65;transform:scale(.85)}50%{opacity:1;transform:scale(1.15)}}
+@media(prefers-reduced-motion:reduce){#welcomeScreen:before,#welcomeScreen .welcome-panel,#welcomeScreen .welcome-mark,#welcomeScreen .welcome-panel:after,.hero .eyebrow:before{animation:none!important}.hero-image:hover img{filter:none}}
+
 </style></head>
 <body>
 <div id="welcomeScreen" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle" aria-describedby="welcomeDescription">
   <div class="welcome-panel">
     <img class="welcome-mark" src="office-photo.png" alt="AMOH JUSTICE">
-    <p class="welcome-kicker">WELCOME TO THE CREATIVE UNIVERSE</p>
+    <p class="welcome-kicker">YOUR NEXT CHAPTER STARTS HERE</p>
     <h1 id="welcomeTitle">Welcome to <em>AMOH JUSTICE AI</em></h1>
-    <p id="welcomeDescription" class="welcome-description">Your ideas deserve a bigger stage. Explore AI creativity, cinematic concepts, digital tools, and practical learning — all in one place.</p>
+    <p id="welcomeDescription" class="welcome-description">Step into a world where imagination meets technology. Create bold visuals, explore AI tools, build digital skills, and turn your next big idea into something real.</p>
     <div class="welcome-actions"><button class="welcome-enter" id="welcomeEnter" type="button">Explore the website <span aria-hidden="true">→</span></button><button class="welcome-skip" id="welcomeSkip" type="button">Skip welcome</button></div>
-    <p class="welcome-footer">DREAM · CREATE · ACHIEVE</p>
+    <p class="welcome-footer"><span>AMOH JUSTICE AI</span> · DREAM · CREATE · ACHIEVE</p>
   </div>
 </div>
 <header class="header"><a class="brand" href="#home"><img class="logo" src="office-photo.png" alt="AMOH JUSTICE logo"><span><b>AMOH JUSTICE</b><small>DREAM · CREATE · ACHIEVE</small></span></a><button id="menu" class="menu" aria-label="Toggle menu">☰</button><nav id="nav"><a href="#home">Home</a><a href="dashboard.html">Dashboard</a><a href="studio.html">AI Studio</a><a href="gallery.html">Portfolio</a><a href="academy.html">AI Academy</a><a href="pricing.html">Services & Pricing</a><a href="toolkit.html">Free AI Toolkit</a><a href="poster.html">Poster Maker</a><a href="business.html">Business Tools</a><a href="marketplace.html">Project Requests</a><a href="install.html">Install on PC</a><a href="account.html">Free Account</a><a href="about.html">About</a><a class="nav-cta" href="#contact">Start a project ↗</a></nav></header>
