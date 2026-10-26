@@ -1,27 +1,25 @@
-/* Browser-native voice controls for Justice AI. The existing /api/chat endpoint is unchanged. */
+/* Native speech controls and hands-free turn-taking for Justice AI. */
 (()=>{
- const input=document.getElementById('chatInput'),form=document.getElementById('chatForm'),mic=document.getElementById('voiceInput'),replies=document.getElementById('voiceReplies'),status=document.getElementById('voiceStatus');
+ const input=document.getElementById('chatInput'),form=document.getElementById('chatForm'),mic=document.getElementById('voiceInput'),modeBtn=document.getElementById('voiceConversation'),replies=document.getElementById('voiceReplies'),status=document.getElementById('voiceStatus');
  if(!input||!form||!mic||!status)return;
- const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;
- let recognition=null,listening=false,finalTranscript='';
- const setStatus=m=>{status.textContent=m};
- window.amohSpeakResponse=text=>{
-   if(!('speechSynthesis' in window)||!text)return;
-   window.speechSynthesis.cancel();
-   const utterance=new SpeechSynthesisUtterance(String(text).slice(0,5000));
-   utterance.lang='en-GH';utterance.rate=1;window.speechSynthesis.speak(utterance);
- };
- const stopListening=()=>{if(recognition){try{recognition.stop()}catch(e){}}listening=false;mic.setAttribute('aria-pressed','false');mic.textContent='🎙 Speak'};
- if(!Recognition){mic.addEventListener('click',()=>setStatus('Voice input is not supported in this browser. Try Chrome or Edge.'))}
- else{
-   recognition=new Recognition();recognition.lang='en-US';recognition.interimResults=true;recognition.continuous=false;
-   recognition.onstart=()=>{listening=true;finalTranscript='';mic.setAttribute('aria-pressed','true');mic.textContent='■ Stop';setStatus('Listening… speak now.')};
-   recognition.onresult=event=>{let interim='';for(let i=event.resultIndex;i<event.results.length;i++){const piece=event.results[i][0].transcript;if(event.results[i].isFinal)finalTranscript+=piece+' ';else interim+=piece}input.value=(finalTranscript+interim).trim()};
-   recognition.onerror=event=>{stopListening();const messages={'not-allowed':'Microphone permission was denied. Allow microphone access in browser settings.','no-speech':'No speech was detected. Tap Speak and try again.','network':'Browser speech recognition needs a working network connection.'};setStatus(messages[event.error]||'Voice input stopped. You can still type your question.')};
-   recognition.onend=()=>{const shouldSend=finalTranscript.trim().length>0;stopListening();if(shouldSend){input.value=finalTranscript.trim();setStatus('Sending your spoken question to Justice AI…');if(typeof form.requestSubmit==='function')form.requestSubmit();else form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}))}else if(input.value.trim())setStatus('Speech captured. Press Send to ask Justice AI.')};
-   mic.addEventListener('click',()=>{if(listening){stopListening();setStatus('Voice input stopped.');return}if(!window.isSecureContext){setStatus('Voice input needs the secure HTTPS website.');return}try{recognition.start()}catch(e){setStatus('Voice input is already starting. Please wait.')}});
- }
- replies?.addEventListener('change',()=>{if(!replies.checked&&'speechSynthesis'in window)window.speechSynthesis.cancel();setStatus(replies.checked?'AI replies will be spoken aloud.':'Voice chat is ready. Tap Speak to ask by voice.')});
- if(replies?.checked===false)setStatus('Voice chat is ready. Tap Speak to ask by voice.');
- window.addEventListener('pagehide',()=>{stopListening();if('speechSynthesis'in window)window.speechSynthesis.cancel()});
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ let rec=null,listening=false,transcript='',handsFree=false,waiting=false,stopped=false;
+ const sayStatus=t=>status.textContent=t;
+ window.amohVoiceConversationActive=false;
+ function stopMic(){if(rec)try{rec.stop()}catch(e){}listening=false;mic.textContent='🎙 Speak';mic.setAttribute('aria-pressed','false')}
+ function stopMode(message='Voice conversation stopped.'){handsFree=false;window.amohVoiceConversationActive=false;stopped=true;waiting=false;stopMic();if(window.speechSynthesis)window.speechSynthesis.cancel();if(modeBtn){modeBtn.textContent='🎧 Voice chat';modeBtn.setAttribute('aria-pressed','false')}sayStatus(message)}
+ function listen(){if(!handsFree||!rec||listening||waiting||stopped)return;if(!window.isSecureContext){stopMode('Voice chat needs the secure HTTPS website.');return}try{rec.start()}catch(e){sayStatus('Preparing microphone…')}}
+ window.amohSpeakResponse=text=>{if(!window.speechSynthesis||!text)return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(String(text).slice(0,3000));u.lang='en-GH';u.rate=1.08;u.onstart=()=>{if(handsFree)sayStatus('Justice AI is speaking…')};u.onend=()=>{if(handsFree&&!stopped){sayStatus('Your turn — listening…');listen()}};u.onerror=()=>{if(handsFree&&!stopped)listen()};window.speechSynthesis.speak(u)};
+ function sendSpoken(text){if(!text.trim())return;input.value=text.trim();sayStatus(handsFree?'Sending your question…':'Sending your spoken question…');if(form.requestSubmit)form.requestSubmit();else form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}))}
+ if(!SR){mic.addEventListener('click',()=>sayStatus('Voice input is not supported here. Try Chrome or Edge.'));modeBtn?.addEventListener('click',()=>sayStatus('Hands-free voice chat needs a browser with speech recognition, such as Chrome.'));return}
+ rec=new SR();rec.lang='en-US';rec.interimResults=true;rec.continuous=false;
+ rec.onstart=()=>{listening=true;transcript='';mic.textContent='■ Stop';mic.setAttribute('aria-pressed','true');sayStatus(handsFree?'Listening — ask Justice AI anything.':'Listening… speak now.')};
+ rec.onresult=e=>{let interim='';for(let i=e.resultIndex;i<e.results.length;i++){const t=e.results[i][0].transcript;if(e.results[i].isFinal)transcript+=t+' ';else interim+=t}input.value=(transcript+interim).trim()};
+ rec.onerror=e=>{listening=false;mic.textContent='🎙 Speak';if(handsFree&&e.error==='no-speech'){sayStatus('I did not hear you. Listening again…');listen()}else if(handsFree){const msg=e.error==='not-allowed'?'Allow microphone access in browser settings.':'Voice input stopped. You can still type.';stopMode(msg)}else sayStatus(e.error==='not-allowed'?'Allow microphone access in browser settings.':'Voice input stopped. You can still type.')};
+ rec.onend=()=>{const spoken=transcript.trim();listening=false;mic.textContent='🎙 Speak';mic.setAttribute('aria-pressed','false');if(spoken){if(handsFree)waiting=true;sendSpoken(spoken)}else if(handsFree&&!stopped&&!waiting){sayStatus('Listening again…');listen()}else if(input.value.trim())sayStatus('Speech captured. Press Send to ask Justice AI.')};
+ mic.addEventListener('click',()=>{if(listening){stopMic();sayStatus('Voice input stopped.');return}if(!window.isSecureContext){sayStatus('Voice input needs the secure HTTPS website.');return}try{rec.start()}catch(e){sayStatus('Microphone is starting. Please wait.')}});
+ modeBtn?.addEventListener('click',()=>{if(handsFree){stopMode();return}if(!window.isSecureContext){sayStatus('Voice chat needs the secure HTTPS website.');return}if(!window.speechSynthesis){sayStatus('Spoken replies are not supported in this browser.');return}stopped=false;handsFree=true;waiting=false;window.amohVoiceConversationActive=true;modeBtn.textContent='■ End voice chat';modeBtn.setAttribute('aria-pressed','true');if(replies)replies.checked=true;sayStatus('Voice chat starting — allow microphone access, then speak.');listen()});
+ window.addEventListener('amoh:justice-answer',e=>{if(!handsFree)return;waiting=false;if(e.detail?.answer)window.amohSpeakResponse(e.detail.answer);else listen()});
+ replies?.addEventListener('change',()=>{if(!replies.checked&&window.speechSynthesis)window.speechSynthesis.cancel();sayStatus(replies.checked?'AI replies will be spoken aloud.':'Voice chat is ready. Tap Speak to ask by voice.')});
+ window.addEventListener('pagehide',()=>{stopMic();if(window.speechSynthesis)window.speechSynthesis.cancel()});
 })();
