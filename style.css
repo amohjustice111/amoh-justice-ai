@@ -287,3 +287,109 @@ body:before{
 .chat-form .voice-btn[aria-pressed="true"]{background:#e8c76b;color:#111}
 .chat-form .voice-btn:disabled{opacity:.55}
 @media(max-width:600px){.voice-reply-setting{padding:0 14px;align-items:flex-start;flex-direction:column}.voice-reply-setting #voiceStatus{text-align:left}.chat-form{gap:7px;padding:12px}.chat-form .voice-btn,.chat-form .btn.gold{padding:11px 10px;font-size:12px}.chat-form input{padding:12px 10px}}
+
+
+/* Responsive layout pass: phone, tablet, laptop and desktop */
+html{width:100%;max-width:100%;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{width:100%;min-width:0;max-width:100%;overflow-x:clip}
+main,header,footer,section,nav,form,article,aside,div{min-width:0}
+p,h1,h2,h3,h4,small,a,button,label{overflow-wrap:anywhere}
+img,video,canvas,iframe,svg{max-width:100%}
+button,a,input,select,textarea{touch-action:manipulation}
+input,select,textarea{font-size:16px}
+:where(button,a,input,select,textarea,[tabindex]):focus-visible{outline:2px solid var(--aj-teal,#63b3ff);outline-offset:3px}
+.header{width:100%;min-width:0}
+.brand{min-width:0}
+.brand span{min-width:0}
+#nav{min-width:0}
+.hero,.section{min-width:0}
+.hero>* ,.section>*{min-width:0}
+.grid,.v2-card-grid,.learn-grid,.video-links{align-items:stretch}
+.chat-shell{width:100%;min-width:0;margin-inline:auto}
+.chat-form input{flex:1 1 0;min-width:0}
+.chat-form button{white-space:normal}
+.chat-messages{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+#contactForm,.contact form{min-width:0}
+@media(min-width:761px) and (max-width:1100px){
+ .header{padding-inline:clamp(16px,3vw,30px)}
+ .brand b{font-size:12px}
+ .brand small{letter-spacing:.1em}
+ .hero{width:90%;grid-template-columns:minmax(0,1fr) minmax(0,.85fr);gap:clamp(24px,4vw,42px)}
+ .hero h1{font-size:clamp(40px,5.2vw,60px)}
+ .hero-image{width:100%}
+ .section{width:90%}
+ .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .v2-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .chat-shell{max-width:100%}
+}
+@media(max-width:760px){
+ .header{position:sticky;top:0;gap:8px}
+ .brand{flex:1 1 auto}
+ .header-tools{flex:0 0 auto}
+ #nav{max-height:calc(100dvh - 90px);overflow-y:auto;overscroll-behavior:contain}
+ .hero{width:90%;grid-template-columns:minmax(0,1fr);gap:30px}
+ .hero-copy{width:100%}
+ .hero h1{font-size:clamp(38px,9vw,62px);overflow-wrap:normal}
+ .hero-image{max-width:520px}
+ .section{width:90%}
+ .section-head{min-width:0}
+ .actions .btn{min-height:48px}
+ .contact,.about{grid-template-columns:minmax(0,1fr)}
+ .chat-top{padding:14px}
+ .chat-messages{max-height:min(52dvh,430px)}
+ .voice-reply-setting{width:100%;box-sizing:border-box}
+ footer{padding:22px 5%;align-items:flex-start}
+}
+@media(max-width:480px){
+ .header{padding:9px 10px}
+ .brand .logo{width:34px;height:34px;border-radius:10px}
+ .brand b{font-size:10px;letter-spacing:.06em}
+ .brand small{font-size:7px;letter-spacing:.07em}
+ .header-tools{gap:6px}
+ .amoh-tool-button{min-height:40px;padding:8px 9px}
+ .menu{min-height:40px;padding:7px 10px}
+ .hero,.section{width:calc(100% - 32px)}
+ .hero{padding:44px 0 54px}
+ .hero h1{font-size:clamp(35px,10.5vw,48px);letter-spacing:-.045em}
+ .lead{font-size:15px;line-height:1.7}
+ .proof{line-height:1.6}
+ .section{padding:52px 0}
+ .section h2{font-size:clamp(30px,8vw,40px)}
+ .grid,.learn-grid,.v2-card-grid,.video-links{grid-template-columns:minmax(0,1fr)}
+ .service,.learn-grid article,.v2-card{padding:20px}
+ .v2-card{min-height:0}
+ .video-hub{gap:18px;border-radius:20px}
+ .video-links a{min-height:78px}
+ .chat-shell{border-radius:18px}
+ .chat-top{gap:10px;padding:12px}
+ .chat-avatar{width:36px;height:36px}
+ .chat-top b{font-size:13px}
+ .chat-top small{font-size:10px}
+ .chat-messages{padding:12px;gap:10px;max-height:55dvh}
+ .bubble{max-width:94%;padding:11px 12px;font-size:13px}
+ .quick-questions{padding-inline:12px}
+ .quick-questions button{min-height:38px}
+ .voice-reply-setting{margin-top:12px;padding-inline:12px}
+ .chat-form{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;padding:12px}
+ .chat-form input{grid-column:1/-1;width:100%;min-height:46px}
+ .chat-form .voice-btn,.chat-form .btn.gold{width:100%;min-width:0;min-height:44px;padding:10px 8px;font-size:12px}
+ .chat-disclaimer{padding:0 12px 14px;line-height:1.6}
+ #contactForm{padding:16px}
+ #amohCommandOverlay{padding:7vh 8px 10px}
+ .amoh-command-search{padding:12px}
+ .amoh-command-footer{flex-wrap:wrap}
+ footer{padding:20px 16px}
+ footer .brand{width:auto}
+ footer p{font-size:10px;line-height:1.6}
+}
+@media(max-width:350px){
+ .brand small{display:none}
+ .amoh-tool-button{font-size:11px;padding-inline:7px}
+ .menu{padding-inline:8px}
+ .hero h1{font-size:34px}
+ .chat-form{padding:9px}
+ .chat-form .voice-btn,.chat-form .btn.gold{font-size:11px}
+}
+@media(hover:none){
+ .btn:hover,.v2-card:hover,.service:hover,.video-links a:hover{transform:none}
+}
