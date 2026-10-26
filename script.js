@@ -24,7 +24,7 @@ async function askJustice(message){
     const response=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message,history:chatHistory.slice(-10,-1)})});
     const data=await response.json().catch(()=>({}));
     if(!response.ok) throw new Error(data.error||'Justice AI could not answer. Please try again.');
-    pending.textContent=data.answer;
+    pending.textContent=data.answer;if(document.getElementById('voiceReplies')?.checked&&window.amohSpeakResponse)window.amohSpeakResponse(data.answer);
     chatHistory.push({role:'model',text:data.answer});
     if(chatHistory.length>12)chatHistory.splice(0,chatHistory.length-12);
   }catch(error){pending.textContent='Sorry, I could not answer just now. '+(error.message||'Please try again later.');}
