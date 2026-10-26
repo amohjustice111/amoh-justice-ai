@@ -1,5 +1,5 @@
-const CACHE='amoh-justice-ai-v8';
-const FILES=['/','/index.html','/style.css','/script.js','/office-photo.png','/manifest.webmanifest','/icon-192.png','/icon-512.png','/justice-ai-floating.css','/justice-ai-floating.js'];
+const CACHE='amoh-justice-ai-v9';
+const FILES=['/','/index.html','/style.css','/script.js','/office-photo.png','/manifest.webmanifest','/icon-192.png','/icon-512.png','/justice-ai-floating.css','/justice-ai-floating.js','/voice-chat.js','/v2.css','/justice-ai-floating.css?v=2'];
 
 self.addEventListener('install', event => {
   event.waitUntil(
