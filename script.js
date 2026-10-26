@@ -27,7 +27,7 @@ async function askJustice(message){
     pending.textContent=data.answer;window.dispatchEvent(new CustomEvent('amoh:justice-answer',{detail:{answer:data.answer}}));if(document.getElementById('voiceReplies')?.checked&&window.amohSpeakResponse&&!window.amohVoiceConversationActive)window.amohSpeakResponse(data.answer);
     chatHistory.push({role:'model',text:data.answer});
     if(chatHistory.length>12)chatHistory.splice(0,chatHistory.length-12);
-  }catch(error){pending.textContent='Sorry, I could not answer just now. '+(error.message||'Please try again later.');}
+  }catch(error){pending.textContent='Sorry, I could not answer just now. '+(error.message||'Please try again later.');window.dispatchEvent(new CustomEvent('amoh:justice-answer',{detail:{answer:pending.textContent}}));}
   finally{setChatBusy(false);chatInput.focus();chatMessages.scrollTop=chatMessages.scrollHeight;}
 }
 chatForm.addEventListener('submit',e=>{e.preventDefault();const message=chatInput.value.trim();if(!message||sendButton.disabled)return;chatInput.value='';askJustice(message);});
