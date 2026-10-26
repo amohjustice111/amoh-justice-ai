@@ -2,23 +2,14 @@
 (()=>{
  const input=document.getElementById('chatInput'),form=document.getElementById('chatForm'),mic=document.getElementById('voiceInput'),modeBtn=document.getElementById('amohVoiceLauncher'),replies=document.getElementById('voiceReplies'),status=document.getElementById('voiceStatus'),avatarPanel=document.getElementById('amohVoiceAvatarPanel'),avatarStatus=document.getElementById('amohVoiceAvatarStatus'),avatar=document.getElementById('amohVoiceAvatar'),avatarClose=document.getElementById('amohVoiceAvatarClose');
  if(!input||!form||!mic||!status)return;
- // On phone-sized screens, place V immediately after Send; restore it to the chat header on larger screens.
- const voiceHomeParent=modeBtn?.parentNode;
- const voiceHomeNext=modeBtn?.nextSibling;
- const phoneLayout=window.matchMedia('(max-width:600px)');
+ // Keep V visible on every device: first in the message row, before Speak and Send.
  function placeVoiceLauncher(){
-  if(!modeBtn||!voiceHomeParent)return;
-  if(phoneLayout.matches){
-   const sendButton=form.querySelector('button[type="submit"]');
-   if(sendButton&&modeBtn.previousElementSibling!==sendButton)sendButton.insertAdjacentElement('afterend',modeBtn);
-  }else if(modeBtn.parentNode!==voiceHomeParent){
-   if(voiceHomeNext&&voiceHomeNext.parentNode===voiceHomeParent)voiceHomeParent.insertBefore(modeBtn,voiceHomeNext);
-   else voiceHomeParent.appendChild(modeBtn);
+  if(!modeBtn)return;
+  if(modeBtn.parentNode!==form||modeBtn.nextElementSibling!==mic){
+   form.insertBefore(modeBtn,mic);
   }
  }
  placeVoiceLauncher();
- if(phoneLayout.addEventListener)phoneLayout.addEventListener('change',placeVoiceLauncher);
- else if(phoneLayout.addListener)phoneLayout.addListener(placeVoiceLauncher);
  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
  let rec=null,listening=false,transcript='',handsFree=false,waiting=false,stopped=false;
  const sayStatus=t=>{if(status)status.textContent=t;if(avatarStatus)avatarStatus.textContent=t};
