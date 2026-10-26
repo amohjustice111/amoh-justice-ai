@@ -276,3 +276,14 @@ body:before{
  .amoh-command-panel{max-height:82dvh;border-radius:17px}
 }
 @media(prefers-reduced-motion:reduce){#amohCommandOverlay *{scroll-behavior:auto!important;transition:none!important}}
+
+
+/* Optional browser-native voice chat; existing AI request flow is unchanged. */
+.voice-reply-setting{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:860px;margin:14px auto 0;padding:0 20px;color:#aabbd3;font-size:12px}
+.voice-reply-setting label{display:flex;align-items:center;gap:8px;cursor:pointer}
+.voice-reply-setting input{accent-color:#e8c76b}
+#voiceStatus{font-size:11px;text-align:right}
+.chat-form .voice-btn{flex-shrink:0;border:1px solid rgba(232,199,107,.38);background:rgba(232,199,107,.09);color:#f7e4a5}
+.chat-form .voice-btn[aria-pressed="true"]{background:#e8c76b;color:#111}
+.chat-form .voice-btn:disabled{opacity:.55}
+@media(max-width:600px){.voice-reply-setting{padding:0 14px;align-items:flex-start;flex-direction:column}.voice-reply-setting #voiceStatus{text-align:left}.chat-form{gap:7px;padding:12px}.chat-form .voice-btn,.chat-form .btn.gold{padding:11px 10px;font-size:12px}.chat-form input{padding:12px 10px}}
