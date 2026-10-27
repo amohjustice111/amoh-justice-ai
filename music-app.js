@@ -48,10 +48,13 @@ async function tracks(items){
 async function poll(id){
   try{
     const d=await request('/api/music?taskId='+encodeURIComponent(id),{method:'GET'});
-    if(d.state==='success'&&d.tracks&&d.tracks.length){
-      $('resultTitle').textContent='Your music is ready!';
-      $('resultText').textContent='The AI music service returned '+d.tracks.length+' track variation(s). Play or open the audio below.';
-      tracks(d.tracks);busy(false);return;
+    if(d.state==='success'){
+      if(d.tracks&&d.tracks.length){
+        $('resultTitle').textContent='Your music is ready!';
+        $('resultText').textContent='The AMOH Music Engine returned '+d.tracks.length+' track(s). Play or download your song below.';
+        tracks(d.tracks);busy(false);return;
+      }
+      throw Error('The model finished but did not return an audio file. Check the model server output.');
     }
     if(d.state==='fail')throw Error(d.error||'Music generation failed. Please try again.');
     $('resultText').textContent='Your song is being composed… '+(d.progress!=null?'Progress: '+d.progress+'%':'Please keep this page open.');
