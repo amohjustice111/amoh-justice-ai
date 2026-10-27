@@ -65,12 +65,16 @@ module.exports = async function handler(req, res) {
         use_random_seed: true,
         vocal_language: ({ english: 'en', twi: 'en', 'english + twi': 'en', ga: 'en', ewe: 'en', hausa: 'en' })[languageRaw] || 'en'
       };
-      if (ideaMode) {
+      if (ideaMode && !instrumental) {
         payload.sample_query = prompt + '. Musical style: ' + style + '. Title: ' + title;
+      } else if (ideaMode && instrumental) {
+        payload.prompt = 'Instrumental music only, no singing or vocals. ' + prompt + '. Musical style: ' + style + '. Title: ' + title;
+        payload.lyrics = '';
       } else if (!instrumental) {
         payload.lyrics = prompt;
       } else {
         payload.lyrics = '';
+        payload.prompt += ', instrumental only, no vocals';
       }
 
       const upstream = await fetch(engineBase + '/release_task', { method: 'POST', headers: engineHeaders, body: JSON.stringify(payload) });
