@@ -22,7 +22,14 @@ Do not add a KIE key for this design. Never put MUSIC_ENGINE_TOKEN in browser Ja
 
 ## Model server
 
-Deploy the official ACE-Step 1.5 project on a compatible GPU host, then enable its documented local API service on port 8001. Configure ACESTEP_API_KEY on the model server and set the same secret as MUSIC_ENGINE_TOKEN in Vercel. Use the official API guide for the exact command and supported model setup:
+Deploy the official ACE-Step 1.5 project on a compatible GPU host. From the ACE-Step environment, configure a long random secret as ACESTEP_API_KEY and start its API server (the official API guide documents port 8001):
+
+```bash
+export ACESTEP_API_KEY='replace-with-a-long-random-secret'
+python -m acestep.api_server --api-key "$ACESTEP_API_KEY"
+```
+
+Set MUSIC_ENGINE_URL to the server's public HTTPS base URL and set the same secret as MUSIC_ENGINE_TOKEN in Vercel. Keep the model API behind HTTPS and authentication. Use the official API guide for the exact command and supported model setup:
 
 - https://ace-step.github.io/ACE-Step-1.5/en/API
 - https://github.com/ace-step/ACE-Step
