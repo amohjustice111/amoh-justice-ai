@@ -12,7 +12,7 @@
  placeVoiceLauncher();
  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
  const settingsKey='amohJusticeVoicePrefsV1';
- const defaultPrefs={voiceURI:'',gender:'female',relationship:'friend',rate:1.04,pitch:1};
+ const defaultPrefs={voiceURI:'',gender:'female',relationship:'friend',language:'en-US',voiceStyle:'standard',rate:1.04,pitch:1};
  let voicePrefs={...defaultPrefs};
  try{voicePrefs={...defaultPrefs,...JSON.parse(localStorage.getItem(settingsKey)||'{}')}}catch(e){}
  const relationships={
@@ -25,14 +25,24 @@
   playful:{label:'Playful companion',instruction:'Speak like a cheerful companion: upbeat, natural, and lightly humorous when suitable, while still being accurate and respectful.'},
   calm:{label:'Calm professional',instruction:'Use a calm, composed, friendly professional tone: clear, respectful, reassuring, and concise.'}
  };
+ const languageOptions=[
+  ['en-US','English (United States)'],['en-GB','English (United Kingdom)'],['en-GH','English (Ghana)'],
+  ['ak-GH','Akan (Twi, Ghana)'],['ak-FANTE','Akan (Fante, Ghana)'],['ee-GH','Ewe (Ghana)'],['gaa-GH','Ga (Ghana)'],['dag-GH','Dagbani (Ghana)'],
+  ['fr-FR','French'],['es-ES','Spanish'],['pt-PT','Portuguese'],['ar-SA','Arabic'],['ha-NG','Hausa'],['yo-NG','Yoruba'],['ig-NG','Igbo'],['sw-KE','Swahili'],
+  ['de-DE','German'],['it-IT','Italian'],['nl-NL','Dutch'],['ru-RU','Russian'],['zh-CN','Chinese (Mandarin)'],['ja-JP','Japanese'],['ko-KR','Korean'],['hi-IN','Hindi'],['ur-PK','Urdu'],
+  ['tr-TR','Turkish'],['pl-PL','Polish'],['th-TH','Thai'],['vi-VN','Vietnamese'],['id-ID','Indonesian'],['ms-MY','Malay'],['bn-BD','Bengali'],['ta-IN','Tamil'],['uk-UA','Ukrainian'],['zu-ZA','Zulu']
+ ];
  function savePrefs(){try{localStorage.setItem(settingsKey,JSON.stringify(voicePrefs))}catch(e){}}
+ function languageBase(code){return String(code||'en-US').toLowerCase().split('-')[0]}
+ function selectedLanguageCode(){return voicePrefs.language||'en-US'}
+ function applyVoiceStyle(utterance){if(voicePrefs.voiceStyle==='santa'){utterance.pitch=Math.min(Number(voicePrefs.pitch)||0.82,0.85);utterance.rate=Math.min(Number(voicePrefs.rate)||0.9,0.95)}}
  function getVoices(){return window.speechSynthesis?.getVoices?.()||[]}
  function voiceGender(v){const name=((v.name||'')+' '+(v.voiceURI||'')).toLowerCase();if(/female|woman|girl|zira|samantha|victoria|karen|moira|tessa|susan|hazel|aria|jenny|libby|sonia|natasha|google uk english female|google us english female/.test(name))return 'female';if(/male|man|boy|david|mark|daniel|james|george|guy|ryan|liam|thomas|alex|fred|oliver|aaron|google uk english male|google us english male/.test(name))return 'male';return 'unknown'}
  function refreshVoiceOptions(){
   const select=document.getElementById('amohVoiceChoice');if(!select)return;
   const voices=getVoices(),previous=voicePrefs.voiceURI;select.replaceChildren();
-  const filtered=voices.filter(v=>voicePrefs.gender==='all'||voiceGender(v)===voicePrefs.gender||(voicePrefs.gender==='all'&&voiceGender(v)==='unknown'));
-  const choices=filtered.length?filtered:voices;
+  const filtered=voices.filter(v=>voicePrefs.gender==='all'||voiceGender(v)===voicePrefs.gender);
+  const choices=(filtered.length?filtered:voices).slice().sort((a,b)=>{const lang=languageBase(selectedLanguageCode()),am=languageBase(a.lang)===lang?0:1,bm=languageBase(b.lang)===lang?0:1;return am-bm||a.name.localeCompare(b.name)});
   if(!choices.length){const opt=document.createElement('option');opt.value='';opt.textContent='No browser voices found yet';select.appendChild(opt);return}
   choices.forEach((v,i)=>{const opt=document.createElement('option');opt.value=v.voiceURI;opt.textContent=v.name+' · '+(v.lang||'voice');select.appendChild(opt)});
   if(previous&&choices.some(v=>v.voiceURI===previous))select.value=previous;else{select.selectedIndex=0;voicePrefs.voiceURI=select.value;savePrefs()}
@@ -72,6 +82,9 @@
   `;document.head.appendChild(style);
   const box=document.createElement('section');box.id='amohVoiceSettings';box.hidden=true;box.innerHTML=`
    <h3>Make Justice AI feel like family</h3><p>Choose a voice and the friendly style you feel most comfortable with. Options depend on voices installed in your browser or device.</p>
+   <label for="amohChatLanguage">Chat and spoken language</label><select id="amohChatLanguage">${languageOptions.map(([value,label])=>'<option value="'+value+'">'+label+'</option>').join('')}</select>
+   <p>Justice AI will try to answer in this language. Spoken output and microphone recognition depend on language support in your browser/device; Akan may need a compatible speech voice.</p>
+   <label for="amohVoiceStyle">Voice character</label><select id="amohVoiceStyle"><option value="standard">Natural voice</option><option value="santa">Santa Claus style — deep, warm voice effect</option></select>
    <label for="amohVoiceRelationship">Friendly personality</label><select id="amohVoiceRelationship">
     <option value="friend">Friend — natural and supportive</option><option value="brother">Brother — honest and encouraging</option><option value="sister">Sister — warm and thoughtful</option><option value="father">Father — calm and wise</option><option value="mother">Mother — caring and reassuring</option><option value="mentor">Mentor — patient and motivating</option><option value="playful">Playful companion — cheerful</option><option value="calm">Calm professional — clear and gentle</option>
    </select>
@@ -80,9 +93,11 @@
    <label for="amohVoicePitch">Voice pitch <span id="amohVoicePitchValue">1.00</span></label><input id="amohVoicePitch" type="range" min="0.7" max="1.3" step="0.05" value="1">
    <div class="amoh-setting-actions"><button id="amohVoiceTest" type="button">▶ Test voice</button><button id="amohVoiceSettingsClose" class="secondary" type="button">Save & close</button></div>`;
   card.insertBefore(box,document.getElementById('amohVoiceAvatarClose'));
-  const rel=document.getElementById('amohVoiceRelationship'),gender=document.getElementById('amohVoiceGender'),rate=document.getElementById('amohVoiceRate'),pitch=document.getElementById('amohVoicePitch');
-  rel.value=voicePrefs.relationship;gender.value=voicePrefs.gender;rate.value=String(voicePrefs.rate);pitch.value=String(voicePrefs.pitch);
+  const rel=document.getElementById('amohVoiceRelationship'),gender=document.getElementById('amohVoiceGender'),rate=document.getElementById('amohVoiceRate'),pitch=document.getElementById('amohVoicePitch'),language=document.getElementById('amohChatLanguage'),styleChoice=document.getElementById('amohVoiceStyle');
+  rel.value=voicePrefs.relationship;gender.value=voicePrefs.gender;rate.value=String(voicePrefs.rate);pitch.value=String(voicePrefs.pitch);language.value=voicePrefs.language;styleChoice.value=voicePrefs.voiceStyle;
   rel.addEventListener('change',()=>{voicePrefs.relationship=rel.value;savePrefs()});
+  language.addEventListener('change',()=>{voicePrefs.language=language.value;const matching=getVoices().find(v=>languageBase(v.lang)===languageBase(language.value)&&(voicePrefs.gender==='all'||voiceGender(v)===voicePrefs.gender));if(matching)voicePrefs.voiceURI=matching.voiceURI;refreshVoiceOptions();savePrefs();if(rec)rec.lang=language.value});
+  styleChoice.addEventListener('change',()=>{voicePrefs.voiceStyle=styleChoice.value;if(voicePrefs.voiceStyle==='santa'){voicePrefs.pitch=0.82;voicePrefs.rate=0.9;pitch.value='0.82';rate.value='0.9';document.getElementById('amohVoicePitchValue').textContent='0.82';document.getElementById('amohVoiceRateValue').textContent='0.90×'}savePrefs()});
   gender.addEventListener('change',()=>{voicePrefs.gender=gender.value;voicePrefs.voiceURI='';refreshVoiceOptions();savePrefs()});
   document.getElementById('amohVoiceChoice').addEventListener('change',e=>{voicePrefs.voiceURI=e.target.value;savePrefs()});
   rate.addEventListener('input',()=>{voicePrefs.rate=Number(rate.value);document.getElementById('amohVoiceRateValue').textContent=voicePrefs.rate.toFixed(2)+'×';savePrefs()});
@@ -93,10 +108,11 @@
  }
  function applyVoice(utterance){
   const voices=getVoices();const selected=voices.find(v=>v.voiceURI===voicePrefs.voiceURI);
-  if(selected)utterance.voice=selected;utterance.rate=Number(voicePrefs.rate)||1.04;utterance.pitch=Number(voicePrefs.pitch)||1;utterance.lang=selected?.lang||'en-GH';
+  if(selected)utterance.voice=selected;utterance.rate=Number(voicePrefs.rate)||1.04;utterance.pitch=Number(voicePrefs.pitch)||1;
+  utterance.lang=selected&&languageBase(selected.lang)===languageBase(selectedLanguageCode())?selected.lang:selectedLanguageCode();applyVoiceStyle(utterance);
  }
  function selectedRelationship(){return relationships[voicePrefs.relationship]||relationships.friend}
- window.amohJusticeVoicePreferences=()=>({relationship:voicePrefs.relationship,voiceGender:voicePrefs.gender});
+ window.amohJusticeVoicePreferences=()=>({relationship:voicePrefs.relationship,voiceGender:voicePrefs.gender,language:voicePrefs.language||'en-US'});
  
  installVoiceSettings();
  const chatTop=document.querySelector('#justiceAiOverlay .chat-top, .chat-top');
@@ -119,7 +135,7 @@
  window.amohSpeakResponse=text=>{if(!window.speechSynthesis||!text)return;clearSpeechQueue();const clean=String(text).slice(0,3000);speechQueue=[clean];speakNextQueued()};
  function sendSpoken(text){if(!text.trim())return;input.value=text.trim();sayStatus(handsFree?'Sending your question…':'Sending your spoken question…');if(form.requestSubmit)form.requestSubmit();else form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}))}
  if(!SR){mic.addEventListener('click',()=>sayStatus('Voice input is not supported here. Try Chrome or Edge.'));modeBtn?.addEventListener('click',()=>sayStatus('Hands-free voice chat needs a browser with speech recognition, such as Chrome.'));return}
- rec=new SR();rec.lang='en-US';rec.interimResults=true;rec.continuous=false;
+ rec=new SR();rec.lang=selectedLanguageCode();rec.interimResults=true;rec.continuous=false;
  rec.onstart=()=>{listening=true;transcript='';mic.textContent='■ Stop';mic.setAttribute('aria-pressed','true');sayStatus(handsFree?'Listening — ask Justice AI anything.':'Listening… speak now.')};
  rec.onresult=e=>{let interim='';for(let i=e.resultIndex;i<e.results.length;i++){const t=e.results[i][0].transcript;if(e.results[i].isFinal)transcript+=t+' ';else interim+=t}if(handsFree&&window.speechSynthesis?.speaking&&interim.trim()){clearSpeechQueue();window.amohInterruptJusticeAnswer?.();waiting=false;sayStatus('I heard you — stopping my voice and listening.')}input.value=(transcript+interim).trim()};
  rec.onerror=e=>{listening=false;mic.textContent='🎙 Speak';if(handsFree&&e.error==='no-speech'){sayStatus('I did not hear you. Listening again…');listen()}else if(handsFree){const msg=e.error==='not-allowed'?'Allow microphone access in browser settings.':'Voice input stopped. You can still type.';stopMode(msg)}else sayStatus(e.error==='not-allowed'?'Allow microphone access in browser settings.':'Voice input stopped. You can still type.')};
