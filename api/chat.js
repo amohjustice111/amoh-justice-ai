@@ -65,13 +65,13 @@ const systemInstruction = `You are Justice AI, the friendly, helpful assistant f
             try {
               const chunk = JSON.parse(payload);
               const text = (chunk.candidates || []).flatMap(candidate => (candidate.content && candidate.content.parts) || []).map(piece => piece.text || '').join('');
-              if (text) res.write(JSON.stringify({ text }) + '\\n');
+              if (text) res.write(JSON.stringify({ text }) + '\n');
             } catch (parseError) {}
           }
         }
       } catch (streamError) {
         console.error('Gemini streaming failed:', streamError && streamError.message);
-        res.write(JSON.stringify({ error: 'The response stream was interrupted.' }) + '\\n');
+        res.write(JSON.stringify({ error: 'The response stream was interrupted.' }) + '\n');
       }
       return res.end();
     }
