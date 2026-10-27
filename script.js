@@ -24,7 +24,7 @@ async function askJustice(message){
   const requestId=++chatRequestId,controller=new AbortController();activeRequestController=controller;setChatBusy(true);
   try{
     const voiceStream=Boolean(window.amohVoiceConversationActive&&window.amohQueueVoiceText);
-    const response=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},signal:controller.signal,body:JSON.stringify({message,history:chatHistory.slice(-10,-1),stream:voiceStream})});
+    const response=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},signal:controller.signal,body:JSON.stringify({message,history:chatHistory.slice(-10,-1),stream:voiceStream,relationship:window.amohJusticeVoicePreferences?.().relationship||'friend'})});
     if(!response.ok){const data=await response.json().catch(()=>({}));throw new Error(data.error||'Justice AI could not answer. Please try again.');}
     let answer='';
     if(voiceStream&&response.body&&response.body.getReader){
