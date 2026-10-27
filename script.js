@@ -15,20 +15,31 @@ const sendButton=chatForm.querySelector('button[type="submit"]');
 window.amohJusticeChatHistory=window.amohJusticeChatHistory||[];const chatHistory=window.amohJusticeChatHistory;
 function addBubble(text,who){const el=document.createElement('div');el.className='bubble '+who;el.textContent=text;chatMessages.appendChild(el);chatMessages.scrollTop=chatMessages.scrollHeight;return el;}
 function setChatBusy(busy){sendButton.disabled=busy;sendButton.textContent=busy?'Thinking…':'Send ↗';chatInput.disabled=busy;}
+let activeRequestController=null,chatRequestId=0;
+window.amohInterruptJusticeAnswer=()=>{chatRequestId++;if(activeRequestController){activeRequestController.abort();activeRequestController=null;}setChatBusy(false);};
 async function askJustice(message){
   addBubble(message,'user');
   chatHistory.push({role:'user',text:message});
   const pending=addBubble('Justice AI is thinking…','bot');
-  setChatBusy(true);
+  const requestId=++chatRequestId,controller=new AbortController();activeRequestController=controller;setChatBusy(true);
   try{
-    const response=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message,history:chatHistory.slice(-10,-1)})});
-    const data=await response.json().catch(()=>({}));
-    if(!response.ok) throw new Error(data.error||'Justice AI could not answer. Please try again.');
-    pending.textContent=data.answer;window.dispatchEvent(new CustomEvent('amoh:justice-answer',{detail:{answer:data.answer}}));if(document.getElementById('voiceReplies')?.checked&&window.amohSpeakResponse&&!window.amohVoiceConversationActive)window.amohSpeakResponse(data.answer);
-    chatHistory.push({role:'model',text:data.answer});
-    if(chatHistory.length>12)chatHistory.splice(0,chatHistory.length-12);
-  }catch(error){pending.textContent='Sorry, I could not answer just now. '+(error.message||'Please try again later.');window.dispatchEvent(new CustomEvent('amoh:justice-answer',{detail:{answer:pending.textContent}}));}
-  finally{setChatBusy(false);chatInput.focus();chatMessages.scrollTop=chatMessages.scrollHeight;}
+    const voiceStream=Boolean(window.amohVoiceConversationActive&&window.amohQueueVoiceText);
+    const response=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},signal:controller.signal,body:JSON.stringify({message,history:chatHistory.slice(-10,-1),stream:voiceStream})});
+    if(!response.ok){const data=await response.json().catch(()=>({}));throw new Error(data.error||'Justice AI could not answer. Please try again.');}
+    let answer='';
+    if(voiceStream&&response.body&&response.body.getReader){
+      const reader=response.body.getReader(),decoder=new TextDecoder();let buffer='',sentenceBuffer='';
+      while(true){const part=await reader.read();if(part.done)break;buffer+=decoder.decode(part.value,{stream:true});const lines=buffer.split(/\r?\n/);buffer=lines.pop()||'';for(const line of lines){if(!line.trim())continue;const item=JSON.parse(line);if(item.error)throw new Error(item.error);if(!item.text)continue;answer+=item.text;sentenceBuffer+=item.text;pending.textContent=answer;chatMessages.scrollTop=chatMessages.scrollHeight;const matches=sentenceBuffer.match(/[\s\S]*?[.!?](?:\s+|$)/g)||[];if(matches.length){for(const sentence of matches)if(sentence.trim())window.amohQueueVoiceText(sentence.trim());sentenceBuffer=sentenceBuffer.slice(matches.join('').length);}}}
+      if(buffer.trim()){const item=JSON.parse(buffer);if(item.text){answer+=item.text;sentenceBuffer+=item.text;}}
+      if(sentenceBuffer.trim())window.amohQueueVoiceText(sentenceBuffer.trim());
+      if(!answer.trim())throw new Error('Justice AI returned an empty answer. Please try again.');
+      window.dispatchEvent(new CustomEvent('amoh:justice-answer',{detail:{answer,streamed:true}}));
+    }else{
+      const data=await response.json().catch(()=>({}));answer=data.answer||'';if(!answer)throw new Error(data.error||'Justice AI returned an empty answer.');pending.textContent=answer;window.dispatchEvent(new CustomEvent('amoh:justice-answer',{detail:{answer}}));if(document.getElementById('voiceReplies')?.checked&&window.amohSpeakResponse&&!window.amohVoiceConversationActive)window.amohSpeakResponse(answer);
+    }
+    chatHistory.push({role:'model',text:answer});if(chatHistory.length>12)chatHistory.splice(0,chatHistory.length-12);
+  }catch(error){if(error.name==='AbortError')return;pending.textContent='Sorry, I could not answer just now. '+(error.message||'Please try again later.');window.dispatchEvent(new CustomEvent('amoh:justice-answer',{detail:{answer:pending.textContent}}));}
+  finally{if(requestId===chatRequestId){activeRequestController=null;setChatBusy(false);chatInput.focus();}chatMessages.scrollTop=chatMessages.scrollHeight;}
 }
 chatForm.addEventListener('submit',e=>{e.preventDefault();const message=chatInput.value.trim();if(!message||sendButton.disabled)return;chatInput.value='';askJustice(message);});
 document.querySelectorAll('[data-question]').forEach(btn=>btn.addEventListener('click',()=>{if(!sendButton.disabled)askJustice(btn.dataset.question);}));
