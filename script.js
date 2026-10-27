@@ -12,7 +12,7 @@ const chatMessages=document.getElementById('chatMessages');
 const chatForm=document.getElementById('chatForm');
 const chatInput=document.getElementById('chatInput');
 const sendButton=chatForm.querySelector('button[type="submit"]');
-const chatHistory=[];
+window.amohJusticeChatHistory=window.amohJusticeChatHistory||[];const chatHistory=window.amohJusticeChatHistory;
 function addBubble(text,who){const el=document.createElement('div');el.className='bubble '+who;el.textContent=text;chatMessages.appendChild(el);chatMessages.scrollTop=chatMessages.scrollHeight;return el;}
 function setChatBusy(busy){sendButton.disabled=busy;sendButton.textContent=busy?'Thinking…':'Send ↗';chatInput.disabled=busy;}
 async function askJustice(message){

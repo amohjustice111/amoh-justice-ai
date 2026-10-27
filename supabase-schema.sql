@@ -19,3 +19,23 @@ create policy "Users can update their own projects" on public.amoh_projects for 
 drop policy if exists "Users can delete their own projects" on public.amoh_projects;
 create policy "Users can delete their own projects" on public.amoh_projects for delete to authenticated using (auth.uid() = user_id);
 create index if not exists amoh_projects_user_created_idx on public.amoh_projects(user_id, created_at desc);
+
+-- Justice AI conversation history: private to each authenticated account.
+create table if not exists public.amoh_chat_conversations (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  title text not null default 'New chat' check (char_length(title) <= 120),
+  messages jsonb not null default '[]'::jsonb check (jsonb_typeof(messages) = 'array'),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+alter table public.amoh_chat_conversations enable row level security;
+drop policy if exists "Users can read their own chat history" on public.amoh_chat_conversations;
+create policy "Users can read their own chat history" on public.amoh_chat_conversations for select to authenticated using (auth.uid() = user_id);
+drop policy if exists "Users can create their own chat history" on public.amoh_chat_conversations;
+create policy "Users can create their own chat history" on public.amoh_chat_conversations for insert to authenticated with check (auth.uid() = user_id);
+drop policy if exists "Users can update their own chat history" on public.amoh_chat_conversations;
+create policy "Users can update their own chat history" on public.amoh_chat_conversations for update to authenticated using (auth.uid() = user_id) with check (auth.uid() = user_id);
+drop policy if exists "Users can delete their own chat history" on public.amoh_chat_conversations;
+create policy "Users can delete their own chat history" on public.amoh_chat_conversations for delete to authenticated using (auth.uid() = user_id);
+create index if not exists amoh_chat_conversations_user_updated_idx on public.amoh_chat_conversations(user_id, updated_at desc);
