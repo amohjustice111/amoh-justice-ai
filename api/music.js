@@ -67,7 +67,6 @@ module.exports = async function handler(req, res) {
       };
       if (ideaMode) {
         payload.sample_query = prompt + '. Musical style: ' + style + '. Title: ' + title;
-        payload.sample_mode = true;
       } else if (!instrumental) {
         payload.lyrics = prompt;
       } else {
