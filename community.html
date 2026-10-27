@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#07110c">
+<meta name="description" content="AMOH JUSTICE AI Community & Help Center: practical guides, account preferences, feedback, and support.">
+<title>Community & Help | AMOH JUSTICE AI</title>
+<link rel="icon" href="icon-192.png"><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="v2.css">
+<style>
+:root{--v2-gold:#34d399;--v2-gold-light:#d1fae5;--v2-black:#050b08;--v2-panel:#0d1711;--v2-muted:#a7b9ad}
+body{background:#050907;color:#f0fdf4;background-image:radial-gradient(ellipse at 75% 0,rgba(16,185,129,.15),transparent 42%)}
+.v2-title em{background:linear-gradient(100deg,#ecfdf5,#34d399,#059669);background-clip:text;-webkit-background-clip:text}
+.v2-panel,.v2-tool{border-color:#34d39935;background:linear-gradient(145deg,#101d15,#080d0a)}
+.v2-link,.v2-button,.v2-tab{border-color:#34d39955;color:#d1fae5;background:#34d3990d}
+.v2-button.primary,.v2-tab[aria-pressed=true]{background:linear-gradient(135deg,#a7f3d0,#10b981);color:#04140b;border:0}
+.v2-field label{color:#a7f3d0}.v2-field input,.v2-field textarea,.v2-field select{border-color:#34d39940;background:#060b08}
+.v2-status{color:#a7f3d0}.v2-badge{color:#a7f3d0;border-color:#34d39944;background:#34d39912}
+.feature-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:24px 0}
+.feature-card{padding:19px;border:1px solid #34d39930;border-radius:18px;background:linear-gradient(145deg,#102017,#080d0a)}
+.feature-card .icon{font-size:23px;color:#6ee7b7}.feature-card h3{margin:10px 0 6px;font-size:16px}.feature-card p{font-size:12px;color:#a7b9ad;line-height:1.7;margin:0}
+.faq details{border-bottom:1px solid #34d39925;padding:14px 0}.faq summary{cursor:pointer;font-weight:700;color:#d1fae5}.faq details p{color:#a7b9ad;font-size:13px;line-height:1.8;margin:10px 0 0}
+.action-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.status-box{padding:12px 14px;border:1px solid #34d39930;border-radius:12px;background:#34d3990a;color:#b7c9bd;font-size:12px;line-height:1.7}
+#ideaBoard{display:grid;gap:10px}.idea-item{padding:14px;border:1px solid #34d39928;border-radius:13px;background:#07100a;overflow-wrap:anywhere}.idea-item small{color:#8ba495;font-size:10px}.idea-item p{white-space:pre-wrap;color:#dcece1;margin:8px 0;font-size:13px}
+@media(max-width:760px){.feature-grid{grid-template-columns:1fr}.v2-page{padding-top:25px}.v2-title{font-size:clamp(36px,10vw,56px)}}
+</style>
+</head>
+<body>
+<header class="header"><a class="brand" href="index.html"><img class="logo" src="icon-512.png" alt=""><span><b>AMOH JUSTICE</b><small>COMMUNITY · SUPPORT · GROWTH</small></span></a><button id="menu" class="menu" aria-label="Toggle menu">☰</button><nav id="nav"><a href="index.html">Home</a><a href="dashboard.html">Dashboard</a><a href="account.html">Account</a><a href="academy.html">Learn</a></nav></header>
+<main class="v2-page">
+<div class="v2-topline"><a class="v2-back" href="dashboard.html">← Back to dashboard</a><span class="v2-badge">Community & Help</span></div>
+<p class="v2-kicker">A better experience for everyone</p><h1 class="v2-title">Your space to <em>learn, connect, and get help.</em></h1>
+<p class="v2-lead">Find answers, manage your preferences on this device, share AMOH JUSTICE AI, and contact support when you need help. This page works on phones, tablets, and computers.</p>
+<div class="feature-grid">
+<article class="feature-card"><div class="icon">⌘</div><h3>Learn at your pace</h3><p>Explore tutorials and practical guides for getting started with the website.</p><div class="action-row"><a class="v2-link" href="academy.html">Open Academy ↗</a></div></article>
+<article class="feature-card"><div class="icon">▦</div><h3>Keep your work organized</h3><p>Review your gallery and account workspace. Cloud syncing depends on the existing account and database setup.</p><div class="action-row"><a class="v2-link" href="gallery.html">My gallery ↗</a><a class="v2-link" href="account.html">My account ↗</a></div></article>
+<article class="feature-card"><div class="icon">☏</div><h3>Contact support</h3><p>Send a question or report a problem directly through WhatsApp. Review your message before sending.</p><div class="action-row"><a class="v2-link" href="https://wa.me/233546389770?text=Hello%20AMOH%20JUSTICE%20AI%2C%20I%20need%20help%20with%20the%20website." target="_blank" rel="noopener noreferrer">WhatsApp support ↗</a></div></article>
+</div>
+<section class="v2-panel" aria-labelledby="preferencesTitle"><p class="v2-kicker">Personal settings</p><h2 id="preferencesTitle" style="font:600 28px 'Space Grotesk',sans-serif;margin:8px 0">Your preferences</h2><p class="v2-note">These preferences are saved in this browser on this device. They do not change your account profile or sync to other devices.</p>
+<div class="v2-form-grid">
+<div class="v2-field"><label for="displayName">Preferred display name (this device)</label><input id="displayName" maxlength="40" placeholder="How should the page greet you?"></div>
+<div class="v2-field"><label for="fontSize">Reading size</label><select id="fontSize"><option value="normal">Standard</option><option value="large">Larger text</option><option value="largest">Largest text</option></select></div>
+<div class="v2-field full"><label><input id="reduceMotion" type="checkbox" style="width:auto;margin-right:8px;accent-color:#34d399"> Reduce animations where supported</label></div>
+<div class="v2-field full"><div class="action-row"><button class="v2-button primary" id="savePreferences" type="button">Save preferences</button><button class="v2-button" id="resetPreferences" type="button">Reset preferences</button></div><p id="prefsStatus" class="v2-status" role="status" aria-live="polite"></p></div>
+</div></section>
+<section class="v2-panel" style="margin-top:20px" aria-labelledby="updatesTitle"><p class="v2-kicker">Personal activity</p><h2 id="updatesTitle" style="font:600 28px 'Space Grotesk',sans-serif;margin:8px 0">Your quick notes</h2><p class="v2-note">Keep reminders or ideas for your next visit. Notes stay in this browser only and are not visible to other users.</p>
+<div class="v2-field"><label for="ideaInput">Add a note or feedback reminder</label><textarea id="ideaInput" maxlength="600" placeholder="Example: I want to learn how to make a poster…"></textarea></div><div class="action-row"><button class="v2-button primary" id="addIdea" type="button">Save note</button><button class="v2-button" id="clearIdeas" type="button">Clear my notes</button></div><p id="ideaStatus" class="v2-status" role="status" aria-live="polite"></p><div id="ideaBoard" aria-live="polite"></div>
+</section>
+<section class="v2-panel faq" style="margin-top:20px" aria-labelledby="faqTitle"><p class="v2-kicker">Quick answers</p><h2 id="faqTitle" style="font:600 28px 'Space Grotesk',sans-serif;margin:8px 0">Frequently asked questions</h2>
+<details><summary>How do I save my projects?</summary><p>Use the save option available in a tool, then open My Account or the gallery. Some features save in this browser; cross-device private project syncing requires a configured Supabase account and database.</p></details>
+<details><summary>Can I use the website on my phone?</summary><p>Yes. The pages are designed to adapt to phones, tablets, and computers. If something looks incorrect, tell support which page and device you are using.</p></details>
+<details><summary>What if a tool does not work?</summary><p>Refresh once, check your connection, and try again. If it continues, use WhatsApp support and include the page name and the message you see. Never send your password or secret API keys.</p></details>
+<details><summary>Are all generation tools free?</summary><p>Website navigation, guides, and local preferences do not require paid credits. Some generation services may need a separately configured model or provider; do not assume generation is available until it has been tested.</p></details>
+<details><summary>Can other users see my notes here?</summary><p>No. Notes and preferences on this page are stored in this browser only. This is not a shared community feed. Shared posts and comments would need a dedicated backend with access controls and moderation.</p></details>
+</section>
+<section class="v2-panel" style="margin-top:20px"><p class="v2-kicker">Share the website</p><h2 style="font:600 26px 'Space Grotesk',sans-serif;margin:8px 0">Invite someone to explore</h2><p class="v2-note">Share the public AMOH JUSTICE AI website with a friend or copy its link.</p><div class="action-row"><button class="v2-button primary" id="shareSite" type="button">Share website</button><button class="v2-button" id="copySite" type="button">Copy website link</button></div><p id="shareStatus" class="v2-status" role="status" aria-live="polite"></p></section>
+<footer class="v2-footer"><span>AMOH JUSTICE AI · DREAM · CREATE · ACHIEVE</span><a class="v2-back" href="about.html">About the owner ↗</a></footer>
+</main>
+<script>
+(function(){
+const $=id=>document.getElementById(id), prefKey='amohJusticeExperiencePrefs', notesKey='amohJusticeExperienceNotes';
+const safeRead=(key,fallback)=>{try{const v=JSON.parse(localStorage.getItem(key)||'null');return v===null?fallback:v}catch(_){return fallback}};
+const safeWrite=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value));return true}catch(_){return false}};
+const status=(id,message)=>{const el=$(id);if(el)el.textContent=message};
+function loadPrefs(){const p=safeRead(prefKey,{});$('displayName').value=typeof p.name==='string'?p.name:'';$('fontSize').value=['normal','large','largest'].includes(p.fontSize)?p.fontSize:'normal';$('reduceMotion').checked=p.reduceMotion===true;applyPrefs(p)}
+function applyPrefs(p){document.documentElement.style.fontSize=p.fontSize==='largest'?'112.5%':p.fontSize==='large'?'106.25%':'';if(p.reduceMotion)document.documentElement.classList.add('user-reduce-motion');else document.documentElement.classList.remove('user-reduce-motion')}
+$('savePreferences').addEventListener('click',()=>{const p={name:$('displayName').value.trim().slice(0,40),fontSize:$('fontSize').value,reduceMotion:$('reduceMotion').checked};if(!safeWrite(prefKey,p)){status('prefsStatus','Could not save preferences. Check browser storage settings.');return}applyPrefs(p);status('prefsStatus','Preferences saved on this device.');});
+$('resetPreferences').addEventListener('click',()=>{localStorage.removeItem(prefKey);loadPrefs();status('prefsStatus','Preferences reset on this device.');});
+function renderNotes(){const list=safeRead(notesKey,[]);const board=$('ideaBoard');board.replaceChildren();if(!list.length){const p=document.createElement('p');p.className='v2-note';p.textContent='No notes saved yet.';board.appendChild(p);return}list.slice().reverse().forEach((item,index)=>{const card=document.createElement('article');card.className='idea-item';const small=document.createElement('small');small.textContent=new Date(item.createdAt).toLocaleString();const p=document.createElement('p');p.textContent=item.text;const remove=document.createElement('button');remove.className='v2-button';remove.type='button';remove.textContent='Delete note';remove.addEventListener('click',()=>{const all=safeRead(notesKey,[]);all.splice(all.length-1-index,1);safeWrite(notesKey,all);renderNotes();status('ideaStatus','Note deleted.');});card.append(small,p,remove);board.appendChild(card)})}
+$('addIdea').addEventListener('click',()=>{const value=$('ideaInput').value.trim();if(!value){status('ideaStatus','Write a note first.');$('ideaInput').focus();return}const list=safeRead(notesKey,[]);list.push({text:value.slice(0,600),createdAt:new Date().toISOString()});if(!safeWrite(notesKey,list.slice(-50))){status('ideaStatus','Could not save note. Check browser storage settings.');return}$('ideaInput').value='';renderNotes();status('ideaStatus','Note saved on this device.');});
+$('clearIdeas').addEventListener('click',()=>{if(!confirm('Clear all notes saved on this device?'))return;localStorage.removeItem(notesKey);renderNotes();status('ideaStatus','All local notes cleared.');});
+$('shareSite').addEventListener('click',async()=>{const data={title:'AMOH JUSTICE AI',text:'Explore AMOH JUSTICE AI — creative tools, learning resources, and more.',url:'https://amoh-justice-ai.vercel.app/'};try{if(navigator.share){await navigator.share(data);status('shareStatus','Share panel opened.')}else{await navigator.clipboard.writeText(data.url);status('shareStatus','Website link copied.')}}catch(e){if(e.name!=='AbortError')status('shareStatus','Sharing was unavailable. Use Copy website link instead.')}});
+$('copySite').addEventListener('click',async()=>{try{await navigator.clipboard.writeText('https://amoh-justice-ai.vercel.app/');status('shareStatus','Website link copied.')}catch(_){status('shareStatus','Copy was blocked by this browser. Copy this link manually: https://amoh-justice-ai.vercel.app/')}});
+const nav=$('nav'),menu=$('menu');if(menu&&nav)menu.addEventListener('click',()=>nav.classList.toggle('open'));
+loadPrefs();renderNotes();
+})();
+</script>
+<style>.user-reduce-motion *, .user-reduce-motion *::before,.user-reduce-motion *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}</style>
+</body></html>
