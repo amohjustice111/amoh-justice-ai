@@ -45,6 +45,11 @@
    <button class="ajtools-primary" id="ajAnalyzeFiles">Analyze files</button><div class="ajtools-status" id="ajFileStatus" role="status"></div><div class="ajtools-output" id="ajFileOutput" hidden></div>
   </section>
   
+  <section class="ajtools-page" data-page="memory">
+   <h3>Your personal memory</h3><p>Memory stays in this browser on this device. Save preferences or project context you want Justice AI to use. Do not save passwords or sensitive information.</p>
+   <label class="ajtools-field" for="ajMemoryText">What should Justice AI remember?</label><textarea class="ajtools-area" id="ajMemoryText" placeholder="I prefer step-by-step explanations. My current project is…"></textarea>
+   <button class="ajtools-primary" id="ajMemorySave">Save memory</button><button class="ajtools-secondary" id="ajMemoryClear">Clear memory</button><div class="ajtools-status" id="ajMemoryStatus" role="status"></div><div class="ajtools-output" id="ajMemoryOutput"></div>
+  </section>
   <section class="ajtools-page" data-page="tools">
    <h3>Quick tools</h3><p>Choose an action to prepare a useful prompt in the main Justice AI chat.</p>
    <div class="ajtools-grid">
