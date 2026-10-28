@@ -46,7 +46,7 @@ const memoryInstruction = memoryContext ? `The user has explicitly saved these p
 const languageCode = typeof body.language === 'string' ? body.language : 'en-US';
 const languageName = supportedLanguageLabels[languageCode] || 'English';
 const languageInstruction = languageCode === 'ak-GH' || languageCode === 'ak-FANTE' ? 'Reply in Akan, using the selected Twi or Fante variety as best you can. If a phrase is uncertain, be transparent and do not pretend perfect fluency. Keep names, code, and requested quoted text unchanged when needed.' : `Reply in ${languageName}. Keep the whole answer in this language unless the user explicitly requests another language, translation, or original-language wording. Preserve code, proper names, and requested quoted text where appropriate.`;
-const systemInstruction = `You are Justice AI, the friendly, helpful assistant for AMOH JUSTICE. ${languageInstruction} ${relationshipStyle} ${memoryInstruction} Be warm, clear, respectful, and useful. Answer general questions across education, writing, technology, coding, business, creativity, and everyday knowledge, not only questions about AMOH JUSTICE. Explain step by step when helpful and adapt explanations for beginners. If a request is unclear, ask a short clarifying question. Be honest about uncertainty and do not invent facts. For medical, legal, financial, or safety-critical questions, provide general information and encourage consulting a qualified professional when appropriate. Do not claim you performed actions you cannot perform. You can help create images: when the user asks to generate, draw, design, or illustrate an image, clearly tell them to open the ✦ Tools button and choose Generate Image, then help them write a detailed prompt. Do not falsely claim an image has been generated inside the chat; the actual image is created in the Tools Hub. You may explain AMOH JUSTICE services: AI video guidance, website design and development, graphic design, and digital learning. For AMOH JUSTICE contact, WhatsApp is +233 546 389 770 (https://wa.me/233546389770). Do not claim that video generation, payments, or accounts are connected unless the user asks about the site and the owner confirms they are implemented.`;
+const systemInstruction = `You are Justice AI, the friendly, capable general-purpose assistant for AMOH JUSTICE. ${languageInstruction} ${relationshipStyle} ${memoryInstruction} Answer the user's actual question directly and naturally. Handle simple greetings and everyday questions warmly without overthinking them. Be concise by default: a short direct answer first, then add detail only when useful or requested. Be quick, clear, and helpful across education, writing, technology, coding, business, creativity, and everyday knowledge. Do not refuse a question merely because it is awkward, unpopular, or controversial; answer neutrally and respectfully when safe, while following safety rules and applicable limits. If a request is unclear, ask one brief clarifying question. Be honest about uncertainty and never invent facts. For medical, legal, financial, or safety-critical questions, provide general information and encourage consulting a qualified professional when appropriate. Do not claim you performed actions you cannot perform. You may explain AMOH JUSTICE services: AI video guidance, website design and development, graphic design, and digital learning. For AMOH JUSTICE contact, WhatsApp is +233 546 389 770 (https://wa.me/233546389770). Do not claim that video generation, payments, or accounts are connected unless the user asks about the site and the owner confirms they are implemented.`;
 
   try {
     const streaming = body.stream === true;
@@ -60,7 +60,7 @@ const systemInstruction = `You are Justice AI, the friendly, helpful assistant f
         systemInstruction: { parts: [{ text: systemInstruction }] },
         contents,
         tools: body.webSearch === true ? [{ google_search: {} }] : undefined,
-        generationConfig: { temperature: 0.7, maxOutputTokens: body.webSearch === true ? 900 : 300 }
+        generationConfig: { temperature: 0.4, maxOutputTokens: body.webSearch === true ? 900 : 220 }
       })
     });
 
@@ -73,6 +73,15 @@ const systemInstruction = `You are Justice AI, the friendly, helpful assistant f
       if (!reader) return res.status(502).json({ error: 'Streaming is unavailable from the AI provider.' });
       const decoder = new TextDecoder();
       let buffer = '';
+      const consumeEvent = event => {
+        const payload = event.split(/\r?\n/).filter(line => line.startsWith('data:')).map(line => line.slice(5).trim()).join('');
+        if (!payload || payload === '[DONE]') return;
+        try {
+          const chunk = JSON.parse(payload);
+          const text = (chunk.candidates || []).flatMap(candidate => (candidate.content && candidate.content.parts) || []).map(piece => piece.text || '').join('');
+          if (text) res.write(JSON.stringify({ text }) + '\n');
+        } catch (parseError) {}
+      };
       try {
         while (true) {
           const part = await reader.read();
@@ -80,16 +89,10 @@ const systemInstruction = `You are Justice AI, the friendly, helpful assistant f
           buffer += decoder.decode(part.value, { stream: true });
           const events = buffer.split(/\r?\n\r?\n/);
           buffer = events.pop() || '';
-          for (const event of events) {
-            const payload = event.split(/\r?\n/).filter(line => line.startsWith('data:')).map(line => line.slice(5).trim()).join('');
-            if (!payload || payload === '[DONE]') continue;
-            try {
-              const chunk = JSON.parse(payload);
-              const text = (chunk.candidates || []).flatMap(candidate => (candidate.content && candidate.content.parts) || []).map(piece => piece.text || '').join('');
-              if (text) res.write(JSON.stringify({ text }) + '\n');
-            } catch (parseError) {}
-          }
+          for (const event of events) consumeEvent(event);
         }
+        buffer += decoder.decode();
+        if (buffer.trim()) consumeEvent(buffer);
       } catch (streamError) {
         console.error('Gemini streaming failed:', streamError && streamError.message);
         res.write(JSON.stringify({ error: 'The response stream was interrupted.' }) + '\n');
