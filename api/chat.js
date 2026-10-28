@@ -73,6 +73,15 @@ const systemInstruction = `You are Justice AI, the friendly, capable general-pur
       if (!reader) return res.status(502).json({ error: 'Streaming is unavailable from the AI provider.' });
       const decoder = new TextDecoder();
       let buffer = '';
+      const consumeEvent = event => {
+        const payload = event.split(/\r?\n/).filter(line => line.startsWith('data:')).map(line => line.slice(5).trim()).join('');
+        if (!payload || payload === '[DONE]') return;
+        try {
+          const chunk = JSON.parse(payload);
+          const text = (chunk.candidates || []).flatMap(candidate => (candidate.content && candidate.content.parts) || []).map(piece => piece.text || '').join('');
+          if (text) res.write(JSON.stringify({ text }) + '\n');
+        } catch (parseError) {}
+      };
       try {
         while (true) {
           const part = await reader.read();
@@ -80,16 +89,10 @@ const systemInstruction = `You are Justice AI, the friendly, capable general-pur
           buffer += decoder.decode(part.value, { stream: true });
           const events = buffer.split(/\r?\n\r?\n/);
           buffer = events.pop() || '';
-          for (const event of events) {
-            const payload = event.split(/\r?\n/).filter(line => line.startsWith('data:')).map(line => line.slice(5).trim()).join('');
-            if (!payload || payload === '[DONE]') continue;
-            try {
-              const chunk = JSON.parse(payload);
-              const text = (chunk.candidates || []).flatMap(candidate => (candidate.content && candidate.content.parts) || []).map(piece => piece.text || '').join('');
-              if (text) res.write(JSON.stringify({ text }) + '\n');
-            } catch (parseError) {}
-          }
+          for (const event of events) consumeEvent(event);
         }
+        buffer += decoder.decode();
+        if (buffer.trim()) consumeEvent(buffer);
       } catch (streamError) {
         console.error('Gemini streaming failed:', streamError && streamError.message);
         res.write(JSON.stringify({ error: 'The response stream was interrupted.' }) + '\n');
