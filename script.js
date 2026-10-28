@@ -19,13 +19,13 @@ let activeRequestController=null,chatRequestId=0;
 window.amohInterruptJusticeAnswer=()=>{chatRequestId++;if(activeRequestController){activeRequestController.abort();activeRequestController=null;}setChatBusy(false);};
 async function generateImageInsideChat(message,pending,requestId){
   const prompt=message
-    .replace(/^\\s*(?:justice\\s*ai[,:-]?\\s*)?(?:please\\s+)?(?:generate|create|draw|design|make|produce|render|illustrate)\\s+(?:me\\s+)?(?:an?\\s+)?(?:image|picture|photo|poster|logo|banner|artwork|illustration|portrait|wallpaper)\\s*(?:of|for|showing|with|about)?\\s*/i,'')
+    .replace(/^\s*(?:justice\s*ai[,:-]?\s*)?(?:please\s+)?(?:generate|create|draw|design|make|produce|render|illustrate)\s+(?:me\s+)?(?:an?\s+)?(?:image|picture|photo|poster|logo|banner|artwork|illustration|portrait|wallpaper)\s*(?:of|for|showing|with|about)?\s*/i,'')
     .trim() || message.trim();
-  const styleMatch=message.match(/\\b(photorealistic|realistic|cinematic|3d(?:\\s+illustration)?|anime|watercolor|graphic design)\\b/i);
+  const styleMatch=message.match(/\b(photorealistic|realistic|cinematic|3d(?:\s+illustration)?|anime|watercolor|graphic design)\b/i);
   const styleText=styleMatch?styleMatch[1].toLowerCase():'';
   const style=styleText.startsWith('3d')?'3D illustration':styleText==='graphic design'?'Graphic design':styleText?styleText[0].toUpperCase()+styleText.slice(1):'Cinematic';
-  const ratio=/\\b(landscape|16\\s*:\\s*9|wide)\\b/i.test(message)?'landscape':/\\b(portrait|9\\s*:\\s*16|vertical|phone wallpaper)\\b/i.test(message)?'portrait':'square';
-  const imageSize=/\\b4k\\b/i.test(message)?'4K':/\\b2k|high[- ]quality\\b/i.test(message)?'2K':'1K';
+  const ratio=/\b(landscape|16\s*:\s*9|wide)\b/i.test(message)?'landscape':/\b(portrait|9\s*:\s*16|vertical|phone wallpaper)\b/i.test(message)?'portrait':'square';
+  const imageSize=/\b4k\b/i.test(message)?'4K':/\b2k|high[- ]quality\b/i.test(message)?'2K':'1K';
   const response=await fetch('/api/generate-image',{method:'POST',headers:{'Content-Type':'application/json'},signal:activeRequestController?.signal,body:JSON.stringify({prompt,style,ratio,imageSize})});
   const data=await response.json().catch(()=>({}));
   if(!response.ok)throw new Error(data.error||'Image generation failed. Please try again.');
@@ -45,7 +45,7 @@ async function askJustice(message){
   const pending=addBubble('Justice AI is thinking…','bot');
   const requestId=++chatRequestId,controller=new AbortController();activeRequestController=controller;setChatBusy(true);
   try{
-    if(/\\b(generate|create|draw|design|make|produce|render|illustrate)\\b.{0,80}\\b(image|picture|photo|poster|logo|banner|artwork|illustration|portrait|wallpaper)\\b|\\b(image|picture|photo|poster|logo|banner|artwork|illustration|portrait|wallpaper)\\b.{0,80}\\b(generate|create|draw|design|make|produce|render|illustrate)\\b/i.test(message)){
+    if(/\b(generate|create|draw|design|make|produce|render|illustrate)\b.{0,80}\b(image|picture|photo|poster|logo|banner|artwork|illustration|portrait|wallpaper)\b|\b(image|picture|photo|poster|logo|banner|artwork|illustration|portrait|wallpaper)\b.{0,80}\b(generate|create|draw|design|make|produce|render|illustrate)\b/i.test(message)){
       await generateImageInsideChat(message,pending,requestId);
       const answer='Generated an image from your request.';chatHistory.push({role:'model',text:answer});if(chatHistory.length>12)chatHistory.splice(0,chatHistory.length-12);window.dispatchEvent(new CustomEvent('amoh:justice-answer',{detail:{answer}}));return;
     }
