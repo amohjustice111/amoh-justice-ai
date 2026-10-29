@@ -8,7 +8,9 @@ import android.app.Service;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.provider.Settings;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
@@ -17,28 +19,28 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.WindowManager;
 import android.widget.TextView;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Locale;
 
 public class WakeWordService extends Service {
     private static final String CHANNEL = "justice_ai_wake";
+    private final Handler handler = new Handler(Looper.getMainLooper());
     private SpeechRecognizer recognizer;
     private WindowManager windowManager;
     private TextView bubble;
     private String pendingPrompt = "";
-    private boolean waitingForQuestion = false;
     private boolean listening = false;
     private boolean stopped = false;
 
     @Override public void onCreate() {
         super.onCreate();
         createNotificationChannel();
-        Intent open = new Intent(this, MainActivity.class);
-        PendingIntent pi = PendingIntent.getActivity(this, 0, open, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        Intent setup = new Intent(this, MainActivity.class);
+        setup.putExtra("showSetup", true);
+        PendingIntent pi = PendingIntent.getActivity(this, 0, setup, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         Notification notification = new Notification.Builder(this, CHANNEL)
-            .setContentTitle("Justice AI is ready")
-            .setContentText("Listening for “Justice AI”. Tap to manage.")
+            .setContentTitle("Justice AI hands-free is active")
+            .setContentText("Listening for “Justice AI” or “ChatGPT”. Tap to manage.")
             .setSmallIcon(android.R.drawable.ic_btn_speak_now)
             .setOngoing(true).setContentIntent(pi).build();
         startForeground(7, notification);
@@ -46,24 +48,33 @@ public class WakeWordService extends Service {
         startRecognition(false);
     }
 
-    @Override public int onStartCommand(Intent intent, int flags, int startId) { return START_STICKY; }
+    @Override public int onStartCommand(Intent intent, int flags, int startId) {
+        stopped = false;
+        return START_STICKY;
+    }
     @Override public IBinder onBind(Intent intent) { return null; }
 
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= 26) {
             NotificationChannel channel = new NotificationChannel(CHANNEL, "Justice AI hands-free assistant", NotificationManager.IMPORTANCE_LOW);
-            channel.setDescription("Persistent notification while the wake phrase listener uses the microphone.");
+            channel.setDescription("Visible notification while the microphone listener is active.");
             ((NotificationManager)getSystemService(NOTIFICATION_SERVICE)).createNotificationChannel(channel);
         }
     }
 
     private void startRecognition(boolean questionMode) {
         if (stopped || listening) return;
-        if (!SpeechRecognizer.isRecognitionAvailable(this)) { showBubble("Voice recognition unavailable"); return; }
+        if (!SpeechRecognizer.isRecognitionAvailable(this)) {
+            showBubble("Justice AI voice recognition unavailable");
+            scheduleRestart();
+            return;
+        }
         try {
-            if (recognizer != null) { recognizer.destroy(); recognizer = null; }
+            if (recognizer != null) {
+                try { recognizer.cancel(); recognizer.destroy(); } catch (Exception ignored) {}
+                recognizer = null;
+            }
             recognizer = SpeechRecognizer.createSpeechRecognizer(this);
-            waitingForQuestion = questionMode;
             recognizer.setRecognitionListener(new RecognitionListener() {
                 @Override public void onReadyForSpeech(android.os.Bundle params) { listening = true; }
                 @Override public void onBeginningOfSpeech() {}
@@ -85,8 +96,12 @@ public class WakeWordService extends Service {
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault().toLanguageTag());
             intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, false);
             intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
+            intent.putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, false);
             recognizer.startListening(intent);
-        } catch (Exception e) { listening = false; scheduleRestart(); }
+        } catch (Exception e) {
+            listening = false;
+            scheduleRestart();
+        }
     }
 
     private void handleSpeech(String heard, boolean questionMode) {
@@ -94,21 +109,33 @@ public class WakeWordService extends Service {
         if (questionMode) {
             if (!heard.isEmpty()) {
                 pendingPrompt = heard;
-                showBubble("💚 Justice AI heard you\nTap to get your answer");
-                // Android may block opening another app from the background. The floating
-                // bubble remains the reliable, user-initiated route into the conversation.
-                try { openPrompt(heard); } catch (Exception ignored) {}
+                showBubble("💚 JUSTICE AI\nTap to hear answer");
+                openJusticeAI(heard);
+            } else {
+                scheduleRestart();
             }
-            scheduleRestart();
             return;
         }
+
         int wake = lower.indexOf("justice ai");
+        int wakeLength = "justice ai".length();
+        int chatGpt = lower.indexOf("chat gpt");
+        if (chatGpt >= 0 && (wake < 0 || chatGpt < wake)) {
+            wake = chatGpt;
+            wakeLength = "chat gpt".length();
+        }
+        int chatgpt = lower.indexOf("chatgpt");
+        if (chatgpt >= 0 && (wake < 0 || chatgpt < wake)) {
+            wake = chatgpt;
+            wakeLength = "chatgpt".length();
+        }
+
         if (wake >= 0) {
-            String remainder = heard.substring(Math.min(heard.length(), wake + "justice ai".length())).trim();
-            showBubble("💚 JUSTICE AI IS AWAKE\nTap to talk or hear your answer");
+            String remainder = heard.substring(Math.min(heard.length(), wake + wakeLength)).trim();
+            pendingPrompt = remainder;
+            showBubble("💚 JUSTICE AI IS AWAKE\nTap to chat");
             if (!remainder.isEmpty()) {
-                pendingPrompt = remainder;
-                try { openPrompt(remainder); } catch (Exception ignored) {}
+                openJusticeAI(remainder);
                 scheduleRestart();
             } else {
                 startRecognition(true);
@@ -119,7 +146,7 @@ public class WakeWordService extends Service {
     }
 
     private void scheduleRestart() {
-        new android.os.Handler(getMainLooper()).postDelayed(() -> {
+        handler.postDelayed(() -> {
             if (!stopped && !listening) startRecognition(false);
         }, 900);
     }
@@ -134,7 +161,6 @@ public class WakeWordService extends Service {
                 bubble.setGravity(Gravity.CENTER);
                 bubble.setPadding(18, 16, 18, 16);
                 bubble.setBackgroundColor(0xFF087F4B);
-                bubble.setOnClickListener(v -> openPrompt(pendingPrompt));
                 WindowManager.LayoutParams p = new WindowManager.LayoutParams(
                     WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT,
                     Build.VERSION.SDK_INT >= 26 ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY : WindowManager.LayoutParams.TYPE_PHONE,
@@ -144,16 +170,18 @@ public class WakeWordService extends Service {
                 p.x = 10; p.y = 0;
                 windowManager.addView(bubble, p);
                 bubble.setOnTouchListener(new android.view.View.OnTouchListener() {
-                    private float downX, downY; private int startX, startY;
+                    private float downX, downY;
+                    private int startX, startY;
                     @Override public boolean onTouch(android.view.View v, MotionEvent event) {
                         if (event.getAction() == MotionEvent.ACTION_DOWN) {
                             downX = event.getRawX(); downY = event.getRawY();
                             WindowManager.LayoutParams lp = (WindowManager.LayoutParams) bubble.getLayoutParams();
-                            startX = lp.x; startY = lp.y; return true;
+                            startX = lp.x; startY = lp.y;
+                            return true;
                         }
                         if (event.getAction() == MotionEvent.ACTION_UP) {
                             float dx = event.getRawX() - downX, dy = event.getRawY() - downY;
-                            if (Math.abs(dx) < 12 && Math.abs(dy) < 12) openPrompt(pendingPrompt);
+                            if (Math.abs(dx) < 12 && Math.abs(dy) < 12) openJusticeAI(pendingPrompt);
                             else {
                                 WindowManager.LayoutParams lp = (WindowManager.LayoutParams) bubble.getLayoutParams();
                                 lp.x = Math.max(0, startX - (int)dx); lp.y = startY + (int)dy;
@@ -161,7 +189,6 @@ public class WakeWordService extends Service {
                             }
                             return true;
                         }
-                        if (event.getAction() == MotionEvent.ACTION_MOVE) return true;
                         return true;
                     }
                 });
@@ -170,25 +197,22 @@ public class WakeWordService extends Service {
         } catch (Exception ignored) {}
     }
 
-    private void openPrompt(String prompt) {
-        if (prompt == null || prompt.trim().isEmpty()) {
-            Intent i = new Intent(this, MainActivity.class);
-            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(i);
-            return;
-        }
-        try {
-            String url = "https://amoh-justice-ai.vercel.app/?justicePrompt=" + URLEncoder.encode(prompt, "UTF-8") + "&justiceVoice=1";
-            Intent i = new Intent(Intent.ACTION_VIEW, android.net.Uri.parse(url));
-            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(i);
-        } catch (Exception ignored) {}
+    private void openJusticeAI(String prompt) {
+        Intent i = new Intent(this, MainActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        if (prompt != null && !prompt.trim().isEmpty()) i.putExtra("justicePrompt", prompt.trim());
+        startActivity(i);
     }
 
     @Override public void onDestroy() {
         stopped = true;
-        if (recognizer != null) { try { recognizer.cancel(); recognizer.destroy(); } catch (Exception ignored) {} }
-        if (bubble != null && windowManager != null) { try { windowManager.removeView(bubble); } catch (Exception ignored) {} }
+        handler.removeCallbacksAndMessages(null);
+        if (recognizer != null) {
+            try { recognizer.cancel(); recognizer.destroy(); } catch (Exception ignored) {}
+        }
+        if (bubble != null && windowManager != null) {
+            try { windowManager.removeView(bubble); } catch (Exception ignored) {}
+        }
         super.onDestroy();
     }
 }

@@ -1,22 +1,25 @@
-# Justice AI Android companion (experimental)
+# AMOH JUSTICE AI — native Android app prototype
 
-This native Android companion is intended to provide a user-enabled, foreground wake-phrase listener and an emerald floating shortcut for AMOH JUSTICE AI.
+The native Android project packages the existing AMOH JUSTICE AI website inside a WebView and includes an optional foreground microphone listener. The intent is for a user to install **one Justice AI app**, not install a separate wake-word companion plus a website shortcut.
 
-## Current prototype behavior
+## Setup
 
-- The user must open this companion once, grant microphone permission, and allow “Display over other apps”.
-- An ongoing Android notification is shown while the microphone listener is active.
-- The service uses Android's available `SpeechRecognizer` service to detect the phrase “Justice AI”.
-- After a question is recognized, the companion tries to open the AMOH JUSTICE AI website with the recognized question. Android may block background launches; in that case, tap the floating bubble to continue.
-- The website reads the one-time `justicePrompt` query parameter and submits it to the existing chat endpoint. `justiceVoice=1` enables spoken replies for that handoff.
-- This does not change Supabase authentication policies, database schema, or server-side secrets.
+1. Install the debug APK from the successful GitHub Actions artifact.
+2. Open Justice AI. On first launch, choose **Enable hands-free Justice AI**.
+3. Grant microphone permission and allow **Display over other apps**. Tap Enable again if Android returns to the setup screen after the overlay permission step.
+4. Keep the ongoing microphone notification visible.
+5. Say “Justice AI” or “ChatGPT”. When a question is recognized, the app attempts to open its own Justice AI screen with the recognized prompt. If Android blocks a background activity launch, tap the floating green bubble.
+
+The main Justice AI site runs inside the same native app's WebView. Users sign in within that app's WebView; browser sessions are not automatically shared with Chrome.
 
 ## Important limitations
 
-This is an experimental prototype, not a verified production-ready always-on assistant. Android's speech-recognition service may depend on the device's installed recognition provider and network connection; continuous listening may stop, consume battery, or behave differently across phone manufacturers. It is not guaranteed to work while the phone is locked, after the OS kills the process, or immediately after a reboot. A native build and real-device tests are required before relying on it.
+This is an experimental prototype, not a verified production-ready always-on assistant. It uses Android's system `SpeechRecognizer` to continuously start and restart speech-recognition sessions; it is not a dedicated low-power wake-word engine. Recognition may require a network connection, may consume battery, and may behave differently across devices and speech-recognition providers. “Justice AI” and “ChatGPT” are phrase matches, not system-level hotword integrations.
 
-The current prototype uses the system speech recognizer rather than an offline wake-word model. Do not describe it as offline or guaranteed to listen forever. Microphone use is visible through Android's foreground-service notification. Users can stop listening from Android Settings by force-stopping the companion, or by stopping its service from the app (a stop control is planned).
+Android may restrict microphone services or launching an app from the background. Listening is not guaranteed while the phone is locked, after a force-stop, or after a reboot. The user must explicitly enable microphone and overlay permissions. A foreground-service notification remains visible while listening. The service is not designed to bypass Android permissions or privacy indicators.
+
+The prototype has been compiled by GitHub Actions but must be tested on physical Android devices before production use. It does not change Supabase auth policies, database schema, or server secrets.
 
 ## Build
 
-The GitHub Actions workflow builds a debug APK and uploads it as an artifact. Open the repository's **Actions** tab, choose **Build Justice AI Android Companion**, and download `justice-ai-android-debug-apk` from a successful run. A debug APK is for testing; it is not a signed Play Store release.
+Open the repository's **Actions** tab and choose **Build Justice AI Android Companion**. Download the `justice-ai-android-debug-apk` artifact from a successful run. A debug APK is for testing and is not a signed Play Store release.
