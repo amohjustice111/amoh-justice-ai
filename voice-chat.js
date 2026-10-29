@@ -83,7 +83,7 @@
   const box=document.createElement('section');box.id='amohVoiceSettings';box.hidden=true;box.innerHTML=`
    <h3>Make Justice AI feel like family</h3><p>Choose a voice and the friendly style you feel most comfortable with. Options depend on voices installed in your browser or device.</p>
    <label for="amohChatLanguage">Chat and spoken language</label><select id="amohChatLanguage">${languageOptions.map(([value,label])=>'<option value="'+value+'">'+label+'</option>').join('')}</select>
-   <p>Justice AI will try to answer in this language. Spoken output and microphone recognition depend on language support in your browser/device; Akan may need a compatible speech voice.</p>
+   <p>Justice AI will try to answer in your selected language. For Akan, it will use short, calm, friendly Twi or Fante wording and a slower speaking pace. Natural Akan pronunciation still depends on whether your browser or phone has an Akan-compatible speech voice.</p>
    <label for="amohVoiceStyle">Voice character</label><select id="amohVoiceStyle"><option value="standard">Natural voice</option><option value="santa">Santa Claus style — deep, warm voice effect</option></select>
    <label for="amohVoiceRelationship">Friendly personality</label><select id="amohVoiceRelationship">
     <option value="friend">Friend — natural and supportive</option><option value="brother">Brother — honest and encouraging</option><option value="sister">Sister — warm and thoughtful</option><option value="father">Father — calm and wise</option><option value="mother">Mother — caring and reassuring</option><option value="mentor">Mentor — patient and motivating</option><option value="playful">Playful companion — cheerful</option><option value="calm">Calm professional — clear and gentle</option>
@@ -102,7 +102,7 @@
   document.getElementById('amohVoiceChoice').addEventListener('change',e=>{voicePrefs.voiceURI=e.target.value;savePrefs()});
   rate.addEventListener('input',()=>{voicePrefs.rate=Number(rate.value);document.getElementById('amohVoiceRateValue').textContent=voicePrefs.rate.toFixed(2)+'×';savePrefs()});
   pitch.addEventListener('input',()=>{voicePrefs.pitch=Number(pitch.value);document.getElementById('amohVoicePitchValue').textContent=voicePrefs.pitch.toFixed(2);savePrefs()});
-  document.getElementById('amohVoiceTest').addEventListener('click',()=>{if(!window.speechSynthesis)return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance('Hey, I am Justice AI. I am here for you. What would you like us to talk about today?');applyVoice(u);window.speechSynthesis.speak(u)});
+  document.getElementById('amohVoiceTest').addEventListener('click',()=>{if(!window.speechSynthesis)return;window.speechSynthesis.cancel();const isAkan=['ak-GH','ak-FANTE'].includes(selectedLanguageCode());const testText=isAkan?'Maakye! Me ne Justice AI. Ɛyɛ me dɛ sɛ me ne wo rebɔ nkɔmmɔ. Ɛdeɛn na wobɛpɛ sɛ yɛyɛ nnɛ?':'Hey, I am Justice AI. I am here for you. What would you like us to talk about today?';const u=new SpeechSynthesisUtterance(testText);applyVoice(u);window.speechSynthesis.speak(u)});
   document.getElementById('amohVoiceSettingsClose').addEventListener('click',closeVoiceSettings);
   refreshVoiceOptions();if(window.speechSynthesis)window.speechSynthesis.addEventListener?.('voiceschanged',refreshVoiceOptions);
  }
@@ -111,7 +111,10 @@
   if(selected)utterance.voice=selected;utterance.rate=Number(voicePrefs.rate)||1.04;
   // Some Android/browser voices do not identify their gender in the voice name. Keep the selected voice, but lower its pitch when Male is selected so the setting still has a noticeable effect.
   const requestedPitch=Number(voicePrefs.pitch)||1;utterance.pitch=voicePrefs.gender==='male'?Math.min(requestedPitch,0.88):requestedPitch;
-  utterance.lang=selected&&languageBase(selected.lang)===languageBase(selectedLanguageCode())?selected.lang:selectedLanguageCode();applyVoiceStyle(utterance);
+  utterance.lang=selected&&languageBase(selected.lang)===languageBase(selectedLanguageCode())?selected.lang:selectedLanguageCode();
+  // Akan sounds clearer when spoken gently and a little slower. Native pronunciation still depends on an installed Akan-capable speech voice.
+  if(['ak-GH','ak-FANTE'].includes(selectedLanguageCode())){utterance.rate=Math.min(Number(voicePrefs.rate)||0.92,0.92);if(voicePrefs.gender!=='male')utterance.pitch=Math.min(requestedPitch,1.02)}
+  applyVoiceStyle(utterance);
  }
  function selectedRelationship(){return relationships[voicePrefs.relationship]||relationships.friend}
  window.amohJusticeVoicePreferences=()=>({relationship:voicePrefs.relationship,voiceGender:voicePrefs.gender,language:voicePrefs.language||'en-US'});
