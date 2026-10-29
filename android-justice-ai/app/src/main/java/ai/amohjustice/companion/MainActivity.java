@@ -110,10 +110,7 @@ public class MainActivity extends Activity {
         Button open = new Button(this);
         open.setText("Open AMOH JUSTICE AI");
         root.addView(open, new LinearLayout.LayoutParams(-1, -2));
-        open.setOnClickListener(v -> {
-            getSharedPreferences("justice_ai", MODE_PRIVATE).edit().putBoolean("setup_done", true).apply();
-            showJusticeAI(null);
-        });
+        open.setOnClickListener(v -> showJusticeAI(null));
 
         Button stop = new Button(this);
         stop.setText("Stop listening");
