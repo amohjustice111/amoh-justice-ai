@@ -68,3 +68,30 @@ nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{nav.classLi
 document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();open()}else if(e.key==='Escape'&&overlay.classList.contains('is-open'))close()});
 render();
 })();
+
+
+/* Native Android companion handoff: ask the spoken prompt after the user opens the
+   floating Justice AI bubble. Voice replies are enabled for this one answer. */
+(()=> {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const prompt = (params.get('justicePrompt') || '').trim();
+    if (!prompt) return;
+    const run = () => {
+      const input = document.getElementById('chatInput');
+      const form = document.getElementById('chatForm');
+      if (!input || !form) return;
+      if (params.get('justiceVoice') === '1') {
+        const replies = document.getElementById('voiceReplies');
+        if (replies) replies.checked = true;
+      }
+      input.value = prompt;
+      form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+      params.delete('justicePrompt');
+      params.delete('justiceVoice');
+      const clean = window.location.pathname + (params.toString() ? '?' + params.toString() : '') + window.location.hash;
+      window.history.replaceState({}, document.title, clean);
+    };
+    window.addEventListener('load', () => window.setTimeout(run, 900), { once: true });
+  } catch (e) {}
+})();
