@@ -74,7 +74,7 @@
  };
  $$('[data-studio-preset]').forEach(button=>button.addEventListener('click',()=>{
   const preset=studioPresets[button.dataset.studioPreset];if(!preset)return;
-  const set=(id,value)=>{const el=$('#'+id);if(el&&value){const option=[...el.options||[]].find(o=>o.text===value||o.value===value);if(option)el.value=option.value;else if(el.tagName==='TEXTAREA'||el.tagName==='INPUT')el.value=value;}};
+  const set=(id,value)=>{const el=$('#'+id);if(el&&value){const option=[...(el.options || [])].find(o=>o.text===value||o.value===value);if(option)el.value=option.value;else if(el.tagName==='TEXTAREA'||el.tagName==='INPUT')el.value=value;}};
   set('idea',preset.idea);set('style',preset.style);set('ratio',preset.ratio);set('camera',preset.camera);set('lighting',preset.lighting);set('platform',preset.platform);set('duration',preset.duration);set('avoid',preset.avoid);
   const tab=$('#'+(preset.kind==='image'?'imageTab':'videoTab'));tab?.click();
   status('studioStatus','Starter loaded. Edit the idea and details, then generate your prompt.');
