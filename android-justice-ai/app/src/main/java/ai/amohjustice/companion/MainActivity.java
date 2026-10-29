@@ -25,7 +25,9 @@ public class MainActivity extends Activity {
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getIntent() != null && getIntent().getBooleanExtra("showSetup", false)) {
+        boolean setupRequested = getIntent() != null && getIntent().getBooleanExtra("showSetup", false);
+        boolean setupDone = getSharedPreferences("justice_ai", MODE_PRIVATE).getBoolean("setup_done", false);
+        if (setupRequested || !setupDone) {
             showSetup();
         } else {
             showJusticeAI(getIntent() == null ? null : getIntent().getStringExtra("justicePrompt"));
@@ -61,7 +63,9 @@ public class MainActivity extends Activity {
     @Override protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
-        if (webView != null) {
+        if (intent.getBooleanExtra("showSetup", false)) {
+            showSetup();
+        } else if (webView != null) {
             String prompt = intent.getStringExtra("justicePrompt");
             webView.loadUrl(buildUrl(prompt));
         } else {
@@ -106,7 +110,10 @@ public class MainActivity extends Activity {
         Button open = new Button(this);
         open.setText("Open AMOH JUSTICE AI");
         root.addView(open, new LinearLayout.LayoutParams(-1, -2));
-        open.setOnClickListener(v -> showJusticeAI(null));
+        open.setOnClickListener(v -> {
+            getSharedPreferences("justice_ai", MODE_PRIVATE).edit().putBoolean("setup_done", true).apply();
+            showJusticeAI(null);
+        });
 
         Button stop = new Button(this);
         stop.setText("Stop listening");
@@ -134,7 +141,9 @@ public class MainActivity extends Activity {
         }
         Intent service = new Intent(this, WakeWordService.class);
         if (Build.VERSION.SDK_INT >= 26) startForegroundService(service); else startService(service);
+        getSharedPreferences("justice_ai", MODE_PRIVATE).edit().putBoolean("setup_done", true).apply();
         status.setText("Listening enabled. Keep the Justice AI notification visible.");
+        showJusticeAI(null);
     }
 
     @Override public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
