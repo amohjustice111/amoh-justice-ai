@@ -64,4 +64,20 @@
  function renderProjectList(projects){const root=$('#savedProjects');if(!root)return;root.innerHTML='';if(!projects.length){root.innerHTML='<p class="v2-note">No saved projects yet. Visit the Creator Studio or Portfolio Gallery to add your first one.</p>';return}projects.forEach(p=>{const item=document.createElement('article');item.className='v2-lesson';const body=document.createElement('div');body.innerHTML='<span class="v2-badge">'+esc(p.category||'Project')+'</span><h3>'+esc(p.title||'Untitled project')+'</h3><p>'+esc(p.description||p.content||'No notes added.')+'</p>'+(p.content?'<details style="margin-top:10px"><summary class="v2-back">View saved prompt</summary><p style="white-space:pre-wrap">'+esc(p.content)+'</p></details>':'');item.appendChild(body);root.appendChild(item)})}
  function renderLocalProjects(){renderProjectList(read(localKey,[]))}
  $('#clearLocalProjects')?.addEventListener('click',()=>{if(confirm('Clear the projects saved in this browser? This does not delete projects in your online account.')){write(localKey,[]);renderLocalProjects();status('workspaceStatus','Browser-saved projects cleared.')}})
+
+ // AI Studio quick-start presets: fill the existing controls, then let users refine the prompt.
+ const studioPresets={
+  brand:{kind:'video',idea:'A premium product commercial featuring a beautifully designed product on a dark luxury set, with elegant reflections and a confident brand reveal.',style:'Cinematic realism',ratio:'9:16 vertical social video',camera:'Slow cinematic push-in',lighting:'Moody dramatic contrast',platform:'Social media advert',duration:'10–15 seconds',avoid:'Unreadable text, distorted product details, shaky camera'},
+  music:{kind:'video',idea:'A cinematic music visualizer for an original song, with emerald light pulses, atmospheric smoke, elegant motion graphics, and space for readable song lyrics.',style:'3D animation',ratio:'9:16 vertical social video',camera:'Orbiting camera',lighting:'Neon futuristic lighting',platform:'TikTok / Reels / Shorts',duration:'20–30 seconds',avoid:'Gibberish lyrics, flashing lights, cluttered text'},
+  afro:{kind:'image',idea:'An Afrofuturist hero portrait inspired by contemporary African design, sculptural emerald details, rich textures, dramatic cinematic light, and a sophisticated futuristic city backdrop.',style:'Afrofuturism',ratio:'4:5 portrait',camera:'Static hero shot',lighting:'Moody dramatic contrast',platform:'Brand campaign',duration:'5–8 seconds',avoid:'Stereotypes, distorted hands, blurry face, random text'},
+  business:{kind:'image',idea:'A polished promotional poster for a small business, with a bold headline area, clear service message, strong visual hierarchy, premium emerald accents, and uncluttered space for contact details.',style:'Minimal product commercial',ratio:'4:5 portrait',camera:'Static hero shot',lighting:'Bright commercial studio',platform:'Social media advert',duration:'5–8 seconds',avoid:'Tiny text, fake logos, clutter, misspelled words'}
+ };
+ $$('[data-studio-preset]').forEach(button=>button.addEventListener('click',()=>{
+  const preset=studioPresets[button.dataset.studioPreset];if(!preset)return;
+  const set=(id,value)=>{const el=$('#'+id);if(el&&value){const option=[...(el.options || [])].find(o=>o.text===value||o.value===value);if(option)el.value=option.value;else if(el.tagName==='TEXTAREA'||el.tagName==='INPUT')el.value=value;}};
+  set('idea',preset.idea);set('style',preset.style);set('ratio',preset.ratio);set('camera',preset.camera);set('lighting',preset.lighting);set('platform',preset.platform);set('duration',preset.duration);set('avoid',preset.avoid);
+  const tab=$('#'+(preset.kind==='image'?'imageTab':'videoTab'));tab?.click();
+  status('studioStatus','Starter loaded. Edit the idea and details, then generate your prompt.');
+  $('#idea')?.focus();button.closest('.studio-presets')?.querySelectorAll('[data-studio-preset]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));
+ }));
 })();
