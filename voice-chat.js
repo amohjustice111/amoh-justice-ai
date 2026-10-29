@@ -130,13 +130,25 @@
  function stopMic(){if(rec)try{rec.stop()}catch(e){}listening=false;mic.textContent='🎙 Speak';mic.setAttribute('aria-pressed','false')}
  function stopMode(message='Voice conversation stopped.'){handsFree=false;window.amohVoiceConversationActive=false;stopped=true;waiting=false;thinkingUtterance=null;stopMic();speechQueue=[];queuedSpeechActive=false;if(window.speechSynthesis)window.speechSynthesis.cancel();if(modeBtn){modeBtn.textContent='V';modeBtn.setAttribute('aria-pressed','false');modeBtn.setAttribute('aria-label','Start hands-free voice chat with Justice AI')}hideAvatar();sayStatus(message)}
  function listen(){if(!handsFree||!rec||listening||waiting||stopped)return;if(!window.isSecureContext){stopMode('Voice chat needs the secure HTTPS website.');return}try{rec.start()}catch(e){sayStatus('Preparing microphone…')}}
+ // Convert formatted AI text into natural speech. Keep the on-screen answer unchanged.
+ function cleanSpeechText(value){return String(value||'')
+  .replace(/\x60\x60\x60[\s\S]*?\x60\x60\x60/g,' Code example omitted. ')
+  .replace(/!?\[([^\]]+)\]\([^)]*\)/g,'$1')
+  .replace(/https?:\/\/\S+/gi,' link omitted ')
+  .replace(/<[^>]*>/g,' ')
+  .replace(/^\s{0,3}(?:#{1,6}\s*|[-*+]\s+|\d+[.)]\s+)/gm,'')
+  .replace(/[*_~\x60>#|]/g,' ')
+  .replace(/[\p{Extended_Pictographic}\p{Emoji_Component}]/gu,' ')
+  .replace(/[^\p{L}\p{N}\p{M}\s.,!?;:'"()’-]/gu,' ')
+  .replace(/\s+([.,!?;:])/g,'$1').replace(/([.,!?;:])(?=\S)/g,'$1 ')
+  .replace(/\s{2,}/g,' ').trim();}
  let speechQueue=[],queuedSpeechActive=false;
  function clearSpeechQueue(){speechQueue=[];queuedSpeechActive=false;if(window.speechSynthesis)window.speechSynthesis.cancel()}
  function speakNextQueued(){if(!window.speechSynthesis||stopped||!handsFree)return;const next=speechQueue.shift();if(!next){queuedSpeechActive=false;return}queuedSpeechActive=true;const u=new SpeechSynthesisUtterance(next);applyVoice(u);u.onstart=()=>{if(handsFree){sayStatus('Justice AI is speaking — you can interrupt me.');listen()}};u.onend=()=>{if(!handsFree||stopped)return;if(speechQueue.length)speakNextQueued();else{queuedSpeechActive=false;sayStatus('Your turn — listening…');listen()}};u.onerror=()=>{if(handsFree&&!stopped){if(speechQueue.length)speakNextQueued();else{queuedSpeechActive=false;listen()}}};window.speechSynthesis.speak(u)}
  let thinkingUtterance=null;
  function speakThinking(){if(!handsFree||stopped||!window.speechSynthesis)return;try{window.speechSynthesis.cancel();thinkingUtterance=new SpeechSynthesisUtterance('Thinking.');applyVoice(thinkingUtterance);const current=thinkingUtterance;current.onend=()=>{if(thinkingUtterance===current)thinkingUtterance=null};current.onerror=()=>{if(thinkingUtterance===current)thinkingUtterance=null};window.speechSynthesis.speak(current)}catch(e){thinkingUtterance=null}}
- window.amohQueueVoiceText=text=>{const clean=String(text||'').trim();if(!clean||!handsFree||stopped)return;if(thinkingUtterance){window.speechSynthesis?.cancel();thinkingUtterance=null}waiting=false;speechQueue.push(clean);if(!queuedSpeechActive)speakNextQueued()};
- window.amohSpeakResponse=text=>{if(!window.speechSynthesis||!text)return;clearSpeechQueue();const clean=String(text).slice(0,3000);speechQueue=[clean];speakNextQueued()};
+ window.amohQueueVoiceText=text=>{const clean=cleanSpeechText(text);if(!clean||!handsFree||stopped)return;if(thinkingUtterance){window.speechSynthesis?.cancel();thinkingUtterance=null}waiting=false;speechQueue.push(clean);if(!queuedSpeechActive)speakNextQueued()};
+ window.amohSpeakResponse=text=>{if(!window.speechSynthesis||!text)return;clearSpeechQueue();const clean=cleanSpeechText(String(text).slice(0,5000));if(!clean)return;speechQueue=[clean];speakNextQueued()};
  function sendSpoken(text){if(!text.trim())return;input.value=text.trim();if(handsFree){sayStatus('Thinking…');speakThinking()}else sayStatus('Sending your spoken question…');if(form.requestSubmit)form.requestSubmit();else form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}))}
  if(!SR){mic.addEventListener('click',()=>sayStatus('Voice input is not supported here. Try Chrome or Edge.'));modeBtn?.addEventListener('click',()=>sayStatus('Hands-free voice chat needs a browser with speech recognition, such as Chrome.'));return}
  rec=new SR();rec.lang=selectedLanguageCode();rec.interimResults=true;rec.continuous=false;
