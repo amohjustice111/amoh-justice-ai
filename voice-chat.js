@@ -132,16 +132,16 @@
  function listen(){if(!handsFree||!rec||listening||waiting||stopped)return;if(!window.isSecureContext){stopMode('Voice chat needs the secure HTTPS website.');return}try{rec.start()}catch(e){sayStatus('Preparing microphone…')}}
  // Convert formatted AI text into natural speech. Keep the on-screen answer unchanged.
  function cleanSpeechText(value){return String(value||'')
-  .replace(/```[\\s\\S]*?```/g,' Code example omitted. ')
-  .replace(/!?\\[([^\\]]+)\\]\\([^)]*\\)/g,'$1')
-  .replace(/https?:\\/\\/\\S+/gi,' link omitted ')
+  .replace(/\x60\x60\x60[\s\S]*?\x60\x60\x60/g,' Code example omitted. ')
+  .replace(/!?\[([^\]]+)\]\([^)]*\)/g,'$1')
+  .replace(/https?:\/\/\S+/gi,' link omitted ')
   .replace(/<[^>]*>/g,' ')
-  .replace(/^\\s{0,3}(?:#{1,6}\\s*|[-*+]\\s+|\\d+[.)]\\s+)/gm,'')
-  .replace(/[*_~`>#|]/g,' ')
-  .replace(/[\\p{Extended_Pictographic}\\p{Emoji_Component}]/gu,' ')
-  .replace(/[^\\p{L}\\p{N}\\p{M}\\s.,!?;:'"()’-]/gu,' ')
-  .replace(/\\s+([.,!?;:])/g,'$1').replace(/([.,!?;:])(?=\\S)/g,'$1 ')
-  .replace(/\\s{2,}/g,' ').trim();}
+  .replace(/^\s{0,3}(?:#{1,6}\s*|[-*+]\s+|\d+[.)]\s+)/gm,'')
+  .replace(/[*_~\x60>#|]/g,' ')
+  .replace(/[\p{Extended_Pictographic}\p{Emoji_Component}]/gu,' ')
+  .replace(/[^\p{L}\p{N}\p{M}\s.,!?;:'"()’-]/gu,' ')
+  .replace(/\s+([.,!?;:])/g,'$1').replace(/([.,!?;:])(?=\S)/g,'$1 ')
+  .replace(/\s{2,}/g,' ').trim();}
  let speechQueue=[],queuedSpeechActive=false;
  function clearSpeechQueue(){speechQueue=[];queuedSpeechActive=false;if(window.speechSynthesis)window.speechSynthesis.cancel()}
  function speakNextQueued(){if(!window.speechSynthesis||stopped||!handsFree)return;const next=speechQueue.shift();if(!next){queuedSpeechActive=false;return}queuedSpeechActive=true;const u=new SpeechSynthesisUtterance(next);applyVoice(u);u.onstart=()=>{if(handsFree){sayStatus('Justice AI is speaking — you can interrupt me.');listen()}};u.onend=()=>{if(!handsFree||stopped)return;if(speechQueue.length)speakNextQueued();else{queuedSpeechActive=false;sayStatus('Your turn — listening…');listen()}};u.onerror=()=>{if(handsFree&&!stopped){if(speechQueue.length)speakNextQueued();else{queuedSpeechActive=false;listen()}}};window.speechSynthesis.speak(u)}
