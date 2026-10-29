@@ -58,6 +58,14 @@ public class MainActivity extends Activity {
         root.addView(open, new LinearLayout.LayoutParams(-1, -2));
         open.setOnClickListener(v -> openWebsite(null));
 
+        Button stop = new Button(this);
+        stop.setText("Stop listening");
+        root.addView(stop, new LinearLayout.LayoutParams(-1, -2));
+        stop.setOnClickListener(v -> {
+            stopService(new Intent(this, WakeWordService.class));
+            status.setText("Hands-free listening is stopped. Tap Enable to start again.");
+        });
+
         setContentView(root);
         if (getIntent() != null && getIntent().hasExtra("justicePrompt")) openWebsite(getIntent().getStringExtra("justicePrompt"));
     }
