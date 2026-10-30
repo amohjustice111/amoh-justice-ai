@@ -1,0 +1,13 @@
+/* Gallery controls and project library responsive polish */
+.aj-gallery-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:18px 0}
+.aj-gallery-search{flex:1;min-width:190px;border:1px solid rgba(74,222,128,.25);border-radius:11px;padding:12px 14px;background:#060d08;color:#effff4;font:inherit;font-size:13px}
+.aj-gallery-search:focus{outline:2px solid #86efac;outline-offset:2px}
+.aj-gallery-count{font-size:11px;color:#a9c8b3}
+#gallerySavedProjects:empty{display:none}
+#gallerySavedProjects .v2-art{min-width:0;overflow-wrap:anywhere}
+#gallerySavedProjects .v2-art-body{display:flex;flex-direction:column;align-items:flex-start}
+#gallerySavedProjects .v2-art-body .v2-button{margin-top:14px}
+#gallerySavedProjects img{max-width:100%}
+.aj-gallery-library-tools{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:14px 0}
+.aj-gallery-library-tools input{flex:1;min-width:180px;border:1px solid rgba(74,222,128,.25);border-radius:10px;padding:11px;background:#060d08;color:#effff4}
+@media(max-width:560px){.aj-gallery-toolbar{align-items:stretch}.aj-gallery-search{width:100%}.aj-gallery-count{width:100%}}
