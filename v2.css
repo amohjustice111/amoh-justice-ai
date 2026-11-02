@@ -182,3 +182,10 @@ body:before{background:radial-gradient(ellipse at 78% 8%,rgba(22,163,74,.13),tra
 :where(a,button,input,select,textarea,summary):focus-visible{outline:2px solid #bbf7d0;outline-offset:3px}
 @media(max-width:560px){.amoh-whatsapp-float{right:10px;bottom:10px;padding:10px 13px}.amoh-whatsapp-float b{font-size:11px}}
 @media(prefers-reduced-motion:reduce){.amoh-whatsapp-float,.v2-art,.v2-tool,.v2-link,.v2-button,.v2-tab{transition:none!important}}
+
+/* Saved-project library tools */
+.aj-library-tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:16px 0}
+.aj-library-tools input{flex:1 1 220px;min-width:0;padding:12px 14px;border:1px solid rgba(74,222,128,.24);border-radius:11px;background:#07110a;color:#effff4;font:inherit;font-size:13px}
+.aj-library-tools input:focus{outline:2px solid #86efac;outline-offset:2px}
+.aj-library-tools .v2-button{white-space:nowrap}
+@media(max-width:480px){.aj-library-tools{align-items:stretch}.aj-library-tools .v2-button{width:100%}}
