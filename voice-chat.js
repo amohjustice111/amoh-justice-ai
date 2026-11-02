@@ -38,15 +38,20 @@
  function selectedLanguageCode(){return voicePrefs.language||'en-US'}
  function applyVoiceStyle(utterance){if(voicePrefs.voiceStyle==='santa'){utterance.pitch=Math.min(Number(voicePrefs.pitch)||0.82,0.85);utterance.rate=Math.min(Number(voicePrefs.rate)||0.9,0.95)}}
  function getVoices(){return window.speechSynthesis?.getVoices?.()||[]}
- function voiceGender(v){const name=((v.name||'')+' '+(v.voiceURI||'')).toLowerCase();if(/female|woman|girl|zira|samantha|victoria|karen|moira|tessa|susan|hazel|aria|jenny|libby|sonia|natasha|google uk english female|google us english female/.test(name))return 'female';if(/(^|[\s_-])(male|man|boy)([\s_-]|$)|david|mark|daniel|james|george|guy|ryan|liam|thomas|alex|fred|oliver|aaron|google uk english male|google us english male/.test(name))return 'male';return 'unknown'}
+ function voiceGender(v){const name=((v.name||'')+' '+(v.voiceURI||'')).toLowerCase();if(/female|woman|girl|zira|samantha|victoria|karen|moira|tessa|susan|hazel|aria|jenny|libby|sonia|natasha|google uk english female|google us english female|microsoft.*(jenny|aria|zira)/.test(name))return 'female';if(/(^|[\\s_-])(male|man|boy)([\\s_-]|$)|david|mark|daniel|james|george|guy|ryan|liam|thomas|alex|fred|oliver|aaron|google uk english male|google us english male|microsoft.*(guy|davis|tony|jason)/.test(name))return 'male';return 'unknown'}
  function refreshVoiceOptions(){
   const select=document.getElementById('amohVoiceChoice');if(!select)return;
   const voices=getVoices(),previous=voicePrefs.voiceURI;select.replaceChildren();
-  const filtered=voices.filter(v=>voicePrefs.gender==='all'||voiceGender(v)===voicePrefs.gender);
-  const choices=(filtered.length?filtered:voices).slice().sort((a,b)=>{const lang=languageBase(selectedLanguageCode()),am=languageBase(a.lang)===lang?0:1,bm=languageBase(b.lang)===lang?0:1;return am-bm||a.name.localeCompare(b.name)});
-  if(!choices.length){const opt=document.createElement('option');opt.value='';opt.textContent='No browser voices found yet';select.appendChild(opt);return}
-  choices.forEach((v,i)=>{const opt=document.createElement('option');opt.value=v.voiceURI;opt.textContent=v.name+' · '+(v.lang||'voice');select.appendChild(opt)});
+  const requested=voicePrefs.gender==='all'?voices:voices.filter(v=>voiceGender(v)===voicePrefs.gender);
+  // Never silently put a female voice into the Male selection (or vice versa).
+  // If no clearly tagged voice exists, offer only unclassified voices.
+  const unknown=voices.filter(v=>voiceGender(v)==='unknown');
+  const choices=(requested.length?requested:voicePrefs.gender==='all'?voices:unknown).slice().sort((a,b)=>{const lang=languageBase(selectedLanguageCode()),am=languageBase(a.lang)===lang?0:1,bm=languageBase(b.lang)===lang?0:1;return am-bm||a.name.localeCompare(b.name)});
+  if(!choices.length){const opt=document.createElement('option');opt.value='';opt.textContent='No matching voice installed on this device';select.appendChild(opt);select.dataset.voiceFallback='true';return}
+  select.dataset.voiceFallback=requested.length?'false':'true';
+  choices.forEach(v=>{const opt=document.createElement('option');opt.value=v.voiceURI;opt.textContent=v.name+' · '+(v.lang||'voice');select.appendChild(opt)});
   if(previous&&choices.some(v=>v.voiceURI===previous))select.value=previous;else{select.selectedIndex=0;voicePrefs.voiceURI=select.value;savePrefs()}
+  const hint=document.getElementById('amohVoiceAvailability');if(hint)hint.textContent=requested.length?'Choose an installed '+(voicePrefs.gender==='male'?'male':'female')+' voice.':'No clearly identified '+voicePrefs.gender+' voice is installed. Justice AI will use an unclassified voice with pitch adjustment; install another system voice for a true match.';
  }
  function openVoiceSettings(){
   if(!avatarPanel)return;
@@ -89,7 +94,7 @@
    <label for="amohVoiceRelationship">Friendly personality</label><select id="amohVoiceRelationship">
     <option value="friend">Friend — natural and supportive</option><option value="brother">Brother — honest and encouraging</option><option value="sister">Sister — warm and thoughtful</option><option value="wife">Loving wife style — calm and affectionate</option><option value="father">Father — calm and wise</option><option value="mother">Mother — caring and reassuring</option><option value="mentor">Mentor — patient and motivating</option><option value="playful">Playful companion — cheerful</option><option value="calm">Calm professional — clear and gentle</option>
    </select>
-   <div class="amoh-voice-setting-row"><div><label for="amohVoiceGender">Voice type</label><select id="amohVoiceGender"><option value="female">Female voices</option><option value="male">Male voices</option><option value="all">All available voices</option></select></div><div><label for="amohVoiceChoice">Choose a voice</label><select id="amohVoiceChoice" aria-label="Choose a spoken voice"></select></div></div>
+   <div class="amoh-voice-setting-row"><div><label for="amohVoiceGender">Voice gender</label><select id="amohVoiceGender"><option value="female">Female voice</option><option value="male">Male voice</option><option value="all">All available voices</option></select></div><div><label for="amohVoiceChoice">Installed voice</label><select id="amohVoiceChoice" aria-label="Choose a spoken voice"></select></div></div><p id="amohVoiceAvailability" role="status" aria-live="polite">Choose male or female, then test the voice.</p>
    <label for="amohVoiceRate">Speaking speed <span id="amohVoiceRateValue">1.04×</span></label><input id="amohVoiceRate" type="range" min="0.75" max="1.25" step="0.05" value="1.04">
    <label for="amohVoicePitch">Voice pitch <span id="amohVoicePitchValue">1.00</span></label><input id="amohVoicePitch" type="range" min="0.7" max="1.3" step="0.05" value="1">
    <div class="amoh-setting-actions"><button id="amohVoiceTest" type="button">▶ Test voice</button><button id="amohVoiceSettingsClose" class="secondary" type="button">Save & close</button></div>`;
@@ -111,10 +116,10 @@
   const voices=getVoices();const selected=voices.find(v=>v.voiceURI===voicePrefs.voiceURI);
   if(selected)utterance.voice=selected;utterance.rate=Number(voicePrefs.rate)||1.04;
   // Some Android/browser voices do not identify their gender in the voice name. Keep the selected voice, but lower its pitch when Male is selected so the setting still has a noticeable effect.
-  const requestedPitch=Number(voicePrefs.pitch)||1;utterance.pitch=voicePrefs.gender==='male'?Math.min(requestedPitch,0.88):requestedPitch;
+  const requestedPitch=Number(voicePrefs.pitch)||1;utterance.pitch=voicePrefs.gender==='male'?Math.min(requestedPitch,0.78):requestedPitch;
   utterance.lang=selected&&languageBase(selected.lang)===languageBase(selectedLanguageCode())?selected.lang:selectedLanguageCode();
   // Akan sounds clearer when spoken gently and a little slower. Native pronunciation still depends on an installed Akan-capable speech voice.
-  if(['ak-GH','ak-FANTE'].includes(selectedLanguageCode())){utterance.rate=Math.min(Number(voicePrefs.rate)||0.92,0.92);if(voicePrefs.gender!=='male')utterance.pitch=Math.min(requestedPitch,1.02)}
+  if(['ak-GH','ak-FANTE'].includes(selectedLanguageCode())){utterance.rate=Math.min(Number(voicePrefs.rate)||0.92,0.92);if(voicePrefs.gender!=='male')utterance.pitch=Math.min(requestedPitch,1.02);else utterance.pitch=Math.min(utterance.pitch,0.78)}
   applyVoiceStyle(utterance);
  }
  function selectedRelationship(){return relationships[voicePrefs.relationship]||relationships.friend}
