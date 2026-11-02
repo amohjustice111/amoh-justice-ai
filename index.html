@@ -441,18 +441,53 @@ body:before{z-index:-1!important;background:linear-gradient(180deg,rgba(2,8,4,.6
 <section class="justice-rush-home section" id="justice-rush" aria-labelledby="justice-rush-title">
   <div class="justice-rush-heading">
     <p class="eyebrow">PLAY RIGHT HERE · NO DASHBOARD NEEDED</p>
-    <h2 id="justice-rush-title">Meet <em>Justice Rush 3D</em></h2>
-    <p class="muted">Take the wheel in the AMOH JUSTICE AI racing game. It is playable right here on this homepage on your laptop or phone.</p>
-    <div class="justice-rush-actions">
-      <a class="btn gold" href="games.html">Open full-screen game ↗</a>
-      <span>PC: use A / D or ← / → to steer · Shift for nitro · S or Space to brake</span>
-    </div>
+    <h2 id="justice-rush-title">Choose your <em>game.</em></h2>
+    <p class="muted">Two different challenges are ready to play. Select a game to open it here, on your phone or laptop.</p>
   </div>
-  <div class="justice-rush-frame-wrap">
-    <div class="justice-rush-frame-top"><span><i></i> JUSTICE RUSH 3D · LIVE GAME</span><span>Auto-drive · 3 laps</span></div>
-    <iframe class="justice-rush-frame" src="games.html" title="Play Justice Rush 3D racing game" loading="eager" allow="fullscreen" allowfullscreen></iframe>
+  <div class="amoh-game-picker" id="amohGamePicker">
+    <button class="amoh-game-card" type="button" data-game="racing">
+      <span class="amoh-game-art racing-art" aria-hidden="true"><span>🏁</span></span>
+      <span class="amoh-game-info"><small>01 · DRIVING</small><b>Justice Rush Racing</b><span>Take control of your sports car, race rivals, use nitro and complete three laps.</span><strong>PLAY RACING GAME ↗</strong></span>
+    </button>
+    <button class="amoh-game-card" type="button" data-game="subway">
+      <span class="amoh-game-art subway-art" aria-hidden="true"><span>🚇</span></span>
+      <span class="amoh-game-info"><small>02 · ENDLESS RUNNER</small><b>Subway Escape</b><span>Run through a busy subway station, dodge trains, jump barriers, slide and collect coins.</span><strong>PLAY RUNNER GAME ↗</strong></span>
+    </button>
+  </div>
+  <div class="justice-rush-playarea" id="amohGamePlayarea" hidden>
+    <div class="justice-rush-frame-top"><span><i></i> <b id="amohSelectedGameTitle">GAME</b></span><button type="button" class="amoh-game-back" id="amohBackToGames">← ALL GAMES</button></div>
+    <iframe class="justice-rush-frame" id="amohGameFrame" src="about:blank" title="AMOH JUSTICE AI game" loading="lazy" allow="fullscreen" allowfullscreen></iframe>
+    <div class="justice-rush-actions"><a class="btn gold" id="amohOpenGame" href="games.html" target="_blank" rel="noopener">Open full-screen game ↗</a><span id="amohGameHint">Use the on-screen controls or keyboard.</span></div>
   </div>
 </section>
+<style id="amoh-two-game-selector">
+.amoh-game-picker{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin:26px auto 4px;max-width:980px}
+.amoh-game-card{display:flex;flex-direction:column;overflow:hidden;padding:0;text-align:left;border:1px solid rgba(134,239,172,.28);border-radius:20px;background:linear-gradient(145deg,#102719,#06110a);color:#effff3;cursor:pointer;transition:transform .22s,border-color .22s,box-shadow .22s}
+.amoh-game-card:hover,.amoh-game-card:focus-visible{transform:translateY(-4px);border-color:#4ade80;box-shadow:0 18px 42px #0008,0 0 26px #22c55e20;outline:none}
+.amoh-game-art{height:170px;display:grid;place-items:center;position:relative;overflow:hidden}
+.amoh-game-art:before,.amoh-game-art:after{content:"";position:absolute;inset:0}
+.amoh-game-art span{position:relative;z-index:1;font-size:76px;filter:drop-shadow(0 12px 12px #0009)}
+.racing-art{background:linear-gradient(135deg,#101a17,#244a34 48%,#111b16)}
+.racing-art:before{background:repeating-linear-gradient(105deg,transparent 0 35px,#ffffff09 36px 39px),linear-gradient(0deg,#080d0b99,transparent)}
+.subway-art{background:linear-gradient(135deg,#18252c,#36515a 48%,#111b20)}
+.subway-art:before{background:repeating-linear-gradient(90deg,transparent 0 50px,#d6e5e612 51px 56px),linear-gradient(0deg,#070d1099,transparent)}
+.amoh-game-info{display:flex;flex-direction:column;gap:9px;padding:19px 20px 22px}
+.amoh-game-info small{font-size:9px;letter-spacing:.16em;color:#86efac;font-weight:900}
+.amoh-game-info b{font-size:21px;letter-spacing:-.03em}
+.amoh-game-info span{font-size:12px;line-height:1.65;color:#bad1c1;min-height:40px}
+.amoh-game-info strong{font-size:10px;letter-spacing:.08em;color:#bbf7d0;margin-top:5px}
+.justice-rush-playarea[hidden]{display:none}
+.justice-rush-playarea{overflow:hidden;border:1px solid rgba(134,239,172,.42);border-radius:18px;background:#06100b;box-shadow:0 14px 44px #0008;margin-top:24px}
+.justice-rush-playarea .justice-rush-frame-top{min-height:46px}
+.amoh-game-back{border:1px solid #86efac55;border-radius:999px;background:#07170d;color:#d9fbe2;padding:7px 12px;font:800 10px system-ui;cursor:pointer}
+.justice-rush-playarea .justice-rush-frame{height:690px}
+.justice-rush-playarea .justice-rush-actions{margin:0;padding:12px 15px;background:#07150c}
+@media(max-width:700px){.amoh-game-picker{grid-template-columns:1fr;gap:13px}.amoh-game-art{height:135px}.amoh-game-info{padding:16px}.amoh-game-info span{min-height:0}.justice-rush-playarea .justice-rush-frame{height:620px}}
+@media(max-width:420px){.justice-rush-playarea .justice-rush-frame{height:560px}.justice-rush-playarea .justice-rush-actions .btn{width:auto}}
+</style>
+<script id="amoh-game-selector-script">
+(()=>{const picker=document.getElementById('amohGamePicker'),area=document.getElementById('amohGamePlayarea'),frame=document.getElementById('amohGameFrame'),title=document.getElementById('amohSelectedGameTitle'),open=document.getElementById('amohOpenGame'),hint=document.getElementById('amohGameHint'),back=document.getElementById('amohBackToGames');if(!picker||!area||!frame)return;const games={racing:{title:'JUSTICE RUSH RACING',src:'games.html',hint:'Accelerate, brake, steer and use nitro. Keyboard and touch controls.'},subway:{title:'SUBWAY ESCAPE',src:'subway-runner.html',hint:'Swipe or use arrow keys to change lanes, jump and slide.'}};picker.querySelectorAll('[data-game]').forEach(card=>card.addEventListener('click',()=>{const game=games[card.dataset.game];if(!game)return;title.textContent=game.title;open.href=game.src;hint.textContent=game.hint;frame.title=game.title;frame.src=game.src;picker.hidden=true;area.hidden=false;area.scrollIntoView({behavior:'smooth',block:'start'})}));back.addEventListener('click',()=>{frame.src='about:blank';area.hidden=true;picker.hidden=false;picker.scrollIntoView({behavior:'smooth',block:'center'})})})();
+</script>
 <section class="amoh-tiktok-home section" id="tiktok">
 <div class="amoh-tiktok-copy">
 <p class="eyebrow">FOLLOW THE CREATOR · TIKTOK</p>
