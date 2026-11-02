@@ -47,7 +47,7 @@
   // If no clearly tagged voice exists, offer only unclassified voices.
   const unknown=voices.filter(v=>voiceGender(v)==='unknown');
   const choices=(requested.length?requested:voicePrefs.gender==='all'?voices:unknown).slice().sort((a,b)=>{const lang=languageBase(selectedLanguageCode()),am=languageBase(a.lang)===lang?0:1,bm=languageBase(b.lang)===lang?0:1;return am-bm||a.name.localeCompare(b.name)});
-  if(!choices.length){const opt=document.createElement('option');opt.value='';opt.textContent='No matching voice installed on this device';select.appendChild(opt);select.dataset.voiceFallback='true';return}
+  if(!choices.length){voicePrefs.voiceURI='';savePrefs();const opt=document.createElement('option');opt.value='';opt.textContent='No matching voice installed on this device';select.appendChild(opt);select.dataset.voiceFallback='true';const hint=document.getElementById('amohVoiceAvailability');if(hint)hint.textContent='This device has no identifiable '+voicePrefs.gender+' voice installed. Add a '+voicePrefs.gender+' voice in your device text-to-speech settings, then reload this page.';return}
   select.dataset.voiceFallback=requested.length?'false':'true';
   choices.forEach(v=>{const opt=document.createElement('option');opt.value=v.voiceURI;opt.textContent=v.name+' · '+(v.lang||'voice');select.appendChild(opt)});
   if(previous&&choices.some(v=>v.voiceURI===previous))select.value=previous;else{select.selectedIndex=0;voicePrefs.voiceURI=select.value;savePrefs()}
