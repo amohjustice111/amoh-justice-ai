@@ -12,7 +12,7 @@
  placeVoiceLauncher();
  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
  const settingsKey='amohJusticeVoicePrefsV1';
- const defaultPrefs={voiceURI:'',gender:'female',relationship:'friend',language:'en-US',voiceStyle:'standard',rate:1.04,pitch:1};
+ const defaultPrefs={voiceURI:'',gender:'female',relationship:'friend',language:'en-US',voiceStyle:'standard',rate:0.92,pitch:1};
  let voicePrefs={...defaultPrefs};
  try{voicePrefs={...defaultPrefs,...JSON.parse(localStorage.getItem(settingsKey)||'{}')}}catch(e){}
  const relationships={
@@ -95,12 +95,12 @@
     <option value="friend">Friend — natural and supportive</option><option value="brother">Brother — honest and encouraging</option><option value="sister">Sister — warm and thoughtful</option><option value="wife">Loving wife style — calm and affectionate</option><option value="father">Father — calm and wise</option><option value="mother">Mother — caring and reassuring</option><option value="mentor">Mentor — patient and motivating</option><option value="playful">Playful companion — cheerful</option><option value="calm">Calm professional — clear and gentle</option>
    </select>
    <div class="amoh-voice-setting-row"><div><label for="amohVoiceGender">Voice gender</label><select id="amohVoiceGender"><option value="female">Female voice</option><option value="male">Male voice</option><option value="all">All available voices</option></select></div><div><label for="amohVoiceChoice">Installed voice</label><select id="amohVoiceChoice" aria-label="Choose a spoken voice"></select></div></div><p id="amohVoiceAvailability" role="status" aria-live="polite">Choose male or female, then test the voice.</p>
-   <label for="amohVoiceRate">Speaking speed <span id="amohVoiceRateValue">1.04×</span></label><input id="amohVoiceRate" type="range" min="0.75" max="1.25" step="0.05" value="1.04">
+   <label for="amohVoiceRate">Speaking speed (slower is calmer) <span id="amohVoiceRateValue">1.04×</span></label><input id="amohVoiceRate" type="range" min="0.75" max="1.25" step="0.05" value="1.04">
    <label for="amohVoicePitch">Voice pitch <span id="amohVoicePitchValue">1.00</span></label><input id="amohVoicePitch" type="range" min="0.7" max="1.3" step="0.05" value="1">
    <div class="amoh-setting-actions"><button id="amohVoiceTest" type="button">▶ Test voice</button><button id="amohVoiceSettingsClose" class="secondary" type="button">Save & close</button></div>`;
   card.insertBefore(box,document.getElementById('amohVoiceAvatarClose'));
   const rel=document.getElementById('amohVoiceRelationship'),gender=document.getElementById('amohVoiceGender'),rate=document.getElementById('amohVoiceRate'),pitch=document.getElementById('amohVoicePitch'),language=document.getElementById('amohChatLanguage'),styleChoice=document.getElementById('amohVoiceStyle');
-  rel.value=voicePrefs.relationship;gender.value=voicePrefs.gender;rate.value=String(voicePrefs.rate);pitch.value=String(voicePrefs.pitch);language.value=voicePrefs.language;styleChoice.value=voicePrefs.voiceStyle;
+  rel.value=voicePrefs.relationship;gender.value=voicePrefs.gender;if(Number(voicePrefs.rate)>0.95)voicePrefs.rate=0.92;rate.value=String(voicePrefs.rate);pitch.value=String(voicePrefs.pitch);language.value=voicePrefs.language;styleChoice.value=voicePrefs.voiceStyle;
   rel.addEventListener('change',()=>{voicePrefs.relationship=rel.value;savePrefs()});
   language.addEventListener('change',()=>{voicePrefs.language=language.value;const matching=getVoices().find(v=>languageBase(v.lang)===languageBase(language.value)&&(voicePrefs.gender==='all'||voiceGender(v)===voicePrefs.gender));if(matching)voicePrefs.voiceURI=matching.voiceURI;refreshVoiceOptions();savePrefs();if(rec)rec.lang=language.value});
   styleChoice.addEventListener('change',()=>{voicePrefs.voiceStyle=styleChoice.value;if(voicePrefs.voiceStyle==='santa'){voicePrefs.pitch=0.82;voicePrefs.rate=0.9;pitch.value='0.82';rate.value='0.9';document.getElementById('amohVoicePitchValue').textContent='0.82';document.getElementById('amohVoiceRateValue').textContent='0.90×'}savePrefs()});
@@ -114,7 +114,7 @@
  }
  function applyVoice(utterance){
   const voices=getVoices();const selected=voices.find(v=>v.voiceURI===voicePrefs.voiceURI);
-  if(selected)utterance.voice=selected;utterance.rate=Number(voicePrefs.rate)||1.04;
+  if(selected)utterance.voice=selected;utterance.rate=Math.min(Number(voicePrefs.rate)||0.92,0.95);
   // Some Android/browser voices do not identify their gender in the voice name. Keep the selected voice, but lower its pitch when Male is selected so the setting still has a noticeable effect.
   const requestedPitch=Number(voicePrefs.pitch)||1;utterance.pitch=voicePrefs.gender==='male'?Math.min(requestedPitch,0.78):requestedPitch;
   utterance.lang=selected&&languageBase(selected.lang)===languageBase(selectedLanguageCode())?selected.lang:selectedLanguageCode();
