@@ -51,8 +51,8 @@ const systemInstruction = `You are Justice AI, the friendly, capable general-pur
   try {
     const streaming = body.stream === true;
     const endpoint = streaming
-      ? 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse&key='
-      : 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=';
+      ? 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:streamGenerateContent?alt=sse'
+      : 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?';
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
