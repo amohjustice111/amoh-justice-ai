@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+<title id="title">AMOH JUSTICE AI — AJ</title>
+<defs>
+  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#fff0b5"/>
+    <stop offset=".48" stop-color="#e8c76b"/>
+    <stop offset="1" stop-color="#a97922"/>
+  </linearGradient>
+</defs>
+<rect width="512" height="512" rx="112" fill="#080808"/>
+<rect x="20" y="20" width="472" height="472" rx="96" fill="none" stroke="url(#gold)" stroke-width="5"/>
+<path d="M256 76 92 420h66l39-86h118l39 86h66L256 76Zm0 132 35 77h-70l35-77Z" fill="url(#gold)"/>
+<path d="M352 146h68v192c0 59-34 91-92 91-39 0-70-13-91-38l43-43c12 14 27 22 46 22 18 0 26-9 26-29V146Z" fill="url(#gold)"/>
+</svg>
