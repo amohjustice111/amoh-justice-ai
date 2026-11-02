@@ -22,7 +22,7 @@ body{background:#050907;color:#f0fdf4;background-image:radial-gradient(ellipse a
 #ideaBoard{display:grid;gap:10px}.idea-item{padding:14px;border:1px solid #34d39928;border-radius:13px;background:#07100a;overflow-wrap:anywhere}.idea-item small{color:#8ba495;font-size:10px}.idea-item p{white-space:pre-wrap;color:#dcece1;margin:8px 0;font-size:13px}
 @media(max-width:760px){.feature-grid{grid-template-columns:1fr}.v2-page{padding-top:25px}.v2-title{font-size:clamp(36px,10vw,56px)}}
 </style>
-<link rel="stylesheet" href="design-refresh.css"></head>
+<link rel="stylesheet" href="design-refresh.css"><link rel="manifest" href="/manifest.webmanifest"></head>
 <body>
 <header class="header"><a class="brand" href="index.html"><img class="logo" src="icon-512.png" alt=""><span><b>AMOH JUSTICE</b><small>COMMUNITY · SUPPORT · GROWTH</small></span></a><button id="menu" class="menu" aria-label="Toggle menu">☰</button><nav id="nav"><a href="index.html">Home</a><a href="dashboard.html">Dashboard</a><a href="account.html">Account</a><a href="academy.html">Learn</a></nav></header>
 <main class="v2-page">
@@ -34,6 +34,7 @@ body{background:#050907;color:#f0fdf4;background-image:radial-gradient(ellipse a
 <article class="feature-card"><div class="icon">▦</div><h3>Keep your work organized</h3><p>Review your gallery and account workspace. Cloud syncing depends on the existing account and database setup.</p><div class="action-row"><a class="v2-link" href="gallery.html">My gallery ↗</a><a class="v2-link" href="account.html">My account ↗</a></div></article>
 <article class="feature-card"><div class="icon">☏</div><h3>Contact support</h3><p>Send a question or report a problem directly through WhatsApp. Review your message before sending.</p><div class="action-row"><a class="v2-link" href="https://wa.me/233546389770?text=Hello%20AMOH%20JUSTICE%20AI%2C%20I%20need%20help%20with%20the%20website." target="_blank" rel="noopener noreferrer">WhatsApp support ↗</a></div></article>
 </div>
+<section class="v2-panel" style="margin:20px 0" aria-labelledby="installAppTitle"><p class="v2-kicker">Use it like an app</p><h2 id="installAppTitle" style="font:600 26px 'Space Grotesk',sans-serif;margin:8px 0">Add AMOH JUSTICE AI to your phone home screen</h2><p class="v2-note">Install the website to create a home-screen launcher icon and open it in an app-style window.</p><div class="action-row"><a class="v2-button primary" href="#" id="amohInstallApp">Install App</a></div></section>
 <section class="v2-panel" aria-labelledby="preferencesTitle"><p class="v2-kicker">Personal settings</p><h2 id="preferencesTitle" style="font:600 28px 'Space Grotesk',sans-serif;margin:8px 0">Your preferences</h2><p class="v2-note">These preferences are saved in this browser on this device. They do not change your account profile or sync to other devices.</p>
 <div class="v2-form-grid">
 <div class="v2-field"><label for="displayName">Preferred display name (this device)</label><input id="displayName" maxlength="40" placeholder="How should the page greet you?"></div>
@@ -75,4 +76,4 @@ loadPrefs();renderNotes();
 })();
 </script>
 <style>.user-reduce-motion *, .user-reduce-motion *::before,.user-reduce-motion *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}</style>
-</body></html>
+<script src="/pwa-install.js" defer></script></body></html>
