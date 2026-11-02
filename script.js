@@ -14,13 +14,13 @@ const chatInput=document.getElementById('chatInput');
 const sendButton=chatForm.querySelector('button[type="submit"]');
 window.amohJusticeChatHistory=window.amohJusticeChatHistory||[];const chatHistory=window.amohJusticeChatHistory;
 function addBubble(text,who){const el=document.createElement('div');el.className='bubble '+who;el.textContent=text;chatMessages.appendChild(el);chatMessages.scrollTop=chatMessages.scrollHeight;return el;}
-function setChatBusy(busy){sendButton.disabled=busy;sendButton.textContent=busy?'Thinking…':'Send ↗';chatInput.disabled=false;chatInput.setAttribute('aria-busy',String(busy));}
+function setChatBusy(busy){sendButton.disabled=busy;sendButton.textContent='Send ↗';chatInput.disabled=false;chatInput.setAttribute('aria-busy',String(busy));}
 let activeRequestController=null,chatRequestId=0;
 window.amohInterruptJusticeAnswer=()=>{chatRequestId++;if(activeRequestController){activeRequestController.abort();activeRequestController=null;}setChatBusy(false);};
 async function askJustice(message){
   addBubble(message,'user');
   chatHistory.push({role:'user',text:message});
-  const pending=addBubble('Justice AI is thinking…','bot');
+  const pending=addBubble('…','bot');
   const requestId=++chatRequestId,controller=new AbortController();activeRequestController=controller;setChatBusy(true);
   try{
     const voiceStream=Boolean(window.amohVoiceConversationActive&&window.amohQueueVoiceText);
