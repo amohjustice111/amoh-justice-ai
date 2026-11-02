@@ -415,8 +415,8 @@ body:before{z-index:-1!important;background:linear-gradient(180deg,rgba(2,8,4,.6
     <img class="welcome-mark" src="/logo.svg" alt="AMOH JUSTICE">
     <p class="welcome-kicker">YOUR NEXT CHAPTER STARTS HERE</p>
     <h1 id="welcomeTitle">Welcome to <em>AMOH JUSTICE AI</em></h1>
-    <p id="welcomeDescription" class="welcome-description">Step into a world where imagination meets technology. Create bold visuals, explore AI tools, build digital skills, and turn your next big idea into something real.</p>
-    <div class="welcome-actions"><button class="welcome-enter" id="welcomeEnter" type="button">Explore the website <span aria-hidden="true">→</span></button><button class="welcome-skip" id="welcomeSkip" type="button">Skip welcome</button></div>
+    <p id="welcomeDescription" class="welcome-description">New here? Take a quick beginner tour to discover the dashboard, AI Creator Studio, projects, learning tools, and account area.</p>
+    <div class="welcome-actions"><a class="welcome-enter" href="beginners-guide.html">Watch the beginner tutorial <span aria-hidden="true">→</span></a><button class="welcome-skip" id="welcomeSkip" type="button">Skip for now</button></div>
     <p class="welcome-footer"><span>AMOH JUSTICE AI</span> · DREAM · CREATE · ACHIEVE</p>
   </div>
 </div>
@@ -485,8 +485,7 @@ body:before{z-index:-1!important;background:linear-gradient(180deg,rgba(2,8,4,.6
  window.addEventListener('pageshow',placeV);
 })();
 </script><script src="justice-ai-floating.js?v=4"></script><script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}</script><script id="amoh-welcome-screen-script">
-(()=>{const screen=document.getElementById('welcomeScreen');const enter=document.getElementById('welcomeEnter');const skip=document.getElementById('welcomeSkip');if(!screen||!enter||!skip)return;const close=()=>{screen.classList.add('is-hidden');screen.setAttribute('aria-hidden','true');document.body.style.overflow='';try{sessionStorage.setItem('amohWelcomeSeen','1')}catch(e){}setTimeout(()=>screen.remove(),500)};let seen=false;try{seen=sessionStorage.getItem('amohWelcomeSeen')==='1'}catch(e){}if(seen){screen.remove()}else{document.body.style.overflow='hidden';enter.focus()}enter.addEventListener('click',close);skip.addEventListener('click',close);document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('welcomeScreen'))close()});})();
-
+(()=>{const screen=document.getElementById('welcomeScreen');const skip=document.getElementById('welcomeSkip');if(!screen||!skip)return;const key='amohBeginnersGuideSeen';let seen=false;try{seen=localStorage.getItem(key)==='1'}catch(e){}const close=()=>{screen.classList.add('is-hidden');screen.setAttribute('aria-hidden','true');document.body.style.overflow='';try{localStorage.setItem(key,'1')}catch(e){}setTimeout(()=>screen.remove(),500)};if(seen){screen.remove()}else{document.body.style.overflow='hidden';skip.focus()}skip.addEventListener('click',close);document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('welcomeScreen'))close()});})();
 </script><script id="amoh-premium-usability">
 (()=>{const bar=document.querySelector('#amohReadingProgress span');let queued=false;const update=()=>{if(!bar)return;const root=document.documentElement;const max=root.scrollHeight-window.innerHeight;bar.style.width=(max>0?Math.min(100,Math.max(0,window.scrollY/max*100)):0)+'%';queued=false};window.addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(update)}},{passive:true});window.addEventListener('resize',update,{passive:true});update();
 const sections=[...document.querySelectorAll('main .section')];const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
