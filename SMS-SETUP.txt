@@ -1,0 +1,48 @@
+AMOH JUSTICE AI — SMS SETUP
+==============================
+
+WHAT THIS ADDS
+- One-way business SMS to customers' normal SMS inboxes.
+- Automatic welcome SMS after a customer signs in for the first time, only if they supplied a phone number and explicitly opted in.
+- Admin-only customer list and announcement sender at /sms-admin.html.
+- Customer selection is restricted to accounts with SMS consent and a valid phone number.
+- SMS delivery records are stored in a private Supabase audit table.
+
+IMPORTANT
+The code is deployed in a disabled-by-default state. It will not send messages until the owner configures an SMS provider and the required server-side environment variables. No provider account is created and no credits are purchased by this code.
+
+1) SUPABASE SQL
+Run the contents of sms-schema.sql in the Supabase SQL Editor.
+The audit table has RLS enabled and no client read/write policies. Only the server-side service role can access it.
+
+2) VERCEL ENVIRONMENT VARIABLES
+Set these in the Vercel project for Production (and Preview if needed):
+- SUPABASE_URL: existing Supabase project URL
+- SUPABASE_ANON_KEY: existing public anon key
+- SUPABASE_SERVICE_ROLE_KEY: Supabase service_role key (SECRET; server-side only)
+- SMS_ADMIN_EMAILS: comma-separated exact email address(es) allowed to use the SMS dashboard
+- AT_USERNAME: Africa's Talking account username
+- AT_API_KEY: Africa's Talking API key (SECRET)
+- AT_SENDER_ID: sender ID approved for use in Ghana, for example AMOHJUSTICE only after approval
+
+Do not put service-role keys or SMS API keys in HTML, JavaScript, GitHub, or public-config responses. Do not use a Supabase anon key as a service-role key.
+
+3) PROVIDER AND GHANA SENDER-ID APPROVAL
+Create/verify the Africa's Talking account separately, confirm current Ghana SMS rates and route availability, and complete any required sender-ID registration with the provider/mobile networks. The sender ID is not guaranteed to be approved just because it is entered in Vercel. A registered alphanumeric sender ID is normally one-way (customers cannot reply to it). Provider/network rules may differ.
+
+4) CUSTOMER PHONE AND CONSENT
+New account sign-up includes an optional phone field and an unchecked SMS-consent box. Only opted-in customers with valid phone numbers appear in the announcement recipient list. Customers who do not consent are excluded.
+Existing accounts need to sign in again only if their metadata has already been updated; the current sign-up form collects phone/consent for new accounts. A future account profile screen can let existing customers add or change these details.
+
+5) DEPLOY AND TEST
+After setting the environment variables and running the SQL:
+- Sign in using an email listed in SMS_ADMIN_EMAILS.
+- Open /sms-admin.html.
+- Check the provider configuration indicator and eligible customer count.
+- First test with one opted-in number that you control. Verify sender-ID delivery before sending a customer announcement.
+- The admin page asks for confirmation before sending; each batch is limited to 250 recipients.
+
+6) AUTOMATIC WELCOME MESSAGE
+The website calls the server after an authenticated user session becomes available. The server checks the verified Supabase identity, phone metadata and sms_consent. A unique event key prevents repeat welcome messages for the same account. Email-confirmation sign-ups receive the welcome SMS after their first successful sign-in.
+
+No inbound SMS/replies are processed. This is an outbound notification service only.
