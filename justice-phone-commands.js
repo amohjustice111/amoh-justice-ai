@@ -17,11 +17,13 @@
   const panel=document.createElement('section');
   panel.id='justicePhoneContacts';
   panel.setAttribute('aria-label','Justice AI contacts and calling');
-  panel.style.cssText='margin:8px 0 12px;padding:12px;border:1px solid #3b82f6;border-radius:14px;background:#07172b;color:#eaf2ff;display:grid;gap:9px';
+  panel.style.cssText='width:min(1180px,88%);margin:0 auto 24px;padding:14px;border:1px solid #3b82f6;border-radius:16px;background:#07172b;color:#eaf2ff;display:grid;gap:9px;position:relative;z-index:2';
   panel.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap"><strong>📞 Call someone</strong><span id="justiceContactCount" style="font-size:12px;color:#bfdbfe">No contacts saved</span></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" id="justicePickContacts" style="border:1px solid #60a5fa;border-radius:999px;background:#15345b;color:white;padding:9px 12px;font-weight:700">👤 Select from phone contacts</button><button type="button" id="justiceAddContact" style="border:1px solid #60a5fa;border-radius:999px;background:#1d4ed8;color:white;padding:9px 12px;font-weight:700">＋ Add contact</button></div><div id="justiceManualContact" hidden style="display:grid;gap:7px"><input id="justiceContactName" placeholder="Contact name (e.g. Mum)" autocomplete="name" style="padding:11px;border-radius:9px;border:1px solid #64748b;background:#0b1220;color:white"><input id="justiceContactPhone" placeholder="Phone number (e.g. 0241234567)" inputmode="tel" autocomplete="tel" style="padding:11px;border-radius:9px;border:1px solid #64748b;background:#0b1220;color:white"><button type="button" id="justiceSaveContact" style="padding:10px;border:0;border-radius:9px;background:#16a34a;color:white;font-weight:700">Save contact</button></div><small style="color:#bfdbfe">Save a contact once, then say or type “Call Mum”. You can also say “Call” followed by a phone number.</small>';
-  const target=chat();
-  const top=target.querySelector('.chat-top');
-  if(top)top.insertAdjacentElement('afterend',panel);else form.insertAdjacentElement('beforebegin',panel);
+  // Keep contact management on the homepage, not inside the chat composer.
+  const home=document.querySelector('#home');
+  const homeHero=home||document.querySelector('.hero');
+  if(homeHero)homeHero.insertAdjacentElement('afterend',panel);else document.body.insertBefore(panel,document.body.firstChild);
+  panel.classList.add('justice-home-contacts');
   const count=document.getElementById('justiceContactCount');
   const update=()=>{const n=read().length;count.textContent=n+' saved contact'+(n===1?'':'s');};
   const manual=document.getElementById('justiceManualContact');
@@ -54,13 +56,10 @@
   function match(q){const k=normalise(q),all=read();let found=all.find(c=>(c.names||[]).some(n=>normalise(n)===k));if(found)return found;const hits=all.filter(c=>(c.names||[]).some(n=>{const x=normalise(n);return x&&(x.startsWith(k+' ')||k.startsWith(x+' '));}));return hits.length===1?hits[0]:null;}
   function dial(number,name=''){
     const phone=clean(number);if(!valid(phone)){setStatus('That phone number is not valid.');return true;}
-    const old=document.getElementById('justiceCallConfirm');if(old)old.remove();
-    const box=document.createElement('div');box.id='justiceCallConfirm';box.style.cssText='margin:8px 0;padding:13px;border:1px solid #60a5fa;border-radius:13px;background:#10284a;color:white;display:grid;gap:8px';
-    const title=document.createElement('b');title.textContent='Call '+(name?name+' · ':'')+phone+'?';
-    const note=document.createElement('span');note.textContent='Tap below to open your phone dialler, then tap Call to confirm.';
-    const link=document.createElement('a');link.href='tel:'+phone;link.textContent='📞 Open phone dialler';link.style.cssText='display:inline-block;text-align:center;padding:12px;border-radius:999px;background:#2563eb;color:white;text-decoration:none;font-weight:800';
-    const cancel=document.createElement('button');cancel.type='button';cancel.textContent='Cancel';cancel.style.cssText='padding:9px;border-radius:9px;background:transparent;color:white;border:1px solid #94a3b8';cancel.onclick=()=>box.remove();
-    box.append(title,note,link,cancel);panel.insertAdjacentElement('afterend',box);setStatus('Call ready. Tap Open phone dialler to continue.');return true;
+    setStatus('Opening the phone dialler for '+(name||phone)+'. Your phone may still ask you to confirm the call.');
+    // Launch the Android/iOS dialler immediately. The OS controls final call approval.
+    window.location.href='tel:'+phone;
+    return true;
   }
   function handle(raw){
     const text=String(raw||'').trim();
@@ -75,5 +74,5 @@
   update();
   form.addEventListener('submit',e=>{if(handle(input.value)){e.preventDefault();e.stopImmediatePropagation();input.value='';}},true);
   window.amohJusticePhoneCommand=handle;
-  window.addEventListener('pageshow',()=>{if(!document.getElementById('justicePhoneContacts')){const t=chat(),h=t.querySelector('.chat-top');if(h)h.insertAdjacentElement('afterend',panel);else form.insertAdjacentElement('beforebegin',panel);}});
+  window.addEventListener('pageshow',()=>{if(!document.getElementById('justicePhoneContacts')){const h=document.querySelector('#home')||document.querySelector('.hero');if(h)h.insertAdjacentElement('afterend',panel);else document.body.insertBefore(panel,document.body.firstChild);}});
 })();
