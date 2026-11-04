@@ -4,9 +4,11 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
@@ -17,20 +19,24 @@ import android.view.Gravity;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+import java.util.Locale;
 
 public class MainActivity extends Activity {
     private static final int MIC_REQUEST = 41;
+    private static final int CONTACTS_REQUEST = 43;
     private WebView webView;
     private TextView status;
+    private String pendingContactName = "";
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         boolean setupRequested = getIntent() != null && getIntent().getBooleanExtra("showSetup", false);
         boolean setupDone = getSharedPreferences("justice_ai", MODE_PRIVATE).getBoolean("setup_done", false);
-        if (setupRequested || !setupDone) {
-            showSetup();
-        } else {
-            showJusticeAI(getIntent() == null ? null : getIntent().getStringExtra("justicePrompt"));
+        if (setupRequested || !setupDone) showSetup();
+        else {
+            showJusticeAI(null);
+            handleVoiceCommand(getIntent() == null ? null : getIntent().getStringExtra("justicePrompt"));
         }
     }
 
@@ -53,9 +59,8 @@ public class MainActivity extends Activity {
     private String buildUrl(String prompt) {
         String url = "https://amoh-justice-ai.vercel.app/";
         if (prompt != null && !prompt.trim().isEmpty()) {
-            try {
-                url += "?justicePrompt=" + java.net.URLEncoder.encode(prompt, "UTF-8") + "&justiceVoice=1";
-            } catch (Exception ignored) {}
+            try { url += "?justicePrompt=" + java.net.URLEncoder.encode(prompt, "UTF-8") + "&justiceVoice=1"; }
+            catch (Exception ignored) {}
         }
         return url;
     }
@@ -63,13 +68,10 @@ public class MainActivity extends Activity {
     @Override protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
-        if (intent.getBooleanExtra("showSetup", false)) {
-            showSetup();
-        } else if (webView != null) {
-            String prompt = intent.getStringExtra("justicePrompt");
-            webView.loadUrl(buildUrl(prompt));
-        } else {
-            showJusticeAI(intent.getStringExtra("justicePrompt"));
+        if (intent.getBooleanExtra("showSetup", false)) showSetup();
+        else {
+            if (webView == null) showJusticeAI(null);
+            handleVoiceCommand(intent.getStringExtra("justicePrompt"));
         }
     }
 
@@ -78,18 +80,18 @@ public class MainActivity extends Activity {
         root.setOrientation(LinearLayout.VERTICAL);
         root.setGravity(Gravity.CENTER);
         root.setPadding(28, 32, 28, 32);
-        root.setBackgroundColor(0xFF050807);
+        root.setBackgroundColor(0xFF061426);
 
         TextView title = new TextView(this);
         title.setText("JUSTICE AI");
-        title.setTextColor(0xFF36F0A0);
-        title.setTextSize(28);
+        title.setTextColor(0xFF55B8FF);
+        title.setTextSize(30);
         title.setGravity(Gravity.CENTER);
         root.addView(title, new LinearLayout.LayoutParams(-1, -2));
 
         TextView description = new TextView(this);
-        description.setText("Enable hands-free mode once. Then say “Justice AI” or “ChatGPT” to wake your assistant. Android will show a microphone notification while listening.");
-        description.setTextColor(0xFFE4F2EA);
+        description.setText("Your blue, hands-free voice assistant. Enable the microphone, then say “Justice AI” followed by a command. Try “Justice AI, call my mother.” A visible notification appears while listening.");
+        description.setTextColor(0xFFEAF4FF);
         description.setTextSize(16);
         description.setGravity(Gravity.CENTER);
         LinearLayout.LayoutParams dp = new LinearLayout.LayoutParams(-1, -2);
@@ -97,13 +99,13 @@ public class MainActivity extends Activity {
         root.addView(description, dp);
 
         status = new TextView(this);
-        status.setTextColor(0xFF9DE8C0);
+        status.setTextColor(0xFF9CCFFF);
         status.setText("Microphone and floating-button permissions are required.");
         status.setGravity(Gravity.CENTER);
         root.addView(status, new LinearLayout.LayoutParams(-1, -2));
 
         Button enable = new Button(this);
-        enable.setText("Enable hands-free Justice AI");
+        enable.setText("Enable voice commands");
         root.addView(enable, new LinearLayout.LayoutParams(-1, -2));
         enable.setOnClickListener(v -> enableAssistant());
 
@@ -117,9 +119,8 @@ public class MainActivity extends Activity {
         root.addView(stop, new LinearLayout.LayoutParams(-1, -2));
         stop.setOnClickListener(v -> {
             stopService(new Intent(this, WakeWordService.class));
-            status.setText("Hands-free listening is stopped. Tap Enable to start again.");
+            status.setText("Voice listening is stopped. Tap Enable to start again.");
         });
-
         setContentView(root);
     }
 
@@ -129,7 +130,7 @@ public class MainActivity extends Activity {
             return;
         }
         if (!Settings.canDrawOverlays(this)) {
-            status.setText("Allow “Display over other apps” on the next screen, then return here.");
+            status.setText("Allow “Display over other apps”, then return to Justice AI.");
             startActivity(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName())));
             return;
         }
@@ -139,23 +140,86 @@ public class MainActivity extends Activity {
         Intent service = new Intent(this, WakeWordService.class);
         if (Build.VERSION.SDK_INT >= 26) startForegroundService(service); else startService(service);
         getSharedPreferences("justice_ai", MODE_PRIVATE).edit().putBoolean("setup_done", true).apply();
-        status.setText("Listening enabled. Keep the Justice AI notification visible.");
+        Toast.makeText(this, "Justice AI voice commands enabled", Toast.LENGTH_SHORT).show();
         showJusticeAI(null);
+    }
+
+    private void handleVoiceCommand(String spoken) {
+        if (spoken == null || spoken.trim().isEmpty()) return;
+        String command = spoken.trim();
+        String lower = command.toLowerCase(Locale.ROOT);
+        String contact = null;
+        if (lower.matches("^(please\\s+)?(call|phone|ring)\\s+.+")) {
+            contact = command.replaceFirst("(?i)^(please\\s+)?(call|phone|ring)\\s+", "").trim();
+            if (contact.toLowerCase(Locale.ROOT).startsWith("my ")) contact = contact.substring(3).trim();
+        }
+        if (contact != null && !contact.isEmpty()) {
+            callContactByName(contact);
+        } else if (webView != null) {
+            webView.loadUrl(buildUrl(command));
+        }
+    }
+
+    private void callContactByName(String name) {
+        pendingContactName = name;
+        if (checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, CONTACTS_REQUEST);
+            return;
+        }
+        String number = findContactNumber(name);
+        if (number == null) {
+            Toast.makeText(this, "I couldn't find " + name + " in your contacts.", Toast.LENGTH_LONG).show();
+            return;
+        }
+        Toast.makeText(this, "Opening your dialer for " + name + ". Review the number and tap Call.", Toast.LENGTH_LONG).show();
+        Intent dial = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", number, null));
+        startActivity(dial);
+    }
+
+    private String findContactNumber(String requestedName) {
+        String normalized = requestedName.toLowerCase(Locale.ROOT).trim();
+        String[] terms;
+        if (normalized.equals("mother") || normalized.equals("mum") || normalized.equals("mom") || normalized.equals("mummy") || normalized.equals("mommy")) {
+            terms = new String[]{"mother", "mum", "mom", "mummy", "mommy"};
+        } else if (normalized.equals("father") || normalized.equals("dad") || normalized.equals("daddy")) {
+            terms = new String[]{"father", "dad", "daddy"};
+        } else {
+            terms = new String[]{requestedName};
+        }
+        for (String term : terms) {
+            Uri uri = Uri.withAppendedPath(ContactsContract.CommonDataKinds.Phone.CONTENT_FILTER_URI, Uri.encode(term));
+            Cursor cursor = null;
+            try {
+                cursor = getContentResolver().query(uri,
+                    new String[]{ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.NUMBER},
+                    null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
+                if (cursor != null && cursor.moveToFirst()) {
+                    String number = cursor.getString(1);
+                    if (number != null && !number.trim().isEmpty()) return number;
+                }
+            } catch (Exception ignored) {
+            } finally {
+                if (cursor != null) cursor.close();
+            }
+        }
+        return null;
     }
 
     @Override public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == MIC_REQUEST && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) enableAssistant();
+        if (requestCode == CONTACTS_REQUEST && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && !pendingContactName.isEmpty()) {
+            String name = pendingContactName;
+            pendingContactName = "";
+            callContactByName(name);
+        } else if (requestCode == CONTACTS_REQUEST) {
+            Toast.makeText(this, "Contacts permission was not granted. I can't look up that number.", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override public void onBackPressed() {
         if (webView != null && webView.canGoBack()) webView.goBack();
-        else if (webView != null) {
-            // Keep the native activity available in Recents; the separate foreground service
-            // continues only while Android permits it and the user has not force-stopped it.
-            moveTaskToBack(true);
-        } else {
-            super.onBackPressed();
-        }
+        else if (webView != null) moveTaskToBack(true);
+        else super.onBackPressed();
     }
 }
