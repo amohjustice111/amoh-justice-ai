@@ -1,3 +1,30 @@
+// Resolve the signed-in user's chosen username from the existing Supabase session.
+let justiceChatUsernamePromise=null;
+window.amohJusticeGetChatUsername=()=>{
+  if(window.amohJusticeChatUsername)return Promise.resolve(window.amohJusticeChatUsername);
+  if(justiceChatUsernamePromise)return justiceChatUsernamePromise;
+  justiceChatUsernamePromise=(async()=>{
+    try{
+      const configResponse=await fetch('/api/public-config',{headers:{Accept:'application/json'}});
+      if(!configResponse.ok)return '';
+      const config=await configResponse.json();
+      if(!config.supabaseUrl||!config.supabaseAnonKey)return '';
+      if(!window.supabase?.createClient){
+        const loaded=await new Promise(resolve=>{const tag=document.createElement('script');tag.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';tag.onload=()=>resolve(Boolean(window.supabase?.createClient));tag.onerror=()=>resolve(false);document.head.appendChild(tag)});
+        if(!loaded)return '';
+      }
+      const client=window.supabase.createClient(config.supabaseUrl,config.supabaseAnonKey);
+      const {data}=await client.auth.getSession();
+      const user=data?.session?.user;
+      const metadata=user?.user_metadata||{};
+      const username=String(metadata.username||metadata.display_name||metadata.full_name||user?.email?.split('@')[0]||'').trim().slice(0,32);
+      if(username)window.amohJusticeChatUsername=username;
+      return username;
+    }catch(_){return ''}
+  })();
+  return justiceChatUsernamePromise;
+};
+
 const nav=document.getElementById('nav');
 nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>nav.classList.remove('open')));
 document.getElementById('year').textContent=new Date().getFullYear();
@@ -24,7 +51,8 @@ async function askJustice(message){
   const requestId=++chatRequestId,controller=new AbortController();activeRequestController=controller;setChatBusy(true);
   try{
     const voiceStream=Boolean(window.amohVoiceConversationActive&&window.amohQueueVoiceText);
-    const response=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},signal:controller.signal,body:JSON.stringify({message,history:chatHistory.slice(-10,-1),stream:true,relationship:window.amohJusticeVoicePreferences?.().relationship||'friend',language:window.amohJusticeVoicePreferences?.().language||'en-US',memory:window.amohJusticeMemoryContext?.()||''})});
+    const username=await window.amohJusticeGetChatUsername?.()||'';
+    const response=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},signal:controller.signal,body:JSON.stringify({message,username,history:chatHistory.slice(-10,-1),stream:true,relationship:window.amohJusticeVoicePreferences?.().relationship||'friend',language:window.amohJusticeVoicePreferences?.().language||'en-US',memory:window.amohJusticeMemoryContext?.()||''})});
     if(!response.ok){const data=await response.json().catch(()=>({}));throw new Error(data.error||'Justice AI could not answer. Please try again.');}
     let answer='';
     if(response.body&&response.body.getReader){
