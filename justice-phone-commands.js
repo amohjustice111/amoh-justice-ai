@@ -13,6 +13,17 @@
   const clean=s=>String(s||'').replace(/[^+\d]/g,'');
   const valid=s=>/^\+?\d{7,15}$/.test(s);
   const setStatus=s=>{if(status)status.textContent=s;};
+  // Voice recognition is not a trusted click on Android. Keep a real, visible tel: link on screen.
+  const callAction=document.createElement('div');
+  callAction.id='justiceVoiceCallAction';
+  callAction.style.cssText='display:none;position:relative;z-index:2147483003;margin:10px 0;padding:12px;border:1px solid #4ade80;border-radius:14px;background:#052e16;color:#ecfdf5;font:600 14px/1.45 system-ui,sans-serif';
+  callAction.innerHTML='<div id="justiceVoiceCallLabel" style="margin-bottom:9px">Ready to call</div><a id="justiceVoiceCallLink" href="#" style="display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 20px;border-radius:999px;background:#22c55e;color:#052e16;font-weight:800;text-decoration:none">📞 Call now</a><button id="justiceVoiceCallDismiss" type="button" style="margin-left:8px;min-height:40px;padding:0 12px;border:1px solid #86efac;border-radius:999px;background:transparent;color:#ecfdf5">Cancel</button>';
+  const composer=form.closest('.chat-shell')||form.parentElement;
+  const statusRow=status?.parentElement;
+  if(statusRow)statusRow.insertAdjacentElement('afterend',callAction);else composer.insertBefore(callAction,form);
+  const callLink=callAction.querySelector('#justiceVoiceCallLink');
+  const hideCallAction=()=>{callAction.style.display='none';callLink.removeAttribute('href');};
+  callAction.querySelector('#justiceVoiceCallDismiss').addEventListener('click',hideCallAction);
   const chat=()=>document.querySelector('#justiceAiOverlay .chat-shell')||document.querySelector('.chat-shell')||form.parentElement;
   const panel=document.createElement('section');
   panel.id='justicePhoneContacts';
@@ -53,25 +64,28 @@
       save(all);update();setStatus('Contacts selected and saved. You can now say “Call [name]”.');
     }catch(e){if(e.name!=='AbortError')setStatus('Could not select contacts. You can use Add contact instead.');}
   });
-  function match(q){const k=normalise(q).replace(/^(?:my|the)\\s+/,'').replace(/\\s+(?:please|now)$/,'');const all=read();let found=all.find(c=>(c.names||[]).some(n=>{const x=normalise(n);return x===k||x.replace(/^(?:my|the)\\s+/,'')===k;}));if(found)return found;const hits=all.filter(c=>(c.names||[]).some(n=>{const x=normalise(n).replace(/^(?:my|the)\\s+/,'');return x&&(x.startsWith(k+' ')||k.startsWith(x+' '));}));return hits.length===1?hits[0]:null;}
+  function match(q){const k=normalise(q).replace(/^(?:my|the)\s+/,'').replace(/\s+(?:please|now|for me|back)$/,'').trim();const all=read();let found=all.find(c=>(c.names||[]).some(n=>{const x=normalise(n);return x===k||x.replace(/^(?:my|the)\s+/,'')===k;}));if(found)return found;const hits=all.filter(c=>(c.names||[]).some(n=>{const x=normalise(n).replace(/^(?:my|the)\s+/,'');return x&&(x.startsWith(k+' ')||k.startsWith(x+' '));}));return hits.length===1?hits[0]:null;}
   function dial(number,name=''){
     const phone=clean(number);if(!valid(phone)){setStatus('That phone number is not valid.');return true;}
-    setStatus('Opening the phone dialler for '+(name||phone)+'. Your phone may still ask you to confirm the call.');
-    // Launch the Android/iOS dialler immediately. The OS controls final call approval.
-    const link=document.createElement('a');link.href='tel:'+phone;link.setAttribute('aria-hidden','true');link.style.cssText='position:fixed;left:-9999px';document.body.appendChild(link);
-    try{link.click();}catch(e){window.location.assign('tel:'+phone);}finally{link.remove();}
+    const label='Ready to call '+(name||phone)+'. Tap Call now to open your phone dialler.';
+    setStatus(label);
+    callAction.querySelector('#justiceVoiceCallLabel').textContent=label;
+    callLink.href='tel:'+phone;
+    callLink.setAttribute('aria-label','Call '+(name||phone));
+    callAction.style.display='block';
+    callAction.scrollIntoView?.({behavior:'smooth',block:'nearest'});
     return true;
   }
   function handle(raw){
     const text=String(raw||'').trim();
     const cleaned=text.replace(/^(?:(?:(?:hey|hello)\s+)?justice[\s,.-]*ai[\s,.:;-]*)+/i,'').trim();
-    const m=cleaned.match(/^(?:(?:please|kindly)\s+)?(?:(?:can|could)\s+you\s+)?(?:(?:i want you to|i need you to)\s+)?(?:please\s+)?(?:call|phone|dial|ring)\s+(.+?)\s*[?.!]*$/i);
+    const m=cleaned.match(/^(?:(?:please|kindly)\s+)?(?:(?:can|could|would)\s+you\s+)?(?:(?:i want(?: you)?|i need(?: you)?)\s+to\s+)?(?:(?:make|place)\s+a\s+)?(?:please\s+)?(?:call|phone|dial|ring)\s+(.+?)\s*[?.!]*$/i);
     if(!m)return false;
-    const who=m[1].trim().replace(/^(?:the number|number)\s+/i,'').replace(/\s+(?:please|now|for me)$/i,'').trim();
+    const who=m[1].trim().replace(/^(?:the number|number)\s+/i,'').replace(/^(?:my|the)\s+/i,'').replace(/\s+(?:please|now|for me|back)$/i,'').trim();
     const number=clean(who);if(valid(number))return dial(number);
     const c=match(who);
     if(c){const nums=[...new Set((c.phones||[]).filter(valid))];if(nums.length===1)return dial(nums[0],c.names?.[0]||who);if(nums.length>1){setStatus('More than one number is saved for '+(c.names?.[0]||who)+'. Please choose one by saving a single number or say the full number.');return true;}}
-    setStatus('I cannot find '+who+' yet. Tap “Select from phone contacts” or “Add contact” above, save the person, then say “Call '+who+'” again.');return true;
+    hideCallAction();setStatus('I cannot find '+who+' in your saved contacts. Add that person and their number first, then say “Call '+who+'” again.');return true;
   }
   update();
   form.addEventListener('submit',e=>{if(handle(input.value)){e.preventDefault();e.stopImmediatePropagation();input.value='';}},true);
