@@ -1,7 +1,7 @@
 /* AMOH JUSTICE AI PWA service worker.
    The installed app is the same secure website; keep its assistant UI assets
    available while ensuring pages and all API/account requests stay fresh. */
-const CACHE = 'amoh-justice-ai-v48';
+const CACHE = 'amoh-justice-ai-v49';
 const APP_SHELL = [
   '/', '/index.html', '/style.css', '/v2.css', '/script.js',
   '/manifest.webmanifest', '/office-photo.png', '/logo.svg',
