@@ -1,0 +1,11 @@
+#justiceSuite .upgrade-answer{margin-top:12px;white-space:pre-wrap;line-height:1.65;color:#e6f6eb;font-size:14px}
+#justiceSuite .upgrade-sources{display:grid;gap:7px;margin-top:14px;padding-top:12px;border-top:1px solid #245b38}
+#justiceSuite .upgrade-sources a{color:#86efac;overflow-wrap:anywhere;font-size:13px}
+#justiceSuite .upgrade-task{display:flex;justify-content:space-between;align-items:center;gap:10px}
+#justiceSuite .upgrade-task label{display:flex!important;align-items:center;gap:9px;flex:1}
+#justiceSuite .upgrade-task label input{width:auto!important;margin:0!important}
+#justiceSuite .upgrade-task.is-done span{text-decoration:line-through;opacity:.65}
+#justiceSuite #justiceSuiteWork input,#justiceSuite #justiceSuiteWork textarea,#justiceSuite #justiceSuiteWork select{font:inherit}
+#justiceSuite #justiceSuiteWork label{display:block;margin:10px 0 5px;color:#c8e8d0;font-size:13px}
+#justiceSuite #justiceSuiteWork button:disabled{opacity:.55;cursor:wait}
+@media(max-width:560px){#justiceSuite .upgrade-task{align-items:flex-start}#justiceSuite .upgrade-task button{padding:8px;font-size:12px}}
