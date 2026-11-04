@@ -1,107 +1,79 @@
-/* Phone commands for the installed AMOH JUSTICE AI PWA.
-   Contacts are imported only after the user taps the picker button.
-   Calls always open the phone dialler; the user confirms the call there. */
+/* Justice AI phone commands for the installed PWA.
+   Contacts are added only with the user's action. Calls open the phone dialler
+   for final confirmation; a website cannot silently place cellular calls. */
 (()=> {
   const STORE='amohJusticeSelectedContactsV1';
   const form=document.getElementById('chatForm');
   const input=document.getElementById('chatInput');
   const status=document.getElementById('voiceStatus');
   if(!form||!input)return;
-
   const normalise=s=>String(s||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9+]/g,' ').replace(/\s+/g,' ').trim();
-  const readContacts=()=>{try{const x=JSON.parse(localStorage.getItem(STORE)||'[]');return Array.isArray(x)?x:[]}catch(e){return []}};
-  const saveContacts=x=>{try{localStorage.setItem(STORE,JSON.stringify(x))}catch(e){setStatus('Could not save selected contacts on this device.')}}};
+  const read=()=>{try{const v=JSON.parse(localStorage.getItem(STORE)||'[]');return Array.isArray(v)?v:[]}catch{return []}};
+  const save=v=>{try{localStorage.setItem(STORE,JSON.stringify(v))}catch{}};
+  const clean=s=>String(s||'').replace(/[^+\d]/g,'');
+  const valid=s=>/^\+?\d{7,15}$/.test(s);
   const setStatus=s=>{if(status)status.textContent=s;};
-  const cleanNumber=s=>String(s||'').replace(/[^+\d]/g,'');
-  const validNumber=s=>/^\+?\d{7,15}$/.test(s);
-  function openDialler(number,name=''){
-    const phone=cleanNumber(number);
-    if(!validNumber(phone)){setStatus('That phone number does not look valid. Please check it and try again.');return true;}
-    const label=name?name+' · '+phone:phone;
-    const wrap=document.getElementById('justiceCallConfirm');
-    if(wrap)wrap.remove();
-    const panel=document.createElement('div');
-    panel.id='justiceCallConfirm';
-    panel.setAttribute('role','status');
-    panel.style.cssText='margin:10px 0;padding:14px;border:1px solid #60a5fa;border-radius:16px;background:#0b1b34;color:#eff6ff;display:grid;gap:9px';
-    const title=document.createElement('strong');title.textContent='Ready to call '+label+'?';
-    const note=document.createElement('span');note.textContent='Your phone dialler will open. Review the number and tap Call to place the call.';
-    const actions=document.createElement('div');actions.style.cssText='display:flex;gap:8px;flex-wrap:wrap';
-    const link=document.createElement('a');link.href='tel:'+phone;link.textContent='Open phone dialler';link.style.cssText='display:inline-block;padding:10px 14px;border-radius:999px;background:#2563eb;color:white;text-decoration:none;font-weight:700';
-    const cancel=document.createElement('button');cancel.type='button';cancel.textContent='Cancel';cancel.style.cssText='padding:10px 14px;border-radius:999px;border:1px solid #93c5fd;background:transparent;color:#dbeafe';
-    cancel.addEventListener('click',()=>panel.remove());
-    actions.append(link,cancel);panel.append(title,note,actions);
-    const chat=document.querySelector('.chat-shell')||form.parentElement;
-    chat.insertBefore(panel,form);
-    setStatus('Call prepared. Tap “Open phone dialler” to continue.');
-    return true;
-  }
-  function matchContact(query){
-    const q=normalise(query);
-    if(!q)return null;
-    const contacts=readContacts();
-    const exact=contacts.find(c=>(c.names||[]).some(n=>normalise(n)===q));
-    if(exact)return exact;
-    const matches=contacts.filter(c=>(c.names||[]).some(n=>{const nn=normalise(n);return nn&&(nn.startsWith(q+' ')||q.startsWith(nn+' '));}));
-    return matches.length===1?matches[0]:null;
-  }
-  function handleCommand(raw){
-    const text=String(raw||'').trim();
-    const m=text.match(/^(?:hey\s+)?(?:please\s+)?(?:can\s+you\s+)?(?:call|phone|dial)\s+(.+?)\s*[?.!]*$/i);
-    if(!m)return false;
-    const target=m[1].trim().replace(/^(?:the number|number)\s+/i,'');
-    const digits=cleanNumber(target);
-    if(validNumber(digits))return openDialler(digits);
-    const contact=matchContact(target);
-    if(contact){
-      const numbers=(contact.phones||[]).filter(validNumber);
-      if(numbers.length===1)return openDialler(numbers[0],(contact.names||[])[0]||'contact');
-      if(numbers.length>1){
-        setStatus('More than one number is saved for '+(contact.names||[])[0]+'. Please choose a number in your phone contacts or say the full number.');
-        return true;
-      }
-    }
-    setStatus('I could not find “'+target+'” in the contacts you selected for Justice AI. Tap “Choose contacts” to select it, or say “call” followed by the full phone number.');
-    return true;
-  }
-
-  const bar=document.createElement('div');
-  bar.id='justicePhoneCommands';
-  bar.style.cssText='display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 0;padding:0 4px';
-  const pick=document.createElement('button');
-  pick.type='button';pick.textContent='👤 Choose contacts';pick.style.cssText='border:1px solid #60a5fa;border-radius:999px;background:#10284a;color:#dbeafe;padding:9px 13px;font-weight:700';
-  const count=document.createElement('span');count.style.cssText='font-size:12px;color:#9fb8d9';
-  const updateCount=()=>{const n=readContacts().length;count.textContent=n?n+' selected contact'+(n===1?'':'s'):'No contacts selected';};
-  pick.addEventListener('click',async()=>{
-    if(!window.isSecureContext){setStatus('Contact access requires the secure HTTPS website.');return;}
-    if(!navigator.contacts?.select){setStatus('This browser does not support the Contacts Picker. Use Chrome on Android if available, or say “call” followed by the full phone number.');return;}
-    try{
-      const selected=await navigator.contacts.select(['name','tel'],{multiple:true});
-      const entries=[];
-      for(const c of selected||[]){
-        const names=(c.name||[]).map(x=>String(x).trim()).filter(Boolean);
-        const phones=(c.tel||[]).map(cleanNumber).filter(validNumber);
-        if(names.length&&phones.length)entries.push({names,phones});
-      }
-      const merged=new Map(readContacts().map(c=>[(c.names||[]).map(normalise).join('|'),c]));
-      for(const c of entries)merged.set(c.names.map(normalise).join('|'),c);
-      saveContacts([...merged.values()]);
-      updateCount();
-      setStatus(entries.length?'Saved '+entries.length+' selected contact(s). You can now say “Call [name]”.':'No contacts with phone numbers were selected.');
-    }catch(e){if(e.name!=='AbortError')setStatus('Contact selection was not completed. You can try again.');}
+  const chat=()=>document.querySelector('#justiceAiOverlay .chat-shell')||document.querySelector('.chat-shell')||form.parentElement;
+  const panel=document.createElement('section');
+  panel.id='justicePhoneContacts';
+  panel.setAttribute('aria-label','Justice AI contacts and calling');
+  panel.style.cssText='margin:8px 0 12px;padding:12px;border:1px solid #3b82f6;border-radius:14px;background:#07172b;color:#eaf2ff;display:grid;gap:9px';
+  panel.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap"><strong>📞 Call someone</strong><span id="justiceContactCount" style="font-size:12px;color:#bfdbfe">No contacts saved</span></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" id="justicePickContacts" style="border:1px solid #60a5fa;border-radius:999px;background:#15345b;color:white;padding:9px 12px;font-weight:700">👤 Select from phone contacts</button><button type="button" id="justiceAddContact" style="border:1px solid #60a5fa;border-radius:999px;background:#1d4ed8;color:white;padding:9px 12px;font-weight:700">＋ Add contact</button></div><div id="justiceManualContact" hidden style="display:grid;gap:7px"><input id="justiceContactName" placeholder="Contact name (e.g. Mum)" autocomplete="name" style="padding:11px;border-radius:9px;border:1px solid #64748b;background:#0b1220;color:white"><input id="justiceContactPhone" placeholder="Phone number (e.g. 0241234567)" inputmode="tel" autocomplete="tel" style="padding:11px;border-radius:9px;border:1px solid #64748b;background:#0b1220;color:white"><button type="button" id="justiceSaveContact" style="padding:10px;border:0;border-radius:9px;background:#16a34a;color:white;font-weight:700">Save contact</button></div><small style="color:#bfdbfe">Save a contact once, then say or type “Call Mum”. You can also say “Call” followed by a phone number.</small>';
+  const target=chat();
+  const top=target.querySelector('.chat-top');
+  if(top)top.insertAdjacentElement('afterend',panel);else form.insertAdjacentElement('beforebegin',panel);
+  const count=document.getElementById('justiceContactCount');
+  const update=()=>{const n=read().length;count.textContent=n+' saved contact'+(n===1?'':'s');};
+  const manual=document.getElementById('justiceManualContact');
+  document.getElementById('justiceAddContact').addEventListener('click',()=>{manual.hidden=!manual.hidden;if(!manual.hidden)document.getElementById('justiceContactName').focus();});
+  document.getElementById('justiceSaveContact').addEventListener('click',()=>{
+    const name=document.getElementById('justiceContactName').value.trim(),phone=clean(document.getElementById('justiceContactPhone').value);
+    if(!name||!valid(phone)){setStatus('Enter a contact name and a valid phone number.');return;}
+    const all=read();const existing=all.find(c=>(c.names||[]).some(n=>normalise(n)===normalise(name)));
+    if(existing){existing.phones=[...new Set([...(existing.phones||[]),phone])];if(!existing.names.some(n=>normalise(n)===normalise(name)))existing.names.push(name);}
+    else all.push({names:[name],phones:[phone]});
+    save(all);update();document.getElementById('justiceContactName').value='';document.getElementById('justiceContactPhone').value='';manual.hidden=true;
+    setStatus('Saved '+name+'. Now say or type “Call '+name+'”.');
   });
-  const clear=document.createElement('button');
-  clear.type='button';clear.textContent='Clear';clear.title='Remove contacts saved for Justice AI';clear.style.cssText='border:1px solid #64748b;border-radius:999px;background:transparent;color:#cbd5e1;padding:9px 12px';
-  clear.addEventListener('click',()=>{saveContacts([]);updateCount();setStatus('Selected contacts were cleared from Justice AI on this device.');});
-  bar.append(pick,clear,count);
-  form.parentElement.insertBefore(bar,form);
-  updateCount();
-
-  // Capture before the normal chat handler, so phone commands do not go to the AI API.
-  form.addEventListener('submit',e=>{
-    const text=input.value.trim();
-    if(handleCommand(text)){e.preventDefault();e.stopImmediatePropagation();input.value='';}
-  },true);
-
-  window.amohJusticePhoneCommand=handleCommand;
+  document.getElementById('justicePickContacts').addEventListener('click',async()=>{
+    if(!window.isSecureContext){setStatus('Open the HTTPS Justice AI website to select contacts.');return;}
+    if(!navigator.contacts?.select){setStatus('This browser does not offer a phone contact picker. Tap “Add contact” and enter the saved name and number instead.');manual.hidden=false;document.getElementById('justiceContactName').focus();return;}
+    try{
+      const chosen=await navigator.contacts.select(['name','tel'],{multiple:true});
+      const all=read();
+      for(const c of chosen||[]){
+        const names=(c.name||[]).map(x=>String(x).trim()).filter(Boolean),phones=(c.tel||[]).map(clean).filter(valid);
+        if(!names.length||!phones.length)continue;
+        const existing=all.find(x=>(x.names||[]).some(n=>names.some(m=>normalise(n)===normalise(m))));
+        if(existing){existing.names=[...new Set([...existing.names,...names])];existing.phones=[...new Set([...existing.phones,...phones])];}
+        else all.push({names,phones});
+      }
+      save(all);update();setStatus('Contacts selected and saved. You can now say “Call [name]”.');
+    }catch(e){if(e.name!=='AbortError')setStatus('Could not select contacts. You can use Add contact instead.');}
+  });
+  function match(q){const k=normalise(q),all=read();let found=all.find(c=>(c.names||[]).some(n=>normalise(n)===k));if(found)return found;const hits=all.filter(c=>(c.names||[]).some(n=>{const x=normalise(n);return x&&(x.startsWith(k+' ')||k.startsWith(x+' '));}));return hits.length===1?hits[0]:null;}
+  function dial(number,name=''){
+    const phone=clean(number);if(!valid(phone)){setStatus('That phone number is not valid.');return true;}
+    const old=document.getElementById('justiceCallConfirm');if(old)old.remove();
+    const box=document.createElement('div');box.id='justiceCallConfirm';box.style.cssText='margin:8px 0;padding:13px;border:1px solid #60a5fa;border-radius:13px;background:#10284a;color:white;display:grid;gap:8px';
+    const title=document.createElement('b');title.textContent='Call '+(name?name+' · ':'')+phone+'?';
+    const note=document.createElement('span');note.textContent='Tap below to open your phone dialler, then tap Call to confirm.';
+    const link=document.createElement('a');link.href='tel:'+phone;link.textContent='📞 Open phone dialler';link.style.cssText='display:inline-block;text-align:center;padding:12px;border-radius:999px;background:#2563eb;color:white;text-decoration:none;font-weight:800';
+    const cancel=document.createElement('button');cancel.type='button';cancel.textContent='Cancel';cancel.style.cssText='padding:9px;border-radius:9px;background:transparent;color:white;border:1px solid #94a3b8';cancel.onclick=()=>box.remove();
+    box.append(title,note,link,cancel);panel.insertAdjacentElement('afterend',box);setStatus('Call ready. Tap Open phone dialler to continue.');return true;
+  }
+  function handle(raw){
+    const text=String(raw||'').trim();
+    const m=text.match(/^(?:hey\s+)?(?:please\s+)?(?:can\s+you\s+)?(?:i want you to\s+)?(?:call|phone|dial)\s+(.+?)\s*[?.!]*$/i);
+    if(!m)return false;
+    const who=m[1].trim().replace(/^(?:the number|number)\s+/i,'');
+    const number=clean(who);if(valid(number))return dial(number);
+    const c=match(who);
+    if(c){const nums=[...new Set((c.phones||[]).filter(valid))];if(nums.length===1)return dial(nums[0],c.names?.[0]||who);if(nums.length>1){setStatus('More than one number is saved for '+(c.names?.[0]||who)+'. Please choose one by saving a single number or say the full number.');return true;}}
+    setStatus('I cannot find '+who+' yet. Tap “Select from phone contacts” or “Add contact” above, save the person, then say “Call '+who+'” again.');return true;
+  }
+  update();
+  form.addEventListener('submit',e=>{if(handle(input.value)){e.preventDefault();e.stopImmediatePropagation();input.value='';}},true);
+  window.amohJusticePhoneCommand=handle;
+  window.addEventListener('pageshow',()=>{if(!document.getElementById('justicePhoneContacts')){const t=chat(),h=t.querySelector('.chat-top');if(h)h.insertAdjacentElement('afterend',panel);else form.insertAdjacentElement('beforebegin',panel);}});
 })();
