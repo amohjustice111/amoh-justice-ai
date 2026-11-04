@@ -79,7 +79,7 @@
   function handle(raw){
     const text=String(raw||'').trim();
     const cleaned=text.replace(/^(?:(?:(?:hey|hello)\s+)?justice[\s,.-]*ai[\s,.:;-]*)+/i,'').trim();
-    const m=cleaned.match(/^(?:(?:please|kindly)\s+)?(?:(?:can|could|would)\s+you\s+)?(?:(?:i want(?: you)?|i need(?: you)?)\s+to\s+)?(?:(?:make|place)\s+a\s+)?(?:please\s+)?(?:call|phone|dial|ring)\s+(.+?)\s*[?.!]*$/i);
+    const m=cleaned.match(/^(?:(?:please|kindly)\s+)?(?:(?:can|could|would)\s+you\s+)?(?:(?:i want(?: you)?|i need(?: you)?)\s+to\s+)?(?:(?:make|place)\s+a\s+)?(?:please\s+)?(?:call(?:\s+back)?|phone|dial|ring)\s+(.+?)\s*[?.!]*$/i);
     if(!m)return false;
     const who=m[1].trim().replace(/^(?:the number|number)\s+/i,'').replace(/^(?:my|the)\s+/i,'').replace(/\s+(?:please|now|for me|back)$/i,'').trim();
     const number=clean(who);if(valid(number))return dial(number);
@@ -88,7 +88,7 @@
     hideCallAction();setStatus('I cannot find '+who+' in your saved contacts. Add that person and their number first, then say “Call '+who+'” again.');return true;
   }
   update();
-  form.addEventListener('submit',e=>{if(handle(input.value)){e.preventDefault();e.stopImmediatePropagation();input.value='';}},true);
+  form.addEventListener('submit',e=>{if(handle(input.value)){e.preventDefault();e.stopImmediatePropagation();input.value='';}else hideCallAction();},true);
   window.amohJusticePhoneCommand=handle;
   window.addEventListener('pageshow',()=>{if(!document.getElementById('justicePhoneContacts')){const h=document.querySelector('#home')||document.querySelector('.hero');if(h)h.insertAdjacentElement('afterend',panel);else document.body.insertBefore(panel,document.body.firstChild);}});
 })();
