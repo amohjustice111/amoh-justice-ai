@@ -53,12 +53,13 @@
       save(all);update();setStatus('Contacts selected and saved. You can now say “Call [name]”.');
     }catch(e){if(e.name!=='AbortError')setStatus('Could not select contacts. You can use Add contact instead.');}
   });
-  function match(q){const k=normalise(q),all=read();let found=all.find(c=>(c.names||[]).some(n=>normalise(n)===k));if(found)return found;const hits=all.filter(c=>(c.names||[]).some(n=>{const x=normalise(n);return x&&(x.startsWith(k+' ')||k.startsWith(x+' '));}));return hits.length===1?hits[0]:null;}
+  function match(q){const k=normalise(q).replace(/^(?:my|the)\\s+/,'').replace(/\\s+(?:please|now)$/,'');const all=read();let found=all.find(c=>(c.names||[]).some(n=>{const x=normalise(n);return x===k||x.replace(/^(?:my|the)\\s+/,'')===k;}));if(found)return found;const hits=all.filter(c=>(c.names||[]).some(n=>{const x=normalise(n).replace(/^(?:my|the)\\s+/,'');return x&&(x.startsWith(k+' ')||k.startsWith(x+' '));}));return hits.length===1?hits[0]:null;}
   function dial(number,name=''){
     const phone=clean(number);if(!valid(phone)){setStatus('That phone number is not valid.');return true;}
     setStatus('Opening the phone dialler for '+(name||phone)+'. Your phone may still ask you to confirm the call.');
     // Launch the Android/iOS dialler immediately. The OS controls final call approval.
-    window.location.href='tel:'+phone;
+    const link=document.createElement('a');link.href='tel:'+phone;link.setAttribute('aria-hidden','true');link.style.cssText='position:fixed;left:-9999px';document.body.appendChild(link);
+    try{link.click();}catch(e){window.location.assign('tel:'+phone);}finally{link.remove();}
     return true;
   }
   function handle(raw){
