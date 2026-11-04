@@ -6,7 +6,7 @@
  const overlay=document.createElement('div');overlay.id='justiceAiOverlay';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label','Justice AI full-screen chat');
  const close=document.createElement('button');close.className='justice-ai-close';close.type='button';close.innerHTML='&times;';close.setAttribute('aria-label','Close chat');
  overlay.appendChild(close);overlay.appendChild(chat);document.body.append(button,overlay);if(section)section.remove();document.getElementById('justice-ai-jumping-person')?.remove();
- function open(){overlay.classList.add('is-open');document.body.style.overflow='hidden';close.focus();}
- function shut(){overlay.classList.remove('is-open');window.amohJusticeHistoryClose?.();document.body.style.overflow='';button.focus();}
+ function open(){overlay.classList.add('is-open');overlay.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';setTimeout(()=>{const input=overlay.querySelector('#chatInput');if(input)input.focus();},80);}
+ function shut(){overlay.classList.remove('is-open');overlay.setAttribute('aria-hidden','true');window.amohJusticeHistoryClose?.();document.body.style.overflow='';button.focus();}
  button.addEventListener('click',open);close.addEventListener('click',shut);overlay.addEventListener('click',e=>{if(e.target===overlay)shut()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&overlay.classList.contains('is-open')&&!document.getElementById('justiceHistoryPanel')?.classList.contains('is-open'))shut()});
  }if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();})();
