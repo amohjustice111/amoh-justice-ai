@@ -43,7 +43,7 @@ function addCards(){
   const card=document.createElement('article');card.className='suite-card';
   const title=document.createElement('strong');title.textContent=icon+' '+name;
   const p=document.createElement('p');p.textContent=desc;
-  const button=document.createElement('button');button.type='button';button.dataset-upgradeFeature=id;button.textContent='Open '+name+' →';
+  const button=document.createElement('button');button.type='button';button.dataset.upgradeFeature=id;button.textContent='Open '+name+' →';
   card.append(title,p,button);grid.appendChild(card);
  });
  grid.addEventListener('click',e=>{const b=e.target.closest('button[data-upgrade-feature]');if(!b)return;e.preventDefault();e.stopPropagation();try{run(b.dataset.upgradeFeature)}catch(err){openPanel('Feature error','<p class="suite-status">'+esc(err.message||'This feature could not open.')+'</p>')}});
