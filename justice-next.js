@@ -23,7 +23,7 @@ const features=[
 ['🗣️','Multi-language Voice','Open voice settings for English, Twi and other available languages.','languages'],
 ['🔐','Security Centre','Review local data, export your notes, and clear saved AI memory.','security']
 ];
-function openPanel(title,html){const root=$('#justiceSuite'),p=$('#justiceSuiteWork');if(!root||!p){alert('The feature dashboard did not finish loading. Close it and reopen Open All Features.');return;}root.classList.add('open');document.body.style.overflow='hidden';p.innerHTML='<strong>'+title+'</strong>'+html;}
+function openPanel(title,html){const root=$('#justiceSuite'),p=$('#justiceSuiteWork');if(!root||!p){alert('The feature dashboard did not finish loading. Close it and reopen Open All Features.');return;}root.classList.add('open');document.body.style.overflow='hidden';p.innerHTML='<strong>'+title+'</strong>'+html;p.scrollIntoView({behavior:'smooth',block:'start'});}
 function sendToAI(prompt){const overlay=$('#justiceAiOverlay'),float=$('#justiceAiFloat'),input=$('#chatInput'),form=$('#chatForm');if(!input||!form){alert('Justice AI chat is not available on this screen.');return;}if(overlay&&!overlay.classList.contains('is-open'))float?.click();else if(!overlay)float?.click();setTimeout(()=>{input.value=prompt;input.dispatchEvent(new Event('input',{bubbles:true}));form.requestSubmit();},180);}
 window.amohJusticeMemoryContext=()=>read(MEM).map(x=>x.text).join('\n').slice(0,1400);
 function download(name,content,type){const blob=new Blob([content],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
