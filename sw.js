@@ -7,7 +7,7 @@ const APP_SHELL = [
   '/manifest.webmanifest', '/office-photo.png', '/logo.svg',
   '/icon-192.png', '/icon-512.png', '/justice-ai-floating.css',
   '/justice-ai-floating.js', '/justice-chat-history.js',
-  '/justice-ai-tools.js', '/voice-chat.js', '/pwa-install.js'
+  '/justice-ai-tools.js', '/voice-chat.js', '/justice-phone-commands.js', '/pwa-install.js'
 ];
 
 self.addEventListener('install', event => {
