@@ -109,14 +109,20 @@ const commandMap=[
  [/^(?:open|show|go to|take me to)\s+(?:my\s+)?(?:documents|document assistant|document intelligence|pdf reader)$/,'documents'],
  [/^(?:open|show|go to|take me to)\s+(?:my\s+)?(?:research|research mode|web research)$/,'research'],
  [/^(?:open|show|go to|take me to)\s+(?:my\s+)?(?:creative studio|design studio|prompt studio)$/,'creative'],
- [/^(?:open|show|go to|take me to)\s+(?:my\s+)?(?:settings|personalisation|personalization|voice settings)$/,'personalise']
+ [/^(?:open|show|go to|take me to)\s+(?:my\s+)?(?:settings|personalisation|personalization|voice settings)$/,'personalise'],
+ [/^(?:open|show|go to|take me to)\s+(?:my\s+)?(?:memory|ai memory)$/,'memory'],
+ [/^(?:open|show|go to|take me to)\s+(?:my\s+)?(?:camera|ai camera)$/,'camera'],
+ [/^(?:open|show|go to|take me to)\s+(?:my\s+)?(?:study mode|homework assistant)$/,'study'],
+ [/^(?:open|show|go to|take me to)\s+(?:my\s+)?(?:calendar|events)$/,'calendar'],
+ [/^(?:open|show|go to|take me to)\s+(?:my\s+)?(?:voice assistant|voice chat)$/,'voice'],
+ [/^(?:open|show|go to|take me to)\s+(?:my\s+)?(?:phone assistant|contacts)$/,'phone']
 ];
 window.amohJusticeFeatureCommand=raw=>{
  const text=String(raw||'').trim().replace(/^(?:(?:hey|hello)\s+)?justice[\s,.-]*ai[\s,.:;-]*/i,'').replace(/[?.!]+$/,'').trim().toLowerCase();
  const match=commandMap.find(([re])=>re.test(text));if(!match)return false;
  const id=match[1];
  if(id==='dashboard'){if(!$('#justiceSuite')?.classList.contains('open'))$('#justiceSuiteLauncher')?.click();return true;}
- const launch=()=>{if(!$('#justiceSuite')?.classList.contains('open'))$('#justiceSuiteLauncher')?.click();setTimeout(()=>{const b=$('#justiceSuiteGrid [data-upgrade-feature="'+id+'"]');if(b)b.click();else if(id==='personalise')run(id);},180)};
+ const launch=()=>{if(!$('#justiceSuite')?.classList.contains('open'))$('#justiceSuiteLauncher')?.click();setTimeout(()=>{const grid=$('#justiceSuiteGrid');const b=grid?.querySelector('[data-upgrade-feature="'+id+'"],[data-next-feature="'+id+'"]')||[...(grid?.querySelectorAll('button')||[])].find(x=>x.textContent.toLowerCase().includes('open '+id));if(b)b.click();else if(id==='personalise')run(id);},180)};
  launch();return true;
 };
 function init(){addCards();const observer=new MutationObserver(addCards);if(document.body)observer.observe(document.body,{childList:true,subtree:true});}
