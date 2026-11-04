@@ -64,7 +64,7 @@
   }
   function handle(raw){
     const text=String(raw||'').trim();
-    const cleaned=text.replace(/^(?:(?:hey|hello)\s+)?(?:justice[\s,.-]*ai[\s,.:;-]*)+/i,'').trim();
+    const cleaned=text.replace(/^(?:(?:(?:hey|hello)\s+)?justice[\s,.-]*ai[\s,.:;-]*)+/i,'').trim();
     const m=cleaned.match(/^(?:(?:please|kindly)\s+)?(?:(?:can|could)\s+you\s+)?(?:(?:i want you to|i need you to)\s+)?(?:please\s+)?(?:call|phone|dial|ring)\s+(.+?)\s*[?.!]*$/i);
     if(!m)return false;
     const who=m[1].trim().replace(/^(?:the number|number)\s+/i,'').replace(/\s+(?:please|now|for me)$/i,'').trim();
