@@ -5,7 +5,6 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.Handler;
@@ -39,8 +38,8 @@ public class WakeWordService extends Service {
         setup.putExtra("showSetup", true);
         PendingIntent pi = PendingIntent.getActivity(this, 0, setup, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         Notification notification = new Notification.Builder(this, CHANNEL)
-            .setContentTitle("Justice AI hands-free is active")
-            .setContentText("Listening for “Justice AI” or “ChatGPT”. Tap to manage.")
+            .setContentTitle("Justice AI voice assistant is active")
+            .setContentText("Listening for “Justice AI”. Tap to manage.")
             .setSmallIcon(android.R.drawable.ic_btn_speak_now)
             .setOngoing(true).setContentIntent(pi).build();
         startForeground(7, notification);
@@ -56,17 +55,17 @@ public class WakeWordService extends Service {
 
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= 26) {
-            NotificationChannel channel = new NotificationChannel(CHANNEL, "Justice AI hands-free assistant", NotificationManager.IMPORTANCE_LOW);
+            NotificationChannel channel = new NotificationChannel(CHANNEL, "Justice AI voice assistant", NotificationManager.IMPORTANCE_LOW);
             channel.setDescription("Visible notification while the microphone listener is active.");
             ((NotificationManager)getSystemService(NOTIFICATION_SERVICE)).createNotificationChannel(channel);
         }
     }
 
-    private void startRecognition(boolean questionMode) {
+    private void startRecognition(boolean commandMode) {
         if (stopped || listening) return;
         if (!SpeechRecognizer.isRecognitionAvailable(this)) {
-            showBubble("Justice AI voice recognition unavailable");
-            scheduleRestart();
+            showBubble("Voice recognition unavailable");
+            scheduleRestart(false);
             return;
         }
         try {
@@ -75,18 +74,19 @@ public class WakeWordService extends Service {
                 recognizer = null;
             }
             recognizer = SpeechRecognizer.createSpeechRecognizer(this);
+            final boolean expectingCommand = commandMode;
             recognizer.setRecognitionListener(new RecognitionListener() {
                 @Override public void onReadyForSpeech(android.os.Bundle params) { listening = true; }
                 @Override public void onBeginningOfSpeech() {}
                 @Override public void onRmsChanged(float rmsdB) {}
                 @Override public void onBufferReceived(byte[] buffer) {}
                 @Override public void onEndOfSpeech() { listening = false; }
-                @Override public void onError(int error) { listening = false; scheduleRestart(); }
+                @Override public void onError(int error) { listening = false; scheduleRestart(false); }
                 @Override public void onResults(android.os.Bundle results) {
                     listening = false;
                     ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
                     String heard = matches != null && !matches.isEmpty() ? matches.get(0).trim() : "";
-                    handleSpeech(heard, questionMode);
+                    handleSpeech(heard, expectingCommand);
                 }
                 @Override public void onPartialResults(android.os.Bundle partialResults) {}
                 @Override public void onEvent(int eventType, android.os.Bundle params) {}
@@ -100,55 +100,38 @@ public class WakeWordService extends Service {
             recognizer.startListening(intent);
         } catch (Exception e) {
             listening = false;
-            scheduleRestart();
+            scheduleRestart(false);
         }
     }
 
-    private void handleSpeech(String heard, boolean questionMode) {
+    private void handleSpeech(String heard, boolean commandMode) {
         String lower = heard.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9 ]", " ").trim();
-        if (questionMode) {
+        if (commandMode) {
             if (!heard.isEmpty()) {
                 pendingPrompt = heard;
-                showBubble("💚 JUSTICE AI\nTap to hear answer");
+                showBubble("JUSTICE AI\nCommand received");
                 openJusticeAI(heard);
-            } else {
-                scheduleRestart();
-            }
+            } else scheduleRestart(false);
             return;
         }
 
         int wake = lower.indexOf("justice ai");
         int wakeLength = "justice ai".length();
-        int chatGpt = lower.indexOf("chat gpt");
-        if (chatGpt >= 0 && (wake < 0 || chatGpt < wake)) {
-            wake = chatGpt;
-            wakeLength = "chat gpt".length();
-        }
-        int chatgpt = lower.indexOf("chatgpt");
-        if (chatgpt >= 0 && (wake < 0 || chatgpt < wake)) {
-            wake = chatgpt;
-            wakeLength = "chatgpt".length();
-        }
-
         if (wake >= 0) {
             String remainder = heard.substring(Math.min(heard.length(), wake + wakeLength)).trim();
             pendingPrompt = remainder;
-            showBubble("💚 JUSTICE AI IS AWAKE\nTap to chat");
+            showBubble("JUSTICE AI IS AWAKE\nSay your command");
             if (!remainder.isEmpty()) {
                 openJusticeAI(remainder);
-                scheduleRestart();
-            } else {
-                startRecognition(true);
-            }
-        } else {
-            scheduleRestart();
-        }
+                scheduleRestart(false);
+            } else startRecognition(true);
+        } else scheduleRestart(false);
     }
 
-    private void scheduleRestart() {
+    private void scheduleRestart(boolean commandMode) {
         handler.postDelayed(() -> {
-            if (!stopped && !listening) startRecognition(false);
-        }, 900);
+            if (!stopped && !listening) startRecognition(commandMode);
+        }, 700);
     }
 
     private void showBubble(String label) {
@@ -159,8 +142,8 @@ public class WakeWordService extends Service {
                 bubble.setTextColor(0xFFFFFFFF);
                 bubble.setTextSize(13);
                 bubble.setGravity(Gravity.CENTER);
-                bubble.setPadding(18, 16, 18, 16);
-                bubble.setBackgroundColor(0xFF087F4B);
+                bubble.setPadding(20, 17, 20, 17);
+                bubble.setBackgroundColor(0xFF0878D1);
                 WindowManager.LayoutParams p = new WindowManager.LayoutParams(
                     WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT,
                     Build.VERSION.SDK_INT >= 26 ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY : WindowManager.LayoutParams.TYPE_PHONE,
