@@ -64,9 +64,10 @@
   }
   function handle(raw){
     const text=String(raw||'').trim();
-    const m=text.match(/^(?:hey\s+)?(?:please\s+)?(?:can\s+you\s+)?(?:i want you to\s+)?(?:call|phone|dial)\s+(.+?)\s*[?.!]*$/i);
+    const cleaned=text.replace(/^(?:(?:hey|hello)\s+)?(?:justice[\s,.-]*ai[\s,.:;-]*)+/i,'').trim();
+    const m=cleaned.match(/^(?:(?:please|kindly)\s+)?(?:(?:can|could)\s+you\s+)?(?:(?:i want you to|i need you to)\s+)?(?:please\s+)?(?:call|phone|dial|ring)\s+(.+?)\s*[?.!]*$/i);
     if(!m)return false;
-    const who=m[1].trim().replace(/^(?:the number|number)\s+/i,'');
+    const who=m[1].trim().replace(/^(?:the number|number)\s+/i,'').replace(/\s+(?:please|now|for me)$/i,'').trim();
     const number=clean(who);if(valid(number))return dial(number);
     const c=match(who);
     if(c){const nums=[...new Set((c.phones||[]).filter(valid))];if(nums.length===1)return dial(nums[0],c.names?.[0]||who);if(nums.length>1){setStatus('More than one number is saved for '+(c.names?.[0]||who)+'. Please choose one by saving a single number or say the full number.');return true;}}
