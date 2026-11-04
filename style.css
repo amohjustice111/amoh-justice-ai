@@ -393,3 +393,9 @@ input,select,textarea{font-size:16px}
 @media(hover:none){
  .btn:hover,.v2-card:hover,.service:hover,.video-links a:hover{transform:none}
 }
+
+/* Fix: keep the mobile hamburger navigation scrollable on short screens. */
+@media(max-width:760px){
+ #nav.open{max-height:calc(100dvh - 105px);max-height:calc(100vh - 105px);overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;}
+ #nav.open>a{flex:0 0 auto;}
+}
