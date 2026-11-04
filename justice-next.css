@@ -1,0 +1,7 @@
+/* Staged personal assistant upgrades */
+#justiceSuite .suite-card{border-color:rgba(74,222,128,.25)}
+#justiceSuite #justiceSuiteWork label{display:flex;align-items:center;gap:8px;color:#c8e8d0;font-size:13px}
+#justiceSuite #justiceSuiteWork label input{width:auto;margin:0}
+#justiceSuite #justiceSuiteWork video{object-fit:contain}
+#justiceSuite #justiceSuiteWork button:focus-visible,#justiceSuite #justiceSuiteWork a:focus-visible{outline:2px solid #86efac;outline-offset:3px}
+@media(prefers-reduced-motion:reduce){#justiceSuite *{scroll-behavior:auto!important;transition:none!important}}
