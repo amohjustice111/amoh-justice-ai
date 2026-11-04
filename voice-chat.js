@@ -92,6 +92,20 @@
   #amohVoiceSettings button.secondary{background:#07130b;border-color:#86efac55}
   #amohVoiceAvatarPanel.amoh-settings-only #amohVoiceAvatar,#amohVoiceAvatarPanel.amoh-settings-only #amohVoiceAvatarTitle,#amohVoiceAvatarPanel.amoh-settings-only #amohVoiceAvatarStatus,#amohVoiceAvatarPanel.amoh-settings-only #amohVoiceAvatarClose{display:none!important}
   #amohVoiceAvatarPanel.amoh-settings-only #amohVoiceAvatarCard{width:min(440px,100%);max-height:calc(100dvh - 30px);overflow:auto}
+  /* Wake-word mode stays as a compact floating widget; the main chat remains a separate full-screen control. */
+  #amohVoiceAvatarPanel{position:fixed!important;inset:auto 14px 86px auto!important;z-index:2147483002!important;width:min(270px,calc(100vw - 28px));padding:0!important;display:none;align-items:flex-end;justify-content:flex-end;background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;pointer-events:none}
+  #amohVoiceAvatarPanel.is-active{display:flex!important;pointer-events:none}
+  #amohVoiceAvatarCard{pointer-events:auto;width:100%!important;padding:12px!important;border-radius:20px!important;box-shadow:0 12px 42px #000b,0 0 28px #16a34a22!important}
+  #amohVoiceAvatarPanel .amoh-voice-orb-wrap{width:76px!important;height:76px!important;margin:0 auto 8px!important}
+  #amohVoiceAvatarPanel .amoh-voice-orb-wrap:before,#amohVoiceAvatarPanel .amoh-voice-orb-wrap:after{inset:-6px!important}
+  #amohVoiceAvatarPanel #amohVoiceAvatar{width:68px!important;height:68px!important;border-width:2px!important}
+  #amohVoiceAvatarTitle{font-size:14px!important;margin:0 0 3px!important}
+  #amohVoiceAvatarStatus{min-height:0!important;font-size:11px!important;line-height:1.35!important}
+  #amohVoiceAvatarClose{min-width:0!important;margin-top:8px!important;padding:7px 12px!important;font-size:11px!important}
+  #amohVoiceAvatarPanel.amoh-settings-only{inset:0!important;width:auto!important;padding:14px!important;display:flex!important;align-items:center!important;justify-content:center!important;background:rgba(1,8,4,.9)!important;backdrop-filter:blur(12px)!important;-webkit-backdrop-filter:blur(12px)!important;pointer-events:auto!important}
+  #amohVoiceAvatarPanel.amoh-settings-only #amohVoiceAvatarCard{width:min(440px,100%)!important;max-height:calc(100dvh - 28px)!important;overflow:auto!important}
+  @media(max-width:600px){#amohVoiceAvatarPanel{right:10px!important;bottom:82px!important;width:min(250px,calc(100vw - 20px))!important}}
+  @media(prefers-reduced-motion:reduce){#amohVoiceAvatarPanel .amoh-voice-orb-wrap:before,#amohVoiceAvatarPanel .amoh-voice-orb-wrap:after{animation:none!important}}
   #amohVoiceSettings .amoh-voice-setting-row>div{min-width:0}
   @media(max-width:380px){#amohVoiceSettings .amoh-voice-setting-row{grid-template-columns:1fr}}
   `;document.head.appendChild(style);
