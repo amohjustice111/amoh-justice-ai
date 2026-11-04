@@ -99,7 +99,7 @@ function creative(){
 }
 function personalise(){
  openPanel('⚙️ Personalisation Centre','<p>Voice, language and speaking style settings are already part of Justice AI. Open the chat first, then open its settings.</p><div class="suite-row"><button id="upgradeOpenSettings">Open voice & language settings</button><button id="upgradeOpenChat">Open Justice AI chat</button></div><p class="suite-muted">Available voices and speech recognition depend on the voices and language services installed on your device. Akan/Twi recognition may vary by browser.</p>');
- $('#upgradeOpenSettings').onclick=()=>{const float=$('#justiceAiFloat');if(!$('#justiceAiOverlay')?.classList.contains('is-open'))float?.click();setTimeout(()=>{const b=$('#amohVoiceSettingsButton');if(b)b.click();else{$('#upgradePlannerStatus')?.textContent='';alert('Open the chat and tap the gear icon to change voice settings.');}},350)};
+ $('#upgradeOpenSettings').onclick=()=>{const float=$('#justiceAiFloat');if(!$('#justiceAiOverlay')?.classList.contains('is-open'))float?.click();setTimeout(()=>{const b=$('#amohVoiceSettingsButton');if(b)b.click();else{alert('Open the chat and tap the gear icon to change voice settings.');}},350)};
  $('#upgradeOpenChat').onclick=()=>$('#justiceAiFloat')?.click();
 }
 function run(id){if(id==='planner')planner();else if(id==='documents')documents();else if(id==='research')research();else if(id==='creative')creative();else if(id==='personalise')personalise();}
