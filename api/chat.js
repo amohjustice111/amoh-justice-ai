@@ -63,7 +63,7 @@ const systemInstruction = `You are Justice AI, the friendly, capable general-pur
         systemInstruction: { parts: [{ text: systemInstruction }] },
         contents,
         tools: body.webSearch === true ? [{ google_search: {} }] : undefined,
-        generationConfig: { temperature: 0.4, maxOutputTokens: body.webSearch === true ? 900 : 220 }
+        generationConfig: { temperature: 0.4, maxOutputTokens: body.longOutput === true ? (body.webSearch === true ? 1400 : 1200) : (body.webSearch === true ? 900 : 220) }
       })
     });
 
