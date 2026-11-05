@@ -51,7 +51,7 @@ async function askJustice(message){
   const requestId=++chatRequestId,controller=new AbortController();activeRequestController=controller;setChatBusy(true);
   try{
     const voiceStream=Boolean(window.amohVoiceConversationActive&&window.amohQueueVoiceText);
-    const username=await window.amohJusticeGetChatUsername?.()||'';
+    const username=window.amohJusticeChatUsername||''; // Never delay an ordinary chat turn for optional account personalization.
     const response=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},signal:controller.signal,body:JSON.stringify({message,username,history:chatHistory.slice(-10,-1),stream:true,relationship:window.amohJusticeVoicePreferences?.().relationship||'friend',language:window.amohJusticeVoicePreferences?.().language||'en-US',memory:window.amohJusticeMemoryContext?.()||''})});
     if(!response.ok){const data=await response.json().catch(()=>({}));throw new Error(data.error||'Justice AI could not answer. Please try again.');}
     let answer='';
