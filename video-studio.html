@@ -8,14 +8,27 @@
 <title>AI Video Studio | AMOH JUSTICE AI</title>
 <style>
 :root{color-scheme:dark;--bg:#030a06;--panel:#09170e;--line:#1c5734;--green:#86efac;--muted:#a8c6b1}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#12351f 0,transparent 55%),var(--bg);color:#ecfdf5;font:15px/1.6 system-ui,sans-serif}
-header,main{width:min(1180px,calc(100% - 28px));margin:auto}header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:22px 0}
-a{color:var(--green);text-decoration:none}a:hover{text-decoration:underline}.brand{font-weight:850;letter-spacing:.04em}.back,.open{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:#0b2415;color:#eaffef;font-weight:750}
-.hero{padding:20px 0 18px}.eyebrow{color:var(--green);letter-spacing:.18em;font-size:11px;font-weight:800}.hero h1{font-size:clamp(30px,6vw,54px);line-height:1.08;margin:8px 0}.hero p{max-width:760px;color:var(--muted);margin:8px 0}
-.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:18px 0}.step{border:1px solid var(--line);border-radius:14px;background:linear-gradient(145deg,#0b1c12,#07100b);padding:13px}.step b{display:block;color:#d1fae5}.step span{color:var(--muted);font-size:13px}
-.generator{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#07110b;box-shadow:0 18px 70px #0008}.gen-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:12px 16px;background:#0a1d11;border-bottom:1px solid var(--line)}.gen-head small{color:var(--muted)}iframe{display:block;width:100%;height:min(78vh,900px);min-height:680px;border:0;background:#07110b}
-.notice{margin:14px 0 28px;padding:14px 16px;border:1px solid #245b39;border-radius:14px;background:#08170e;color:var(--muted);font-size:13px}.notice strong{color:#d1fae5}
-@media(max-width:600px){header{align-items:flex-start}.back{font-size:12px}iframe{height:78vh;min-height:600px}.hero{padding-top:10px}}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 50% -20%,#12351f 0,transparent 55%),var(--bg);color:#ecfdf5;font:15px/1.6 system-ui,sans-serif}
+header,main{width:min(1180px,calc(100% - 28px));margin:auto}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 0}
+a{color:var(--green);text-decoration:none}a:hover{text-decoration:underline}
+.brand{font-weight:850;letter-spacing:.04em}
+.back,.open{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:#0b2415;color:#eaffef;font-weight:750}
+.hero{padding:18px 0}.eyebrow{color:var(--green);letter-spacing:.18em;font-size:11px;font-weight:800}
+.hero h1{font-size:clamp(30px,6vw,54px);line-height:1.08;margin:8px 0}
+.hero p{max-width:800px;color:var(--muted);margin:8px 0}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:18px 0}
+.step{border:1px solid var(--line);border-radius:14px;background:linear-gradient(145deg,#0b1c12,#07100b);padding:13px}
+.step b{display:block;color:#d1fae5}.step span{color:var(--muted);font-size:13px}
+.generator{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#07110b;box-shadow:0 18px 70px #0008}
+.gen-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:12px 16px;background:#0a1d11;border-bottom:1px solid var(--line)}
+.gen-head small{color:var(--muted)}
+iframe{display:block;width:100%;height:min(82vh,1050px);min-height:720px;border:0;background:#07110b}
+.notice{margin:14px 0 28px;padding:14px 16px;border:1px solid #245b39;border-radius:14px;background:#08170e;color:var(--muted);font-size:13px}
+.notice strong{color:#d1fae5}
+.notice ul{margin:8px 0 0;padding-left:20px}.notice li{margin:5px 0}
+@media(max-width:600px){header{align-items:flex-start}.back{font-size:12px}.hero{padding-top:8px}iframe{height:82vh;min-height:700px}}
 </style>
 </head>
 <body>
@@ -24,18 +37,27 @@ a{color:var(--green);text-decoration:none}a:hover{text-decoration:underline}.bra
 <section class="hero">
 <div class="eyebrow">FREE-FIRST CREATIVE WORKSPACE</div>
 <h1>AI Video <span style="color:var(--green)">Studio</span></h1>
-<p>Turn a written idea into a video, or animate a picture. This studio connects to the public Lightricks LTX-2.5 video-generation demo. The model creates actual video output; it is not just a prompt writer or video editor.</p>
+<p>Create a real video from a written prompt, or animate a picture. The generator below uses the LTX-2.5 model through a public Hugging Face demo. It supports text-to-video, image-to-video and synchronized generated audio. Your phone or laptop only displays the interface; generation runs on the provider's cloud GPU.</p>
 <div class="steps">
-<div class="step"><b>01 · Choose a mode</b><span>Select text-to-video or image-to-video inside the generator.</span></div>
-<div class="step"><b>02 · Describe your scene</b><span>Write the action, setting, camera movement, style and lighting.</span></div>
-<div class="step"><b>03 · Generate and export</b><span>Wait for the shared GPU queue, then preview and save the result when available.</span></div>
+<div class="step"><b>01 · Choose your input</b><span>Leave the image empty for text-to-video, or upload a picture to animate it.</span></div>
+<div class="step"><b>02 · Describe movement</b><span>Explain what should move, the camera action, scene, lighting and mood.</span></div>
+<div class="step"><b>03 · Generate and save</b><span>Press Generate, wait for the shared queue, then preview and download the video.</span></div>
 </div>
 </section>
 <section class="generator" aria-label="LTX-2.5 video generator">
-<div class="gen-head"><b>✦ LTX-2.5 · Video + Audio Generator</b><a class="open" href="https://arpitkgoyal-ltx-2-5-demo.hf.space/" target="_blank" rel="noopener noreferrer">Open separately ↗</a></div>
-<iframe title="LTX-2.5 real AI video generator" src="https://arpitkgoyal-ltx-2-5-demo.hf.space/" loading="eager" allow="clipboard-read; clipboard-write" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+<div class="gen-head"><div><b>✦ LTX-2.5 · Text / Image → Video + Audio</b><br><small>Public community demo · Cloud generation</small></div><a class="open" href="https://arpitkgoyal-ltx-2-5-demo.static.hf.space/index.html" target="_blank" rel="noopener noreferrer">Open generator separately ↗</a></div>
+<iframe title="LTX-2.5 real AI video generator" src="https://arpitkgoyal-ltx-2-5-demo.static.hf.space/index.html" loading="eager" allow="clipboard-read; clipboard-write" referrerpolicy="strict-origin-when-cross-origin"></iframe>
 </section>
-<aside class="notice"><strong>Free access, with limits:</strong> AMOH JUSTICE AI is not charging you or using a paid API for this workflow. The generator uses a public shared queue, so it can be slow or temporarily report that no GPU is available. Retry later if that happens. Availability and limits are controlled by the model host. Do not upload private or sensitive photos. Your ordinary laptop does not run the video model locally.</aside>
+<aside class="notice">
+<strong>Free access and important limits</strong>
+<ul>
+<li>AMOH JUSTICE AI does not charge you or spend AMOH credits for this embedded generator.</li>
+<li>The public demo sends generation requests from your browser to the Lightricks LTX-2.5 Hugging Face Space. AMOH's server does not process your prompt or uploaded image in this workflow.</li>
+<li>Visitors share a public GPU queue. It can be busy, slow, or temporarily return “no GPU available” or “quota exceeded”. Retrying later may help; unlimited or instant generation cannot be promised.</li>
+<li>The demo may offer an optional Hugging Face access token for its own queue limits. It is not required to try anonymous access. If you choose to enter one, the demo says it stores it in this browser and sends it directly to the Lightricks Space; never paste it into AMOH chat or share it with anyone.</li>
+<li>Only upload images you have permission to use. Avoid private or sensitive photos. The provider controls its service, queue, data handling and availability.</li>
+</ul>
+</aside>
 </main>
 </body>
 </html>
