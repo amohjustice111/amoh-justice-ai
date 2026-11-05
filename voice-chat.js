@@ -32,7 +32,7 @@
  function selectedLanguageCode(){voicePrefs.language='en-US';return 'en-US'}
  function applyVoiceStyle(utterance){if(voicePrefs.voiceStyle==='santa'){utterance.pitch=Math.min(Number(voicePrefs.pitch)||0.82,0.85);utterance.rate=Math.min(Number(voicePrefs.rate)||0.9,0.95)}}
  function getVoices(){return window.speechSynthesis?.getVoices?.()||[]}
- function voiceGender(v){const name=((v.name||'')+' '+(v.voiceURI||'')).toLowerCase();if(/female|woman|girl|zira|samantha|victoria|karen|moira|tessa|susan|hazel|aria|jenny|libby|sonia|natasha|google uk english female|google us english female|microsoft.*(jenny|aria|zira)/.test(name))return 'female';if(/(^|[\s_-])(male|man|boy)([\s_-]|$)|david|mark|daniel|james|george|guy|ryan|liam|thomas|alex|fred|oliver|aaron|google uk english male|google us english male|microsoft.*(guy|davis|tony|jason)/.test(name))return 'male';return 'unknown'}
+ function voiceGender(v){const name=((v.name||'')+' '+(v.voiceURI||'')).toLowerCase();if(/female|woman|girl|zira|samantha|victoria|karen|moira|tessa|susan|hazel|aria|jenny|libby|sonia|natasha|google uk english female|google us english female|microsoft.*(jenny|aria|zira)/.test(name))return 'female';if(/(^|[\s_-])(male|man|boy)([\s_-]|$)|david|mark|daniel|james|george|guy|ryan|liam|thomas|alex|fred|oliver|aaron|charon|fenrir|orus|puck|algenib|achird|alnilam|iapetus|rasalgethi|sadachbia|sadaltager|schedar|umbriel|zubenelgenubi|google uk english male|google us english male|microsoft.*(guy|davis|tony|jason)/.test(name))return 'male';return 'unknown'}
  function refreshVoiceOptions(){
   const select=document.getElementById('amohVoiceChoice');if(!select)return;
   const voices=getVoices(),previous=voicePrefs.voiceURI;select.replaceChildren();
@@ -127,7 +127,7 @@
   refreshVoiceOptions();if(window.speechSynthesis)window.speechSynthesis.addEventListener?.('voiceschanged',refreshVoiceOptions);
  }
  function applyVoice(utterance){
-  const voices=getVoices();const lang=languageBase(selectedLanguageCode());const preferred=/google.*(us|uk).*english|microsoft.*(aria|jenny|guy)|samantha|ava|allison|daniel|oliver/i;const selected=voices.find(v=>languageBase(v.lang)===lang&&voiceGender(v)==='male'&&/google|microsoft|natural|neural|enhanced/i.test(v.name))||voices.find(v=>languageBase(v.lang)===lang&&voiceGender(v)==='male')||voices.find(v=>voiceGender(v)==='male')||null;
+  const voices=getVoices();const lang=languageBase(selectedLanguageCode());const preferred=/google.*(us|uk).*english|microsoft.*(aria|jenny|guy)|samantha|ava|allison|daniel|oliver/i;const selected=voices.find(v=>languageBase(v.lang)===lang&&/\bcharon\b/i.test(v.name+' '+v.voiceURI))||voices.find(v=>languageBase(v.lang)===lang&&voiceGender(v)==='male'&&/google|microsoft|natural|neural|enhanced/i.test(v.name))||voices.find(v=>languageBase(v.lang)===lang&&voiceGender(v)==='male')||voices.find(v=>voiceGender(v)==='male')||null;
   if(selected)utterance.voice=selected;utterance.rate=Number(voicePrefs.rate)||0.92;
   // Use the selected device voice with a relaxed default pace and neutral pitch.
   const requestedPitch=Number(voicePrefs.pitch)||1;utterance.pitch=Math.max(0.7,Math.min(requestedPitch,1.15));
