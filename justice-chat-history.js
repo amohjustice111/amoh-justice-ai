@@ -2,7 +2,7 @@
 (function(){
 const KEY='amohJusticeChatConversationsV2',OLD='amohJusticeAIChatHistoryV1',box=document.getElementById('chatMessages'),form=document.getElementById('chatForm'),input=document.getElementById('chatInput');
 if(!box||!form||!input)return;
-const greeting=box.querySelector('.bubble.bot')?.textContent||'Hello! Welcome to AMOH JUSTICE.';
+const greeting=box.querySelector('.bubble.bot')?.textContent||'';
 const read=()=>{try{const v=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(v)?v:[]}catch(_){return[]}};
 const write=()=>{try{localStorage.setItem(KEY,JSON.stringify(chats.slice(0,100)))}catch(_){status('Browser storage is full; chat may not be saved.')}};
 const id=()=>{try{return crypto.randomUUID()}catch(_){return 'chat-'+Date.now()+'-'+Math.random().toString(36).slice(2)}};
@@ -61,7 +61,7 @@ row.append(b,del);list.appendChild(row);
 });
 }
 function getMessages(){return clean([...box.querySelectorAll('.bubble')].map(e=>({role:e.classList.contains('user')?'user':'model',text:(e.innerText||e.textContent||'').trim()})))}
-function renderMessages(ms){box.replaceChildren();const messages=clean(ms);if(!messages.length){const e=document.createElement('div');e.className='bubble bot';e.textContent=greeting;box.appendChild(e)}messages.forEach(m=>{const e=document.createElement('div');e.className='bubble '+(m.role==='user'?'user':'bot');e.textContent=m.text;box.appendChild(e)});box.scrollTop=box.scrollHeight;const ctx=window.amohJusticeChatHistory||[];ctx.splice(0,ctx.length,...messages)}
+function renderMessages(ms){box.replaceChildren();const messages=clean(ms);if(!messages.length&&greeting){const e=document.createElement('div');e.className='bubble bot';e.textContent=greeting;box.appendChild(e)}messages.forEach(m=>{const e=document.createElement('div');e.className='bubble '+(m.role==='user'?'user':'bot');e.textContent=m.text;box.appendChild(e)});box.scrollTop=box.scrollHeight;const ctx=window.amohJusticeChatHistory||[];ctx.splice(0,ctx.length,...messages)}
 function saveNow(){const c=chats.find(x=>x.id===activeId);if(!c)return;c.messages=getMessages();if(!c.messages.some(m=>m.role==='user'))return;c.title=title(c.messages);c.updatedAt=new Date().toISOString();write();renderList();sync(c)}
 function schedule(){clearTimeout(timer);timer=setTimeout(saveNow,500)}
 function newChat(){if(activeId)saveNow();activeId=null;renderMessages([]);renderList();status('New chat ready. Your next message starts a separate conversation.');input.focus()}
