@@ -1,10 +1,10 @@
 /* AMOH JUSTICE AI PWA service worker.
    The installed app is the same secure website; keep its assistant UI assets
    available while ensuring pages and all API/account requests stay fresh. */
-const CACHE = 'amoh-justice-ai-v55';
+const CACHE = 'amoh-justice-ai-v56';
 const APP_SHELL = [
   '/', '/index.html', '/style.css', '/v2.css', '/script.js',
-  '/manifest.webmanifest', '/office-photo.png', '/logo.svg',
+  '/manifest.webmanifest', '/office-photo.png', '/logo.svg', '/amoh-justice-icon.svg',
   '/icon-192.png', '/icon-512.png', '/justice-ai-floating.css',
   '/justice-ai-floating.js', '/justice-chat-history.js',
   '/justice-ai-tools.js', '/justice-suite.css', '/justice-suite.js', '/justice-next.js', '/justice-next.css', '/justice-upgrades.js', '/justice-upgrades.css', '/voice-chat.js', '/justice-phone-commands.js', '/pwa-install.js'
