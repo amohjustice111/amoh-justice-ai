@@ -39,15 +39,15 @@ iframe{display:block;width:100%;height:min(82vh,1050px);min-height:720px;border:
 <h1>AI Video <span style="color:var(--green)">Studio</span></h1>
 <p>Create a real video from a written prompt, or animate a picture. The generator below uses the LTX-2.5 model through a public Hugging Face demo. It supports text-to-video, image-to-video and synchronized generated audio. Your phone or laptop only displays the interface; generation runs on the provider's cloud GPU.</p>
 <div class="steps">
-<div class="step"><b>01 · Choose your input</b><span>Start with a short 2-second test. For the first attempt, use the low-GPU settings shown below; leave the image empty for text-to-video or upload a picture to animate it.</span></div>
+<div class="step"><b>01 · Choose your input</b><span>Choose a 6-second video for the normal starting option, or 8 seconds for a longer clip. Keep the low-GPU resolution settings shown below; leave the image empty for text-to-video or upload a picture to animate it.</span></div>
 <div class="step"><b>02 · Describe movement</b><span>Explain what should move, the camera action, scene, lighting and mood.</span></div>
 <div class="step"><b>03 · Generate and save</b><span>Press Generate, wait for the shared queue, then preview and download the video.</span></div>
 </div>
 </section>
 <section class="step" aria-label="Recommended free GPU settings" style="margin:0 0 16px;border-color:#4ade80;background:linear-gradient(145deg,#0b2415,#07110b)">
-<strong style="color:#bbf7d0">START WITH THESE FREE-FRIENDLY SETTINGS</strong>
-<p style="margin:6px 0;color:var(--muted)">Before pressing Generate in the model window, set <b>Height: 576</b>, <b>Width: 1024</b>, <b>Duration: 2 seconds</b>, and choose the <b>Conv</b> decoder if it is offered. These are lower-resolution test settings intended to reduce the GPU reservation. They do not guarantee access when the public GPU queue is full.</p>
-<p style="margin:6px 0;color:var(--muted)">If the same GPU-duration error appears, reduce the image dimensions further if the demo allows it, keep the shortest duration, and retry later. Do not pay for PRO just to use this page.</p>
+<strong style="color:#bbf7d0">RECOMMENDED VIDEO LENGTH & FREE-FRIENDLY SETTINGS</strong>
+<p style="margin:6px 0;color:var(--muted)">Choose <b>6 seconds</b> for the recommended starting length, or <b>8 seconds</b> when you want a longer clip. Set <b>Height: 576</b>, <b>Width: 1024</b>, and choose the <b>Conv</b> decoder if it is offered. These lower-resolution settings may reduce GPU use, but longer videos need more processing and are not guaranteed to fit the free shared GPU allowance.</p>
+<p style="margin:6px 0;color:var(--muted)">If 6 or 8 seconds triggers a GPU-duration error, try 6 seconds first, lower the dimensions if the demo allows it, or retry later. Do not pay for PRO just to use this page.</p>
 </section>
 <section class="generator" aria-label="LTX-2.5 video generator">
 <div class="gen-head"><div><b>✦ LTX-2.5 · Text / Image → Video + Audio</b><br><small>Public community demo · Cloud generation</small></div><a class="open" href="https://arpitkgoyal-ltx-2-5-demo.static.hf.space/index.html" target="_blank" rel="noopener noreferrer">Open generator separately ↗</a></div>
@@ -57,7 +57,7 @@ iframe{display:block;width:100%;height:min(82vh,1050px);min-height:720px;border:
 <strong>Free access and important limits</strong>
 <ul>
 <li>AMOH JUSTICE AI does not charge you or spend AMOH credits for this embedded generator.</li>
-<li>The public demo sends generation requests from your browser to the Lightricks LTX-2.5 Hugging Face Space. AMOH's server does not process your prompt or uploaded image in this workflow. The recommended 1024×576, 2-second, Conv settings are a lower-demand starting point; if the Space still rejects the reservation, its free GPU allowance is currently insufficient.</li>
+<li>The public demo sends generation requests from your browser to the Lightricks LTX-2.5 Hugging Face Space. AMOH's server does not process your prompt or uploaded image in this workflow. The recommended 1024×576, 6-second (or optional 8-second), Conv settings are a lower-demand starting point for those durations; if the Space rejects the reservation, its free GPU allowance is currently insufficient.</li>
 <li>Visitors share a public GPU queue. It can be busy, slow, or temporarily return “no GPU available” or “quota exceeded”. Retrying later may help; unlimited or instant generation cannot be promised.</li>
 <li>The demo may offer an optional Hugging Face access token for its own queue limits. It is not required to try anonymous access. If you choose to enter one, the demo says it stores it in this browser and sends it directly to the Lightricks Space; never paste it into AMOH chat or share it with anyone.</li>
 <li>Only upload images you have permission to use. Avoid private or sensitive photos. The provider controls its service, queue, data handling and availability.</li>
