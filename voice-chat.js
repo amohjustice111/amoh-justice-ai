@@ -14,7 +14,7 @@
  const settingsKey='amohJusticeVoicePrefsV1';
  const defaultPrefs={voiceURI:'',gender:'male',relationship:'calm',language:'en-US',voiceStyle:'standard',rate:0.92,pitch:0.92};
  let voicePrefs={...defaultPrefs};
- try{const savedPrefs=JSON.parse(localStorage.getItem(settingsKey)||'{}');voicePrefs={...defaultPrefs,...savedPrefs,gender:'male',relationship:'calm',language:'en-US',voiceStyle:'standard',rate:0.92,pitch:0.92};savePrefs()}catch(e){voicePrefs.gender='all'}
+ try{const savedPrefs=JSON.parse(localStorage.getItem(settingsKey)||'{}');voicePrefs={...defaultPrefs,...savedPrefs,gender:'male',relationship:'calm',language:'en-US',voiceStyle:'standard',rate:0.92,pitch:0.92};savePrefs()}catch(e){voicePrefs.gender='male'}
  const relationships={
   friend:{label:'Friendly friend',instruction:'Speak like a kind, loyal friend: warm, natural, encouraging, conversational, and never overly formal.'},
   brother:{label:'Supportive brother',instruction:'Speak like a caring, supportive brother: friendly, honest, encouraging, lightly playful when appropriate, and respectful.'},
@@ -37,7 +37,7 @@
   const select=document.getElementById('amohVoiceChoice');if(!select)return;
   const voices=getVoices(),previous=voicePrefs.voiceURI;select.replaceChildren();
   const requested=voices.filter(v=>voiceGender(v)==='male');
-  const choices=requested.slice().sort((a,b)=>{const lang=languageBase(selectedLanguageCode()),am=languageBase(a.lang)===lang?0:1,bm=languageBase(b.lang)===lang?0:1;const preferred=n=>/google.*(us|uk).*english|microsoft.*(aria|jenny|guy)|samantha|ava|allison|daniel|oliver/i.test(n)?0:1;return am-bm||preferred(a.name)-preferred(b.name)||a.name.localeCompare(b.name)});
+  const choices=requested.slice().sort((a,b)=>{const lang=languageBase(selectedLanguageCode()),am=languageBase(a.lang)===lang?0:1,bm=languageBase(b.lang)===lang?0:1;const preferred=n=>/google|microsoft|natural|neural|enhanced/i.test(n)?0:1;return am-bm||preferred(a.name)-preferred(b.name)||a.name.localeCompare(b.name)});
   if(!choices.length){voicePrefs.voiceURI='';savePrefs();const opt=document.createElement('option');opt.value='';opt.textContent='Use the browser default voice';select.appendChild(opt);select.dataset.voiceFallback='true';const hint=document.getElementById('amohVoiceAvailability');if(hint)hint.textContent='No selectable system voices were found. Justice AI will use your browser’s default spoken voice if available.';return}
   select.dataset.voiceFallback='false';
   choices.forEach(v=>{const opt=document.createElement('option');opt.value=v.voiceURI;opt.textContent=v.name+' · '+(v.lang||'voice');select.appendChild(opt)});
@@ -150,7 +150,7 @@
  async function enableMotion(){if(motionEnabled)return;try{if(typeof DeviceMotionEvent!=='undefined'&&typeof DeviceMotionEvent.requestPermission==='function'){const permission=await DeviceMotionEvent.requestPermission();if(permission!=='granted'){sayStatus('Voice chat is on. Motion permission was not granted, so the picture will not react to phone shakes.');return}}if(typeof DeviceMotionEvent!=='undefined'){window.addEventListener('devicemotion',onMotion,{passive:true});motionEnabled=true}}catch(e){sayStatus('Voice chat is on. This browser does not allow shake detection here.')}}
  window.amohVoiceConversationActive=false;
  function stopMic(){if(rec)try{rec.stop()}catch(e){}listening=false;mic.textContent='🎙 Speak';mic.setAttribute('aria-pressed','false')}
- function stopMode(message='Voice conversation ended.'){handsFree=false;window.amohVoiceConversationActive=false;setVoiceIndicator('',false);stopped=true;waiting=false;stopMic();speechQueue=[];queuedSpeechActive=false;if(window.speechSynthesis)window.speechSynthesis.cancel();if(modeBtn){modeBtn.textContent='V';modeBtn.setAttribute('aria-pressed','false');modeBtn.setAttribute('aria-label','Start hands-free voice chat with Justice AI')}hideAvatar();sayStatus(message)}
+ function stopMode(message='Voice conversation ended.'){handsFree=false;window.amohVoiceConversationActive=false;setVoiceIndicator('',false);stopped=true;waiting=false;stopMic();speechQueue=[];queuedSpeechActive=false;if(window.speechSynthesis)window.speechSynthesis.cancel();if(modeBtn){modeBtn.textContent='👨🏻‍💻';modeBtn.setAttribute('aria-pressed','false');modeBtn.setAttribute('aria-label','Start hands-free voice chat with Justice AI')}hideAvatar();sayStatus(message)}
   
  function listen(){if(!handsFree||!rec||listening||waiting||stopped)return;if(!window.isSecureContext){stopMode('Voice chat needs the secure HTTPS website.');return}try{rec.lang='en-US';rec.start()}catch(e){sayStatus('Microphone is busy. Tap V again if it does not start.')}}
 
