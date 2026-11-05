@@ -122,7 +122,7 @@
   document.getElementById('amohVoiceChoice').addEventListener('change',e=>{voicePrefs.voiceURI=e.target.value;savePrefs()});
   rate.addEventListener('input',()=>{voicePrefs.rate=Number(rate.value);document.getElementById('amohVoiceRateValue').textContent=voicePrefs.rate.toFixed(2)+'×';savePrefs()});
   pitch.addEventListener('input',()=>{voicePrefs.pitch=Number(pitch.value);document.getElementById('amohVoicePitchValue').textContent=voicePrefs.pitch.toFixed(2);savePrefs()});
-  document.getElementById('amohVoiceTest').addEventListener('click',()=>{if(!window.speechSynthesis)return;window.speechSynthesis.cancel();const isAkan=['ak-GH','ak-FANTE'].includes(selectedLanguageCode());const testText=isAkan?'Maakye! Me ne Justice AI. Ɛyɛ me dɛ sɛ me ne wo rebɔ nkɔmmɔ. Ɛdeɛn na wobɛpɛ sɛ yɛyɛ nnɛ?':'Hey, I am Justice AI. I am here for you. What would you like us to talk about today?';const u=new SpeechSynthesisUtterance(testText);applyVoice(u);window.speechSynthesis.speak(u)});
+  document.getElementById('amohVoiceTest').addEventListener('click',()=>{if(!window.speechSynthesis)return;window.speechSynthesis.cancel();const testText='Hello, I am Justice AI. I am here for you. What would you like us to talk about today?';const u=new SpeechSynthesisUtterance(testText);applyVoice(u);window.speechSynthesis.speak(u)});
   document.getElementById('amohVoiceSettingsClose').addEventListener('click',closeVoiceSettings);
   refreshVoiceOptions();if(window.speechSynthesis)window.speechSynthesis.addEventListener?.('voiceschanged',refreshVoiceOptions);
  }
@@ -133,7 +133,7 @@
   const requestedPitch=Number(voicePrefs.pitch)||1;utterance.pitch=Math.max(0.7,Math.min(requestedPitch,1.15));
   utterance.lang=selected&&languageBase(selected.lang)===languageBase(selectedLanguageCode())?selected.lang:selectedLanguageCode();
   // Akan sounds clearer when spoken gently and a little slower. Native pronunciation still depends on an installed Akan-capable speech voice.
-  if(['ak-GH','ak-FANTE'].includes(selectedLanguageCode())){utterance.rate=Math.min(Number(voicePrefs.rate)||0.94,0.9);utterance.pitch=Math.min(utterance.pitch,0.86)}
+  
   applyVoiceStyle(utterance);
  }
  function selectedRelationship(){return relationships[voicePrefs.relationship]||relationships.friend}
