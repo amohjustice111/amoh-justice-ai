@@ -14,7 +14,7 @@
  const settingsKey='amohJusticeVoicePrefsV1';
  const defaultPrefs={voiceURI:'',gender:'male',relationship:'calm',language:'en-US',voiceStyle:'standard',rate:0.92,pitch:0.92};
  let voicePrefs={...defaultPrefs};
- try{const savedPrefs=JSON.parse(localStorage.getItem(settingsKey)||'{}');voicePrefs={...defaultPrefs,...savedPrefs,gender:'male',relationship:'calm',language:'en-US',voiceStyle:'standard',rate:0.92,pitch:0.92};savePrefs()}catch(e){voicePrefs.gender='male'}
+ try{const savedPrefs=JSON.parse(localStorage.getItem(settingsKey)||'{}');voicePrefs={...defaultPrefs,...savedPrefs,voiceURI:'',gender:'male',relationship:'calm',language:'en-US',voiceStyle:'standard',rate:0.92,pitch:0.92};savePrefs()}catch(e){voicePrefs.gender='male'}
  const relationships={
   friend:{label:'Friendly friend',instruction:'Speak like a kind, loyal friend: warm, natural, encouraging, conversational, and never overly formal.'},
   brother:{label:'Supportive brother',instruction:'Speak like a caring, supportive brother: friendly, honest, encouraging, lightly playful when appropriate, and respectful.'},
@@ -32,7 +32,7 @@
  function selectedLanguageCode(){voicePrefs.language='en-US';return 'en-US'}
  function applyVoiceStyle(utterance){if(voicePrefs.voiceStyle==='santa'){utterance.pitch=Math.min(Number(voicePrefs.pitch)||0.82,0.85);utterance.rate=Math.min(Number(voicePrefs.rate)||0.9,0.95)}}
  function getVoices(){return window.speechSynthesis?.getVoices?.()||[]}
- function voiceGender(v){const name=((v.name||'')+' '+(v.voiceURI||'')).toLowerCase();if(/female|woman|girl|zira|samantha|victoria|karen|moira|tessa|susan|hazel|aria|jenny|libby|sonia|natasha|google uk english female|google us english female|microsoft.*(jenny|aria|zira)/.test(name))return 'female';if(/(^|[\s_-])(male|man|boy)([\s_-]|$)|david|mark|daniel|james|george|guy|ryan|liam|thomas|alex|fred|oliver|aaron|google uk english male|google us english male|microsoft.*(guy|davis|tony|jason)/.test(name))return 'male';return 'unknown'}
+ function voiceGender(v){const name=((v.name||'')+' '+(v.voiceURI||'')).toLowerCase();if(/female|woman|girl|zira|samantha|victoria|karen|moira|tessa|susan|hazel|aria|jenny|libby|sonia|natasha|google uk english female|google us english female|microsoft.*(jenny|aria|zira)/.test(name))return 'female';if(/(^|[\s_-])(male|man|boy)([\s_-]|$)|david|mark|daniel|james|george|guy|ryan|liam|thomas|alex|fred|oliver|aaron|charon|fenrir|orus|puck|algenib|achird|alnilam|iapetus|rasalgethi|sadachbia|sadaltager|schedar|umbriel|zubenelgenubi|google uk english male|google us english male|microsoft.*(guy|davis|tony|jason)/.test(name))return 'male';return 'unknown'}
  function refreshVoiceOptions(){
   const select=document.getElementById('amohVoiceChoice');if(!select)return;
   const voices=getVoices(),previous=voicePrefs.voiceURI;select.replaceChildren();
