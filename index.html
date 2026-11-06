@@ -446,7 +446,13 @@ body:before{z-index:-1!important;background:linear-gradient(180deg,rgba(2,8,4,.6
 #amohVoiceAvatarStatus{display:block!important;font-size:11px!important;line-height:1.4!important;text-align:center!important}
 #amohVoiceAvatarClose{display:block!important;min-width:0!important;margin:8px auto 0!important;padding:7px 12px!important;font-size:11px!important}
 @media(max-width:600px){#amohVoiceAvatarPanel{right:10px!important;bottom:76px!important;width:min(230px,calc(100vw - 20px))!important}}
-</style></head>
+</style><style id="about-owner-added-photo">
+#about .owner-photo-added{grid-column:1/-1;display:flex;justify-content:center;align-items:center;width:100%;margin:clamp(20px,4vw,42px) auto 0;padding:0 12px}
+#about .owner-photo-added img{display:block;width:min(100%,360px);height:auto;max-height:76vh;object-fit:contain;object-position:center;border-radius:20px;border:1px solid rgba(134,239,172,.28);box-shadow:0 18px 55px rgba(0,0,0,.38),0 0 28px rgba(34,197,94,.09)}
+@media(max-width:600px){#about .owner-photo-added{margin-top:22px}#about .owner-photo-added img{width:min(100%,330px);border-radius:16px}}
+@media(prefers-reduced-motion:reduce){#about .owner-photo-added img{transition:none}}
+</style>
+</head>
 <body>
 
 <video id="homepageBackgroundVideo" autoplay muted loop playsinline preload="auto" aria-hidden="true"><source src="https://d2ol7oe51mr4n9.cloudfront.net/user_3Ky06cmpgsYPFbsVAGE4rI1asjL/7fbb93e2-85d9-4fa9-ba66-521ed8cf5b02.mp4" type="video/mp4"></video>
@@ -547,6 +553,9 @@ body:before{z-index:-1!important;background:linear-gradient(180deg,rgba(2,8,4,.6
 </div>
 </article>
 <p class="owner-real-certificate-note"><b>School certificate:</b> An authentic certificate can be displayed here once you provide a photo or scan of the real document. No official school certificate has been fabricated or claimed.</p>
+</div>
+<div class="owner-photo-added">
+  <img src="data:image/jpeg;base64,${b64}" alt="Amoh Justice Adjei — additional owner photograph" loading="lazy" decoding="async">
 </div>
 </section>
 <section class="learning section" id="learn"><p class="eyebrow">LEARN · CREATE · GROW</p><h2>Build your digital <em>skills.</em></h2><p class="muted">Tutorial topics to expand as lessons and video links are added.</p><div class="video-hub"><div class="video-hub-copy"><p class="eyebrow">WATCH · LEARN · BUILD</p><h3>Learn with <em>YouTube</em></h3><p class="muted">Open curated YouTube searches for practical tutorials. Videos play on YouTube, so no extra API key is needed.</p></div><div class="video-links"><a href="https://www.youtube.com/results?search_query=best+free+AI+tools+for+beginners" target="_blank" rel="noopener"><span>▶</span><b>Free AI tools</b><small>Beginner tutorials ↗</small></a><a href="https://www.youtube.com/results?search_query=HTML+CSS+JavaScript+website+development+beginners" target="_blank" rel="noopener"><span>⌘</span><b>Build websites</b><small>HTML, CSS & JavaScript ↗</small></a><a href="https://www.youtube.com/results?search_query=free+AI+video+generator+tutorial" target="_blank" rel="noopener"><span>▣</span><b>AI video creation</b><small>Video maker tutorials ↗</small></a><a href="https://www.youtube.com/results?search_query=Canva+graphic+design+for+beginners" target="_blank" rel="noopener"><span>✦</span><b>Graphic design</b><small>Design basics ↗</small></a></div></div><div class="learn-grid"><article><small>01 / AI</small><h3>AI prompts for beginners</h3><p>Learn to explain your idea clearly and prepare useful prompts for creative tools.</p><button data-topic="AI prompts for beginners">Explore topic ↗</button></article><article><small>02 / WEBSITES</small><h3>Publish your first website</h3><p>Understand website files, hosting and the basic steps to go live online.</p><button data-topic="Publish your first website">Explore topic ↗</button></article><article><small>03 / DESIGN</small><h3>Graphic design basics</h3><p>Explore layout, colour, typography and simple ways to improve your visuals.</p><button data-topic="Graphic design basics">Explore topic ↗</button></article></div></section>
