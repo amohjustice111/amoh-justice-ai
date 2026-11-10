@@ -53,10 +53,9 @@ const systemInstruction = `You are Justice AI, a helpful, friendly general-purpo
 
   try {
     const streaming = body.stream === true;
-    // Gemini 3.5 Flash-Lite remains the low-cost default for normal chat.
-    // Google Search grounding has a free daily allowance on Gemini 2.5 Flash-Lite,
-    // so route only explicit research requests through that model.
-    const model = body.webSearch === true ? 'gemini-2.5-flash-lite' : 'gemini-3.5-flash-lite';
+    // Use the currently supported Gemini 3.5 Flash-Lite model for both chat and research.
+    // The older Gemini 2.5 Flash-Lite endpoint is no longer available to this API account.
+    const model = 'gemini-3.5-flash-lite';
     const endpoint = streaming
       ? `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse`
       : `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?`;
@@ -125,8 +124,10 @@ const systemInstruction = `You are Justice AI, a helpful, friendly general-purpo
     const data = await response.json().catch(() => ({}));
     if (!response.ok) {
       console.error('Gemini API error status:', response.status, data && data.error && data.error.message);
-      if (response.status === 429) return res.status(429).json({ error: body.webSearch === true ? 'The web-research service has reached its current free daily limit. Please try again later; normal Justice AI chat may still be available.' : 'Justice AI has reached its current free usage limit. Please wait a little and try again.' });
+      if (response.status === 429) return res.status(429).json({ error: body.webSearch === true ? 'Web search has reached its current Gemini API quota or is not enabled for this API tier. Normal Justice AI chat may still work.' : 'Justice AI has reached its current Gemini API usage limit. Please wait a little and try again.' });
       if (response.status === 400 || response.status === 403) return res.status(502).json({ error: 'The AI provider rejected the request. Please check that the Gemini API key is valid and enabled.' });
+      if (response.status === 503) return res.status(503).json({ error: 'Google Gemini is temporarily busy. Please try your question again in a moment.' });
+      if (response.status === 404) return res.status(502).json({ error: 'The configured Gemini model is unavailable to this API account. Please contact the site administrator.' });
       return res.status(502).json({ error: 'Justice AI could not get an answer right now. Please try again shortly.' });
     }
 
