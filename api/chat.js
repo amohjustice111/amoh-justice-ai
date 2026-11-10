@@ -76,13 +76,25 @@ const systemInstruction = `You are Justice AI, a helpful, friendly general-purpo
       if (!reader) return res.status(502).json({ error: 'Streaming is unavailable from the AI provider.' });
       const decoder = new TextDecoder();
       let buffer = '';
+      const foundSources = [];
       const consumeEvent = event => {
         const payload = event.split(/\r?\n/).filter(line => line.startsWith('data:')).map(line => line.slice(5).trim()).join('');
         if (!payload || payload === '[DONE]') return;
         try {
           const chunk = JSON.parse(payload);
-          const text = (chunk.candidates || []).flatMap(candidate => (candidate.content && candidate.content.parts) || []).map(piece => piece.text || '').join('');
+          const candidates = chunk.candidates || [];
+          const text = candidates.flatMap(candidate => (candidate.content && candidate.content.parts) || []).map(piece => piece.text || '').join('');
           if (text) res.write(JSON.stringify({ text }) + '\n');
+          for (const candidate of candidates) {
+            const grounding = candidate.groundingMetadata;
+            const chunks = grounding && Array.isArray(grounding.groundingChunks) ? grounding.groundingChunks : [];
+            for (const item of chunks) {
+              const web = item && item.web;
+              if (web && typeof web.uri === 'string' && /^https?:/.test(web.uri) && !foundSources.some(source => source.url === web.uri)) {
+                foundSources.push({ title: String(web.title || web.uri).slice(0, 180), url: web.uri });
+              }
+            }
+          }
         } catch (parseError) {}
       };
       try {
@@ -96,6 +108,10 @@ const systemInstruction = `You are Justice AI, a helpful, friendly general-purpo
         }
         buffer += decoder.decode();
         if (buffer.trim()) consumeEvent(buffer);
+        if (foundSources.length) {
+          const sourceText = '\n\nSources:\n' + foundSources.slice(0, 6).map(source => '- ' + source.title + ': ' + source.url).join('\n');
+          res.write(JSON.stringify({ text: sourceText }) + '\n');
+        }
       } catch (streamError) {
         console.error('Gemini streaming failed:', streamError && streamError.message);
         res.write(JSON.stringify({ error: 'The response stream was interrupted.' }) + '\n');
